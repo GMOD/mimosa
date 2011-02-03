@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 # the order is important
-use mimosa;
+use App::Mimosa;
 use Dancer::Test;
 
 route_exists [GET => '/'], 'a route handler is defined for /';
