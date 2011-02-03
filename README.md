@@ -16,8 +16,8 @@ a friendly web interface.
 ## Why does Mimosa exist? Aren't there a lot of things that already do this?
 
 Mimosa exists to solve the problem of making a standalone sequence alignment
-web interface. All existing sequence alignment web interfaces are tightly
-coupled to legacy codebases and/or are difficult to deploy.
+web interface. All existing sequence alignment web interfaces are either tightly
+coupled to legacy codebases, difficult to deploy, or just plain *suck*.
 
 Mimosa plans on being an easy-to-install standalone sequence aligner, which
 can be integrated into an existing website via a REST interface.
