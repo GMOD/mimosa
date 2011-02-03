@@ -10,11 +10,12 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/App/Mimosa.pm',
     include_dirs        => '',
     build_requires => {
-        'Test::More'      => 0,
+        'Test::Most'      => 0,
     },
     requires => {
-        'YAML'            => 0,
-        'Dancer'          => 1.3002,
+        'YAML'                    => 0,
+        'Dancer'                  => 1.3002,
+        'Dancer::Template::Mason' => 0,
     },
     add_to_cleanup      => [  ],
     create_makefile_pl  => 'traditional',
