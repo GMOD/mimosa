@@ -1,1 +1,90 @@
-Hello, have a mimosa!
+ <div id="outercontainer">
+<center>
+<div id="pagetitle"><h3>Mimosa</h3></div>
+
+<form method="post" action="blast_result.pl" name="blastform">
+  <input type="hidden" checked="checked" name="filterq" value="1" />
+  <input type="hidden" name="interface_type" value="simple" />
+  <input type="hidden" name="outformat" value="0" />
+
+  <table align="center" summary="" cellpadding="0" cellspacing="15">
+    <tr><td><b>Sequence Set</b> </td><td>
+    <select id="hsparent1"  onchange=""  name="database">
+</select>
+
+ <a style="font-size: 80%" title="View details of each database" href="dbinfo.pl">db details</a></td></tr>
+    <tr><td><b>Program</b> </td><td><select id="simple_selectbox_1"   name="program">
+<option value="blastn">BLASTN (nucleotide to nucleotide)</option>
+<option value="tblastx">TBLASTX (protein to protein; both database and query are translated)</option>
+<option value="tblastn">TBLASTN (protein to nucleotide; database translated to protein)</option>
+</select>
+</td></tr>
+    <tr><td colspan="2" align="center"><b>Query sequence</b><div style="font-size: 80%">single sequence only, use Advanced for multiple</div><textarea name="sequence" id="sequence_input" rows="8" cols="80"></textarea></td></tr>
+
+    <tr><td colspan="2">
+      <table width="100%"><tr>
+         <td>
+<table summary="" class="info_table_noborder"  width="100%">
+<tr>  <td class="info_table_field">
+    <span class="info_table_fieldname">Expect (e-value) Threshold</span>
+    <div class="info_table_fieldval">
+      <input type="text" size="6" value="1e-10" name="expect" />
+    </div>
+
+  </td>
+  <td class="info_table_field">
+    <span class="info_table_fieldname"> </span>
+    <div class="info_table_fieldval">
+      <div style="text-align: right"><input type="reset" value="Clear" onclick="clearField(); "/> <input type="submit" name="search" value="Search" /></div>
+    </div>
+  </td>
+</tr>
+
+<tr>  <td class="info_table_field">
+    <span class="info_table_fieldname">Substitution Matrix</span>
+    <div class="info_table_fieldval">
+      <select id="simple_selectbox_2"   name="matrix">
+<option value="BLOSUM62">BLOSUM62 (default)</option>
+<option value="BLOSUM80">BLOSUM80 (recent divergence)</option>
+<option value="BLOSUM45">BLOSUM80 (ancient divergence)</option>
+<option value="PAM30">PAM30</option>
+
+<option value="PAM70">PAM70</option>
+</select>
+
+    </div>
+  </td>
+  <td class="info_table_field">
+    <span class="info_table_fieldname">Show Graphics</span>
+    <div class="info_table_fieldval">
+      <select id="simple_selectbox_3"   name="output_graphs">
+
+<option value="bioperl_histogram">all</option>
+<option value="none">none</option>
+<option value="bioperl_only">alignment summary only</option>
+<option value="histogram_only">conservedness histogram only</option>
+</select>
+
+    </div>
+  </td>
+</tr>
+<tr>  <td class="info_table_field">
+
+    <span class="info_table_fieldname">Max. hits to show</span>
+    <div class="info_table_fieldval">
+      <input type="text" name="maxhits" size="6" value="100" />
+    </div>
+  </td>
+<td>&nbsp;</td><td>&nbsp;</td></tr>
+</table>         </td>
+      </tr>
+      </table>
+
+    </td></tr>
+  </table>
+</form>
+  </td></tr>
+</table>
+</div>
+
+</body>
