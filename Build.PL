@@ -13,8 +13,9 @@ my $builder = Module::Build->new(
         'Test::Most'      => 0,
     },
     requires => {
+        'Moose'                   => '1.00',
         'YAML'                    => 0,
-        'Dancer'                  => 1.3002,
+        'Dancer'                  => '1.3002',
         'Dancer::Template::Mason' => 0,
     },
     add_to_cleanup      => [  ],

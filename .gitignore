@@ -3,3 +3,4 @@ MYMETA.yml
 _build/
 blib/
 logs/development.log
+.*sw?
