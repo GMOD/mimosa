@@ -13,6 +13,7 @@ my $builder = Module::Build->new(
         'Test::Most'      => 0,
     },
     requires => {
+        'Bio::Root::Version'      => '1.006009',
         'Moose'                   => '1.00',
         'YAML'                    => 0,
         'Dancer'                  => '1.3002',
