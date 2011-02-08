@@ -1,6 +1,7 @@
 package App::Mimosa;
 use Dancer ':syntax';
 use App::Mimosa::Job;
+use Data::Dumper;
 
 our $VERSION = '0.1';
 
@@ -17,9 +18,12 @@ get '/jobs' => sub {
 };
 
 post '/submit' => sub {
+    # TODO: VALIDATION!
     # parse posted info
-    my $a = App::Mimosa::Job->new( command => 'foo' );
-    die "job submitted";
+    my ($program) = ( map { params->{$_} } qw/program/);
+    my $a = App::Mimosa::Job->new;
+    $a->run( program => $program );
+    print "submitted!";
 };
 
 true;
