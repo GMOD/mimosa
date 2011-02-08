@@ -8,6 +8,14 @@ get '/' => sub {
     template 'index';
 };
 
+get '/results' => sub {
+    template 'results';
+};
+
+get '/jobs' => sub {
+    template 'jobs';
+};
+
 post '/submit' => sub {
     # parse posted info
     my $a = App::Mimosa::Job->new( command => 'foo' );
