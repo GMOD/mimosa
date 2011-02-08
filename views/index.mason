@@ -2,7 +2,7 @@
 <center>
 <div id="pagetitle"><h3>Mimosa</h3></div>
 
-<form method="post" action="blast_result.pl" name="blastform">
+<form method="post" action="/submit" name="blastform">
   <input type="hidden" checked="checked" name="filterq" value="1" />
   <input type="hidden" name="interface_type" value="simple" />
   <input type="hidden" name="outformat" value="0" />
