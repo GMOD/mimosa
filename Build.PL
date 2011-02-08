@@ -20,6 +20,7 @@ my $builder = Module::Build->new(
         'Dancer::Template::Mason' => 0,
         'Class::Accessor::Fast'   => 0,
         'IPC::System::Simple'     => 0,
+        'autodie'                 => 0,
     },
     add_to_cleanup      => [  ],
     create_makefile_pl  => 'traditional',
