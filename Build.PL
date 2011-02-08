@@ -17,6 +17,8 @@ my $builder = Module::Build->new(
         'YAML'                    => 0,
         'Dancer'                  => '1.3002',
         'Dancer::Template::Mason' => 0,
+        'Class::Accessor::Fast'   => 0,
+        'IPC::System::Simple'     => 0,
     },
     add_to_cleanup      => [  ],
     create_makefile_pl  => 'traditional',
