@@ -35,4 +35,4 @@ post '/submit' => sub {
     print "submitted!";
 };
 
-true;
+42;

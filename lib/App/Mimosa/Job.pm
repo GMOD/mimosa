@@ -36,9 +36,11 @@ sub run {
         -format => 'Fasta'
     );
     my $input_seq = $seq->next_seq();
-    $self->aligner()
-        ->outfile($self->output_file)
-        ->blastall($input_seq);
+    my $a = $self->aligner;
+
+    $a->outfile($self->output_file);
+
+    $a->blastall($input_seq);
 }
 
 1;
