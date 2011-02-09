@@ -21,12 +21,17 @@ get '/jobs' => sub {
 post '/submit' => sub {
     # TODO: VALIDATION!
     # parse posted info
-    my ($program) = ( map { params->{$_} } qw/program/);
-    my $a = App::Mimosa::Job->new;
-    $a->run(
-        program     => $program,
-        output_file => tempfile(),
-    );
+    my ($input_fh, $input_filename) = tempfile();
+    my ($output_fh, $output_filename) = tempfile();
+
+    print $input_fh params->{sequence_input};
+    close $input_fh;
+
+    my $j = App::Mimosa::Job->new(
+        program     => params->{program},
+        output_file => $output_filename,
+        input_file  => $input_filename,
+    )->run;
     print "submitted!";
 };
 

@@ -5,9 +5,15 @@ use warnings;
 # the order is important
 use App::Mimosa;
 use Dancer::Test;
+use File::Slurp qw/slurp/;
 
 route_exists [ POST => '/submit'], 'a route handler is defined for /submit';
 
-my $response = dancer_response POST => '/submit', { params => { program => 'blastp'} };
+my $response = dancer_response POST => '/submit', {
+    params => {
+        program        => 'blastp',
+        sequence_input => slurp("t/data/blastdb_test.nucleotide.seq"),
+    },
+};
 is $response->{status}, 200, "response for POST /widgets is 200";
 is $response->{content}, "stuff";
