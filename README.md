@@ -24,4 +24,4 @@ can be integrated into an existing website via a REST interface.
 
 ## What is Mimosa written in?
 
-Mimosa is written in Perl 5 and uses Moose, Bio::Perl and the Dancer web framework.
+Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it uses Moose, BioPerl and the Dancer web framework.  On the client side, it uses JQuery, JQuery UI.
