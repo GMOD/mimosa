@@ -4,7 +4,7 @@ use Bio::Tools::Run::StandAloneBlast;
 use Bio::SeqIO;
 use autodie qw/:all/;
 
-has blaster => (
+has aligner => (
     isa     => 'Bio::Tools::Run::StandAloneBlast',
     default => sub {
         Bio::Tools::Run::StandAloneBlast->new
@@ -13,21 +13,32 @@ has blaster => (
 );
 
 has program => (
+    isa     => 'Str',
+    is      => 'rw',
+    default => 'blastall',
+);
+
+has input_file => (
+    isa => 'Str',
+    is  => 'rw',
+);
+
+has output_file => (
     isa => 'Str',
     is  => 'rw',
 );
 
 
-
 sub run {
     my ($self) = @_;
     my $seq = Bio::SeqIO->new(
-        -file   => 't/amino.fa',
+        -file   => $self->input_file,
         -format => 'Fasta'
     );
     my $input_seq = $seq->next_seq();
-    $self->blaster()->blastall($input_seq);
+    $self->aligner()
+        ->outfile($self->output_file)
+        ->blastall($input_seq);
 }
-
 
 1;

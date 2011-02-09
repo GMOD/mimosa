@@ -2,6 +2,7 @@ package App::Mimosa;
 use Dancer ':syntax';
 use App::Mimosa::Job;
 use Data::Dumper;
+use File::Temp qw/tempfile/;
 
 our $VERSION = '0.1';
 
@@ -22,7 +23,10 @@ post '/submit' => sub {
     # parse posted info
     my ($program) = ( map { params->{$_} } qw/program/);
     my $a = App::Mimosa::Job->new;
-    $a->run( program => $program );
+    $a->run(
+        program     => $program,
+        output_file => tempfile(),
+    );
     print "submitted!";
 };
 
