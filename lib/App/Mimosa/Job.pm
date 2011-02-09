@@ -5,14 +5,16 @@ use Bio::SeqIO;
 use autodie qw/:all/;
 
 has blaster => (
-    isa => 'Bio::Tools::Run::StandAloneBlast',
+    isa     => 'Bio::Tools::Run::StandAloneBlast',
     default => sub {
         Bio::Tools::Run::StandAloneBlast->new
     },
+    is      => 'rw',
 );
 
 has program => (
     isa => 'Str',
+    is  => 'rw',
 );
 
 
