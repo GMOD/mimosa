@@ -31,16 +31,11 @@ has output_file => (
 
 sub run {
     my ($self) = @_;
-    my $seq = Bio::SeqIO->new(
-        -file   => $self->input_file,
-        -format => 'Fasta'
-    );
-    my $input_seq = $seq->next_seq();
     my $a = $self->aligner;
 
     $a->outfile($self->output_file);
 
-    $a->blastall($input_seq);
+    $a->blastall($self->input_file);
 }
 
 1;
