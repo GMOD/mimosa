@@ -4,3 +4,4 @@ _build/
 blib/
 logs/development.log
 .*sw?
+t/var/*
