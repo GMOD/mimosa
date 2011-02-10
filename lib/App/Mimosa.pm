@@ -31,6 +31,7 @@ post '/submit' => sub {
         program     => params->{program},
         output_file => $output_filename,
         input_file  => $input_filename,
+        sequence_input => params->{sequence_input},
     )->run;
     print "submitted!";
 };

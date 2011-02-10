@@ -15,5 +15,4 @@ my $response = dancer_response POST => '/submit', {
         sequence_input => slurp("t/data/blastdb_test.nucleotide.seq"),
     },
 };
-is $response->{status}, 200, "response for POST /widgets is 200";
-is $response->{content}, "stuff";
+is $response->{status}, 200, "response for POST /submit is 200";

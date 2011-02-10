@@ -7,7 +7,12 @@ use autodie qw/:all/;
 has aligner => (
     isa     => 'Bio::Tools::Run::StandAloneBlast',
     default => sub {
-        Bio::Tools::Run::StandAloneBlast->new
+        Bio::Tools::Run::StandAloneBlast->new(
+            -database => 't/data/blastdb_test.protein',
+            -expect   => 0.01,
+            -verbose  => 1,
+            -p        => 'blastp',
+        )
     },
     is      => 'rw',
 );
