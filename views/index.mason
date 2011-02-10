@@ -1,6 +1,6 @@
  <div id="outercontainer">
 <center>
-<div id="pagetitle"><h3>Mimosa</h3></div>
+<div id="pagetitle"><h3>Mimosa - Miniature Model Organism Sequence Aligner</h3></div>
 
 <form method="post" action="/submit" name="blastform">
   <input type="hidden" checked="checked" name="filterq" value="1" />
