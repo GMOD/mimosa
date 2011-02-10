@@ -5,9 +5,7 @@ use Test::More;
 
 use Bio::Chado::Schema;
 
-my $test_db_file = 't/var/schema.t.db';
-unlink $test_db_file;
-my $schema = Bio::Chado::Schema->connect( "dbi:SQLite:dbname=$test_db_file" );
+my $schema = Bio::Chado::Schema->connect( "dbi:SQLite::memory:");
 
 isa_ok $schema, 'DBIx::Class::Schema', 'schema object';
 
