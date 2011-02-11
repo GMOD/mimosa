@@ -33,7 +33,7 @@ post '/submit' => sub {
         input_file  => $input_filename,
         sequence_input => params->{sequence_input},
     )->run;
-    print "submitted!";
+    template 'wait';
 };
 
 42;
