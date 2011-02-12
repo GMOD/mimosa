@@ -1,8 +1,13 @@
 package App::Mimosa;
+
 use Dancer ':syntax';
+use Dancer::Plugin::DBIC qw/schema/;
+
 use App::Mimosa::Job;
 use Data::Dumper;
 use File::Temp qw/tempfile/;
+
+use Bio::Chado::Schema::Mimosa::SequenceSet;
 
 our $VERSION = '0.1';
 
@@ -26,6 +31,8 @@ post '/submit' => sub {
 
     print $input_fh params->{sequence};
     close $input_fh;
+
+    my $ss = schema('mimosa')->resultset('Mimosa::SequenceSet')->all;
 
     my $j = App::Mimosa::Job->new(
         program     => params->{program},

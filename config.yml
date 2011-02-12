@@ -27,3 +27,7 @@ template: "mason"
 #     start_tag: '[%'
 #     end_tag:   '%]'
 
+plugins:
+    DBIC:
+        mimosa:
+            dsn:  "dbi:SQLite:dbname=./mimosa.db"

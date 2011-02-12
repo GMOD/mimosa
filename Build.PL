@@ -18,6 +18,7 @@ my $builder = Module::Build->new(
         'YAML'                    => 0,
         'Dancer'                  => '1.3002',
         'Dancer::Template::Mason' => 0,
+        'Dancer::Plugin::DBIC'    => '0.1504',
         'Class::Accessor::Fast'   => 0,
         'IPC::System::Simple'     => 0,
         'autodie'                 => 0,
