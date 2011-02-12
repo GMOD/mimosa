@@ -9,10 +9,12 @@ use File::Slurp qw/slurp/;
 
 route_exists [ POST => '/submit'], 'a route handler is defined for /submit';
 
-my $response = dancer_response POST => '/submit', {
-    params => {
-        program        => 'blastp',
-        sequence_input => slurp("t/data/blastdb_test.nucleotide.seq"),
-    },
-};
-is $response->{status}, 200, "response for POST /submit is 200";
+response_status_is([
+        POST => '/submit',
+        {
+            params => {
+                program  => 'blastp',
+                sequence => slurp("t/data/blastdb_test.nucleotide.seq"),
+            },
+        }
+], 200 );
