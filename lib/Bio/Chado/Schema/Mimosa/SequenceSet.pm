@@ -9,13 +9,84 @@ use base 'DBIx::Class::Core';
 Bio::Chado::Schema::Mimosa::SequenceSet - a set of sequences (like a
 BLAST database)
 
+=head1 COLUMNS
+
 =cut
 
 __PACKAGE__->table("mimosa_sequence_set");
 
+=head2 mimosa_sequence_set_id
+
+Auto-incrementing surrogate primary key.
+
+=head2 shortname
+
+B<Unique> short name for referring to this set.  For example,
+C<ITAG2.2_cdnas>.
+
+Not null, varchar(255).
+
+=head2 title
+
+User-visible title of the sequence set.
+
+Not null.  Varchar(255).
+
+=head2 description
+
+Text description of the set, probably stored in Markdown or some
+similar format.
+
+Nullable.
+
+=head2 alphabet
+
+Sequence type, either 'protein' or 'nucleotide'.
+
+Not null. Varchar(20).
+
+=head2 source_spec
+
+Specially-formatted text representing how to fetch new
+copies of this sequence set.
+
+This text will be interpreted by software for fetching new copies of
+sequence sets.
+
+Nullable.  Unlimited length.
+
+=head2 lookup_spec
+
+Specially-formatted text representing how to cross-reference
+identifiers in this database with other databases.
+
+Nullable.  Unlimited length.
+
+=head2 info_url
+
+URL pointing to a human-readable resource giving more information
+about this sequence set.
+
+Nullable.  Varchar(255).
+
+=head2 update_interval
+
+Desired interval (either in seconds, or 'monthly', 'weekly', or
+'daily') between updates of this blast database.  a null value
+means no automatic updating.
+
+Nullable.  Varchar(30).
+
+=head2 is_public
+
+Whether this sequence set should be visible to all users.
+
+Not nullable.  Default false.
+
+=cut
+
 __PACKAGE__->add_columns(
 
-  # surrogate key
   "mimosa_sequence_set_id",
   {
     data_type         => "integer",
@@ -24,44 +95,30 @@ __PACKAGE__->add_columns(
     sequence          => "mimosa_sequence_set_mimosa_sequence_set_id_seq",
   },
 
-  # unique short name for referring to this set
   'shortname',
   { data_type => "varchar", is_nullable => 0, size => 255 },
 
-  # user-visible title of the sequence set
   'title',
   { data_type => "varchar", is_nullable => 0, size => 255 },
 
-  # text description of the set, in markdown format
   'description',
   { data_type => "text", is_nullable => 1 },
 
-  # type, either 'protein' or 'nucleotide'
   'alphabet',
   { data_type => "varchar", is_nullable => 0, size => 20 },
 
-  # specially-formatted text representing how to fetch new
-  # copies of this sequence set
   'source_spec',
   { data_type => "text", is_nullable => 1 },
 
-   # specially-formatted text representing how to
-  # cross-reference identifiers in this database with
-  # other databases
   'lookup_spec',
   { data_type => "text", is_nullable => 1 },
 
-  # URL that gives more information about this sequence set
   'info_url',
   { data_type => "varchar", is_nullable => 0, size => 255 },
 
-  # desired interval (either in seconds, or 'monthly', 'weekly', or
-  # 'daily') between updates of this blast database.  a null value
-  # means no automatic updating.
   'update_interval',
   { data_type => "varchar", is_nullable => 1, size => 30 },
 
-  # whether this sequence set should be visible to everyone
   'is_public',
   { data_type => "boolean", is_nullable => 0, default_value => 0 },
 
