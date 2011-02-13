@@ -63,7 +63,7 @@ __PACKAGE__->add_columns(
 
   # whether this sequence set should be visible to everyone
   'is_public',
-  { data_type => "boolean", is_nullable => 0 },
+  { data_type => "boolean", is_nullable => 0, default_value => 0 },
 
 );
 
