@@ -59,7 +59,7 @@ __PACKAGE__->add_columns(
   # 'daily') between updates of this blast database.  a null value
   # means no automatic updating.
   'update_interval',
-  { data_type => "integer", is_nullable => 1 },
+  { data_type => "varchar", is_nullable => 1, size => 30 },
 
   # whether this sequence set should be visible to everyone
   'is_public',
