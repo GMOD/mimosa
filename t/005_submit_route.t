@@ -2,6 +2,9 @@ use Test::More tests => 2;
 use strict;
 use warnings;
 
+use lib 't/lib';
+use App::Mimosa::Test;
+
 # the order is important
 use App::Mimosa;
 use Dancer::Test;

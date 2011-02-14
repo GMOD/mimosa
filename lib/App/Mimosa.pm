@@ -32,7 +32,7 @@ post '/submit' => sub {
     print $input_fh params->{sequence};
     close $input_fh;
 
-    my $ss = schema('mimosa')->resultset('Bio::Chado::Schema::Mimosa::SequenceSet')->all;
+    my $ss = schema('mimosa')->resultset('Mimosa::SequenceSet')->all;
 
     my $j = App::Mimosa::Job->new(
         program     => params->{program},
