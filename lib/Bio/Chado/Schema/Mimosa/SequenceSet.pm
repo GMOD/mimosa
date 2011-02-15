@@ -126,4 +126,21 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("mimosa_sequence_set_id");
 __PACKAGE__->add_unique_constraint("mimosa_sequence_set_c1", ['shortname'] );
 
+=head1 RELATIONS
+
+=head2 sequence_set_organisms
+
+Type: has_many
+
+Related object: L<Bio::Chado::Schema::Mimosa::SequenceSetOrganism>
+
+=cut
+
+__PACKAGE__->has_many(
+    "sequence_set_organisms",
+    "Bio::Chado::Schema::Mimosa::SequenceSetOrganism",
+    { "foreign.mimosa_sequence_set_id" => "self.mimosa_sequence_set_id" },
+    { cascade_copy => 0, cascade_delete => 0 },
+  );
+
 1;
