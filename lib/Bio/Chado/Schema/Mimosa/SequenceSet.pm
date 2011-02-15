@@ -71,11 +71,10 @@ Nullable.  Varchar(255).
 
 =head2 update_interval
 
-Desired interval (either in seconds, or 'monthly', 'weekly', or
-'daily') between updates of this blast database.  a null value
-means no automatic updating.
+Desired interval between updates, in seconds.  A NULL value means no automatic
+updating. Defaults to daily.
 
-Nullable.  Varchar(30).
+Nullable. Integer.
 
 =head2 is_public
 
@@ -116,8 +115,8 @@ __PACKAGE__->add_columns(
   'info_url',
   { data_type => "varchar", is_nullable => 0, size => 255 },
 
-  'update_interval',
-  { data_type => "varchar", is_nullable => 1, size => 30 },
+  'update_interval', # this is in seconds, default = daily
+  { data_type => "integer", is_nullable => 1, default_value => 86400 },
 
   'is_public',
   { data_type => "boolean", is_nullable => 0, default_value => 0 },
