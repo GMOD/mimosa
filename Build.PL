@@ -22,6 +22,7 @@ my $builder = Module::Build->new(
         'Class::Accessor::Fast'   => 0,
         'IPC::System::Simple'     => 0,
         'autodie'                 => 0,
+        'Bio::Chado::Schema'      => '0.08000',
     },
     add_to_cleanup      => [  ],
     create_makefile_pl  => 'traditional',
