@@ -7,20 +7,22 @@ use autodie qw/:all/;
 has aligner => (
     isa     => 'Bio::Tools::Run::StandAloneBlast',
     default => sub {
+        my $self = shift;
         Bio::Tools::Run::StandAloneBlast->new(
             -database => 't/data/blastdb_test.protein',
             -expect   => 0.01,
             -verbose  => 1,
-            -p        => 'blastp',
+            -p        => $self->program(),
         )
     },
     is      => 'rw',
+    lazy    => 1,
 );
 
 has program => (
     isa     => 'Str',
     is      => 'rw',
-    default => 'blastall',
+    default => 'blastn',
 );
 
 has input_file => (

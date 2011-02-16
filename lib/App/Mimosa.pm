@@ -38,7 +38,6 @@ post '/submit' => sub {
     print $input_fh params->{sequence};
     close $input_fh;
 
-
     my $j = App::Mimosa::Job->new(
         program        => params->{program},
         output_file    => $output_filename,
