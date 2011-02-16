@@ -18,7 +18,7 @@ response_status_is([
         POST => '/submit',
         {
             params => {
-                program  => 'blastp',
+                program  => 'blastn',
                 sequence => $seq,
             },
         }

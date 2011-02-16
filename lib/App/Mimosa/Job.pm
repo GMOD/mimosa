@@ -9,7 +9,7 @@ has aligner => (
     default => sub {
         my $self = shift;
         Bio::Tools::Run::StandAloneBlast->new(
-            -database => 't/data/',
+            -database => $ENV{PWD} . "/t/data/solanum_peruvianum_mRNA.seq",
             -expect   => 0.01,
             -verbose  => 1,
             -p        => $self->program(),
