@@ -12,7 +12,13 @@ use Bio::Chado::Schema;
 our $VERSION = '0.1';
 
 get '/' => sub {
-    template 'index';
+    my @sets = schema('mimosa')->resultset('Mimosa::SequenceSet')->all;
+    my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
+
+    template 'index', {
+        sequenceset_html =>
+            map { "<option value='$_->[0]'> $_->[1] </option>" } @setinfo
+    };
 };
 
 get '/results' => sub {
@@ -32,12 +38,10 @@ post '/submit' => sub {
     print $input_fh params->{sequence};
     close $input_fh;
 
-    my $ss = schema('mimosa')->resultset('Mimosa::SequenceSet')->all;
-
     my $j = App::Mimosa::Job->new(
-        program     => params->{program},
-        output_file => $output_filename,
-        input_file  => $input_filename,
+        program        => params->{program},
+        output_file    => $output_filename,
+        input_file     => $input_filename,
         sequence_input => params->{sequence_input},
     )->run;
     template 'wait';
