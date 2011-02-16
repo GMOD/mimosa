@@ -1,4 +1,4 @@
-package Bio::Chado::Schema::Mimosa::SequenceSetOrganism;
+package Bio::Chado::Schema::Result::Mimosa::SequenceSetOrganism;
 use strict;
 use warnings;
 
@@ -6,7 +6,7 @@ use base 'DBIx::Class::Core';
 
 =head1 NAME
 
-Bio::Chado::Schema::Mimosa::SequenceSetOrganism - linking table
+Bio::Chado::Schema::Result::Mimosa::SequenceSetOrganism - linking table
 between Mimosa::SequenceSet and Organism::Organism.
 
 =head1 COLUMNS
@@ -58,13 +58,13 @@ __PACKAGE__->add_unique_constraint(
 
 Type: belongs_to
 
-Related object: L<Bio::Chado::Schema::Organism::Organism>
+Related object: L<Bio::Chado::Schema::Result::Organism::Organism>
 
 =cut
 
 __PACKAGE__->belongs_to(
   "organism",
-  "Bio::Chado::Schema::Organism::Organism",
+  "Bio::Chado::Schema::Result::Organism::Organism",
   { organism_id => "organism_id" },
   {
     cascade_copy   => 0,
@@ -79,13 +79,13 @@ __PACKAGE__->belongs_to(
 
 Type: belongs_to
 
-Related object: L<Bio::Chado::Schema::Mimosa::SequenceSet>
+Related object: L<Bio::Chado::Schema::Result::Mimosa::SequenceSet>
 
 =cut
 
 __PACKAGE__->belongs_to(
   "sequence_set",
-  "Bio::Chado::Schema::Mimosa::SequenceSet",
+  "Bio::Chado::Schema::Result::Mimosa::SequenceSet",
   { mimosa_sequence_set_id => "mimosa_sequence_set_id" },
   {
     cascade_copy   => 0,
@@ -100,18 +100,18 @@ __PACKAGE__->belongs_to(
 
 Also adds the following relations to classes in core Bio::Chado::Schema.
 
-=head2 Bio::Chado::Schema::Organism::Organism  mimosa_sequence_set_organisms
+=head2 Bio::Chado::Schema::Result::Organism::Organism  mimosa_sequence_set_organisms
 
 Type: has_many
 
-Related object: L<Bio::Chado::Schema::Organism::Organism>
+Related object: L<Bio::Chado::Schema::Result::Organism::Organism>
 
 =cut
 
 Bio::Chado::Schema->plugin_add_relationship(
     'Organism::Organism' => 'has_many',
     "mimosa_sequence_sets",
-    "Bio::Chado::Schema::Mimosa::SequenceSetOrganism",
+    "Bio::Chado::Schema::Result::Mimosa::SequenceSetOrganism",
     { "foreign.organism_id" => "self.organism_id" },
     { cascade_copy => 0, cascade_delete => 0 },
   );

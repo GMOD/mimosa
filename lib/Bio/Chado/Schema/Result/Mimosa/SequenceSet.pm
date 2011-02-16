@@ -1,4 +1,4 @@
-package Bio::Chado::Schema::Mimosa::SequenceSet;
+package Bio::Chado::Schema::Result::Mimosa::SequenceSet;
 use strict;
 use warnings;
 
@@ -6,7 +6,7 @@ use base 'DBIx::Class::Core';
 
 =head1 NAME
 
-Bio::Chado::Schema::Mimosa::SequenceSet - a set of sequences (like a
+Bio::Chado::Schema::Result::Mimosa::SequenceSet - a set of sequences (like a
 BLAST database)
 
 =head1 COLUMNS
@@ -132,13 +132,13 @@ __PACKAGE__->add_unique_constraint("mimosa_sequence_set_c1", ['shortname'] );
 
 Type: has_many
 
-Related object: L<Bio::Chado::Schema::Mimosa::SequenceSetOrganism>
+Related object: L<Bio::Chado::Schema::Result::Mimosa::SequenceSetOrganism>
 
 =cut
 
 __PACKAGE__->has_many(
     "sequence_set_organisms",
-    "Bio::Chado::Schema::Mimosa::SequenceSetOrganism",
+    "Bio::Chado::Schema::Result::Mimosa::SequenceSetOrganism",
     { "foreign.mimosa_sequence_set_id" => "self.mimosa_sequence_set_id" },
     { cascade_copy => 0, cascade_delete => 0 },
   );
