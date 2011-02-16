@@ -12,12 +12,14 @@ use File::Slurp qw/slurp/;
 
 route_exists [ POST => '/submit'], 'a route handler is defined for /submit';
 
+my $seq = slurp("t/data/blastdb_test.nucleotide.seq");
+
 response_status_is([
         POST => '/submit',
         {
             params => {
                 program  => 'blastp',
-                sequence => slurp("t/data/blastdb_test.nucleotide.seq"),
+                sequence => $seq,
             },
         }
 ], 200 );
