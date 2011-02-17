@@ -6,6 +6,7 @@ use Dancer::Plugin::DBIC qw/schema/;
 use App::Mimosa::Job;
 use Data::Dumper;
 use File::Temp qw/tempfile/;
+use File::Slurp qw/slurp/;
 
 use Bio::Chado::Schema;
 
@@ -44,7 +45,10 @@ post '/submit' => sub {
         input_file     => $input_filename,
         sequence_input => params->{sequence_input},
     )->run;
-    template 'wait';
+
+    template 'results', {
+        output => join "", slurp($output_filename),
+    };
 };
 
 42;

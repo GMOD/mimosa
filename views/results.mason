@@ -1,1 +1,6 @@
-This views lists currently available results.
+<%args>
+    $output
+</%args>
+<pre>
+<% $output %>
+</pre>
