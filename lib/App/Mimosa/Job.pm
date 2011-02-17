@@ -1,23 +1,10 @@
 package App::Mimosa::Job;
 use Moose;
-use Bio::Tools::Run::StandAloneBlast;
 use Bio::SeqIO;
-use autodie qw/:all/;
+#use autodie qw/:all/;
 
-has aligner => (
-    isa     => 'Bio::Tools::Run::StandAloneBlast',
-    default => sub {
-        my $self = shift;
-        Bio::Tools::Run::StandAloneBlast->new(
-            -database => $ENV{PWD} . "/t/data/solanum_peruvianum_mRNA.seq",
-            -expect   => 0.01,
-            -verbose  => 1,
-            -p        => $self->program(),
-        )
-    },
-    is      => 'rw',
-    lazy    => 1,
-);
+# Good breakdown of commandline flags
+# http://www.molbiol.ox.ac.uk/analysis_tools/BLAST/BLAST_blastall.shtml
 
 has program => (
     isa     => 'Str',
@@ -38,11 +25,14 @@ has output_file => (
 
 sub run {
     my ($self) = @_;
-    my $a = $self->aligner;
+    my $program = $self->program;
+    my $input = $self->input_file;
+    my $output = $self->output_file;
+    my $cmd = <<CMD;
+blastall -d $ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq -e 0.01 -v 1 -p $program -i $input -o $output
+CMD
+    system($cmd);
 
-    $a->outfile($self->output_file);
-
-    $a->blastall($self->input_file);
 }
 
 1;

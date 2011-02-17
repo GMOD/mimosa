@@ -15,7 +15,7 @@ diag "Deploying Mimosa Schema";
 $schema->deploy;
 
 diag "Populating default Mimosa Schema";
-$schema->populate('Bio::Chado::Schema::Mimosa::SequenceSet', [
+$schema->populate('Mimosa::SequenceSet', [
     [qw/shortname title description alphabet source_spec lookup_spec info_url update_interval is_public/],
     ['solanum_peruvianum_mrna', 'Solanum peruvianum SGN mRNA sequences', 'mRNA sequences for S. peruvianum', 'nucleotide', '', '', ,'', 30, 1    ],
 ]);
