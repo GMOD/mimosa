@@ -7,7 +7,8 @@ use App::Mimosa::Job;
 use Data::Dumper;
 use File::Temp qw/tempfile/;
 use File::Slurp qw/slurp/;
-
+use Bio::SearchIO;
+use Bio::SearchIO::Writer::HTMLResultWriter;
 use Bio::Chado::Schema;
 
 our $VERSION = '0.1';
@@ -35,6 +36,7 @@ post '/submit' => sub {
     # parse posted info
     my ($input_fh, $input_filename) = tempfile( CLEANUP => 0 );
     my ($output_fh, $output_filename) = tempfile( CLEANUP => 0 );
+    my ($html_report_fh, $html_report) = tempfile( CLEANUP => 0 );
 
     print $input_fh params->{sequence};
     close $input_fh;
@@ -46,8 +48,21 @@ post '/submit' => sub {
         sequence_input => params->{sequence_input},
     )->run;
 
+    my $in = Bio::SearchIO->new(
+            # -format => $bioperl_formats{$params{outformat}},
+            -file   => "< $output_filename",
+    );
+    my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
+    $writer->start_report(sub {''});
+    $writer->end_report(sub {''});
+    my $out = Bio::SearchIO->new(
+        -writer => $writer,
+        -file   => "> $html_report",
+    );
+    $out->write_result($in->next_result);
+
     template 'results', {
-        output => join "", slurp($output_filename),
+        output => join "", slurp($html_report),
     };
 };
 

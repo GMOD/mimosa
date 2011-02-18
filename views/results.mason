@@ -1,6 +1,4 @@
 <%args>
     $output
 </%args>
-<pre>
 <% $output %>
-</pre>
