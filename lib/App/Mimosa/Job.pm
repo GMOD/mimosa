@@ -40,8 +40,10 @@ sub run {
     my $input   = $self->input_file;
     my $output  = $self->output_file;
     my $evalue  = $self->evalue;
+    my $maxhits  = $self->maxhits;
+
     my $cmd = <<CMD;
-blastall -d $ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq -e $evalue -v 1 -p $program -i $input -o $output
+blastall -d $ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq -b $maxhits -e $evalue -v 1 -p $program -i $input -o $output
 CMD
     system($cmd);
 
