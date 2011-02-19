@@ -21,6 +21,7 @@ response_status_is([
                 program  => 'blastn',
                 sequence => $seq,
                 maxhits => 100,
+                matrix => 'BLOSUM62',
                 evalue => 0.1,
             },
         }
