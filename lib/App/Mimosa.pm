@@ -45,7 +45,11 @@ post '/submit' => sub {
         program        => params->{program},
         output_file    => $output_filename,
         input_file     => $input_filename,
-        sequence_input => params->{sequence_input},
+              map { $_ => params->{$_} }
+            qw/sequence_input
+               maxhits output_graphs
+               evalue matrix
+              /,
     )->run;
 
     my $in = Bio::SearchIO->new(

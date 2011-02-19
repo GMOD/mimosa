@@ -20,6 +20,8 @@ response_status_is([
             params => {
                 program  => 'blastn',
                 sequence => $seq,
+                maxhits => 100,
+                evalue => 0.1,
             },
         }
 ], 200 );

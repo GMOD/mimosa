@@ -45,7 +45,7 @@
 <tr>  <td class="info_table_field">
     <span class="info_table_fieldname">Expect (e-value) Threshold</span>
     <div class="info_table_fieldval">
-      <input type="text" size="6" value="1e-10" name="expect" />
+      <input type="text" size="6" value="1e-10" name="evalue" />
     </div>
 
   </td>

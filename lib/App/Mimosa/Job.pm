@@ -22,14 +22,26 @@ has output_file => (
     is  => 'rw',
 );
 
+has evalue => (
+    isa => 'Num',
+    is  => 'rw',
+    default => 0.01,
+);
+
+has maxhits => (
+    isa => 'Int',
+    is  => 'rw',
+    default => 100,
+);
 
 sub run {
     my ($self) = @_;
     my $program = $self->program;
-    my $input = $self->input_file;
-    my $output = $self->output_file;
+    my $input   = $self->input_file;
+    my $output  = $self->output_file;
+    my $evalue  = $self->evalue;
     my $cmd = <<CMD;
-blastall -d $ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq -e 0.01 -v 1 -p $program -i $input -o $output
+blastall -d $ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq -e $evalue -v 1 -p $program -i $input -o $output
 CMD
     system($cmd);
 
