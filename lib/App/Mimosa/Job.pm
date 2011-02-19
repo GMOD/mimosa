@@ -1,11 +1,12 @@
 package App::Mimosa::Job;
 use Moose;
 use Bio::SeqIO;
-#use autodie qw/:all/;
+use autodie qw/:all/;
 
 # Good breakdown of commandline flags
 # http://www.molbiol.ox.ac.uk/analysis_tools/BLAST/BLAST_blastall.shtml
 
+# validate!
 has program => (
     isa     => 'Str',
     is      => 'rw',
