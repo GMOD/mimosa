@@ -47,23 +47,33 @@ has maxhits => (
 );
 
 has matrix => (
-    isa => 'SubstitutionMatrix',
-    is  => 'rw',
+    isa     => 'SubstitutionMatrix',
+    is      => 'rw',
     default => 'BLOSUM62',
 );
 
+enum 'BoolStr' => qw(T F);
+
+has filtered => (
+    isa     => 'BoolStr',
+    is      => 'rw',
+    default => 'T',
+);
+
+
 sub run {
     my ($self) = @_;
-    my $program = $self->program;
-    my $input   = $self->input_file;
-    my $output  = $self->output_file;
-    my $evalue  = $self->evalue;
-    my $maxhits = $self->maxhits;
-    my $matrix  = $self->matrix;
+    my $program  = $self->program;
+    my $input    = $self->input_file;
+    my $output   = $self->output_file;
+    my $evalue   = $self->evalue;
+    my $maxhits  = $self->maxhits;
+    my $matrix   = $self->matrix;
+    my $filtered = $self->filtered;
 
 
     my $cmd = <<CMD;
-blastall -d $ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq -M $matrix -b $maxhits -e $evalue -v 1 -p $program -i $input -o $output
+blastall -d $ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq -M $matrix -b $maxhits -e $evalue -v 1 -p $program -F $filtered -i $input -o $output
 CMD
     warn "running $cmd";
     system($cmd);
