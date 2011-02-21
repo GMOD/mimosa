@@ -50,24 +50,31 @@ post '/submit' => sub {
                maxhits output_graphs
                evalue matrix
               /,
-    )->run;
-
-    my $in = Bio::SearchIO->new(
-            # -format => $bioperl_formats{$params{outformat}},
-            -file   => "< $output_filename",
     );
-    my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
-    $writer->start_report(sub {''});
-    $writer->end_report(sub {''});
-    my $out = Bio::SearchIO->new(
-        -writer => $writer,
-        -file   => "> $html_report",
-    );
-    $out->write_result($in->next_result);
+    my $error = $j->run;
+    warning("error = $error");
+    if ($error) {
+        template 'error', {
+            error => $error,
+        };
+    } else {
+        my $in = Bio::SearchIO->new(
+                # -format => $bioperl_formats{$params{outformat}},
+                -file   => "< $output_filename",
+        );
+        my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
+        $writer->start_report(sub {''});
+        $writer->end_report(sub {''});
+        my $out = Bio::SearchIO->new(
+            -writer => $writer,
+            -file   => "> $html_report",
+        );
+        $out->write_result($in->next_result);
 
-    template 'results', {
-        output => join "", slurp($html_report),
-    };
+        template 'results', {
+            output => join "", slurp($html_report),
+        };
+    }
 };
 
 42;
