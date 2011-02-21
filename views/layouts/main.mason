@@ -3,16 +3,11 @@
     $request
     $content
 </%args>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=<% $settings->{charset}%>" />
-<title>mimosa</title>
+<title>Mimosa : Genomic Sequence Alignment</title>
 <link rel="stylesheet" href="<% $request->base %>/css/style.css" />
-
-<!-- Grab Google CDN's jQuery. fall back to local if necessary -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
 
 </head>
 <body>
@@ -20,5 +15,19 @@
 <div id="footer">
 Powered by <a href="http://perldancer.org/">Dancer</a>
 </div>
+
+<script src="<% $request->base %>javascripts/jquery.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="<% $request->base%>javascripts/jquery.backstretch.min.js"></script>
+
+<!-- better to do this statically in CSS -->
+<script type="text/javascript">
+  $("#outercontainer").css({ background: "black" })
+                      .css({ opacity: 0.9 })
+                      .css({ color: "white" })
+                      .css({ width: "75%" });
+  $.backstretch("/images/mimosa_pudica.jpg", {speed: 150});
+</script>
+
 </body>
 </html>

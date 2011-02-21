@@ -1,8 +1,8 @@
 <%args>
     $sequenceset_html
 </%args>
- <div id="outercontainer">
 <center>
+ <div id="outercontainer">
 <div id="pagetitle"><h3>Mimosa - Miniature Model Organism Sequence Aligner</h3></div>
 
 <form method="post" action="/submit" name="blastform">
@@ -15,7 +15,7 @@
 <select id="mimosa_sequence_set_id"  onchange=""  name="database">
 <% $sequenceset_html %>
 </select>
-
+<a href="sequencesets/edit">Edit SequenceSets</a>
 <!--
  <a style="font-size: 80%" title="View details of each database" href="dbinfo.pl">db details</a>
 -->
