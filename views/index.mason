@@ -2,7 +2,7 @@
     $sequenceset_html
 </%args>
 <center>
- <div id="outercontainer">
+ <div id="outercontainer" class="rounded">
 <div id="pagetitle"><h3>Mimosa - Miniature Model Organism Sequence Aligner</h3></div>
 
 <form method="post" action="/submit" name="blastform">
@@ -101,6 +101,6 @@
 </form>
   </td></tr>
 </table>
+Powered by <a href="http://perldancer.org/">Dancer</a>
 </div> <!-- advanced -->
 </div>
-</body>

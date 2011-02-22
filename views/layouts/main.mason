@@ -8,25 +8,37 @@
 <meta http-equiv="Content-type" content="text/html; charset=<% $settings->{charset}%>" />
 <title>Mimosa : Genomic Sequence Alignment</title>
 <link rel="stylesheet" href="<% $request->base %>/css/style.css" />
+    <style>
+        * { padding: 0; margin: 0; color: white; font-family: Roman; font-size: 12px; line-height: 14px; }
+        select { color: black; }
+        input { color: black; }
+        p { color: white; font-family: Roman; font-size: 12px; line-height: 12px; -webkit-font-smoothing: antialiased; }
+        b { color: white; font-family: Roman; font-size: 12px; line-height: 12px; -webkit-font-smoothing: antialiased; }
+       td { color: white; font-family: Roman; font-size: 12px; line-height: 12px; -webkit-font-smoothing: antialiased; }
+        a { color: magenta; font-weight: bold; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.3); }
+        a:hover { color: #990000; border-bottom: 1px solid rgba(255,255,255,1); }
+    </style>
+
 
 </head>
 <body>
 <% $content %>
-<div id="footer">
-Powered by <a href="http://perldancer.org/">Dancer</a>
-</div>
 
 <script src="<% $request->base %>javascripts/jquery.js" type="text/javascript"></script>
 
 <script type="text/javascript" src="<% $request->base%>javascripts/jquery.backstretch.min.js"></script>
+<script type="text/javascript" src="<% $request->base%>javascripts/jquery.corners.min.js"></script>
 
 <!-- better to do this statically in CSS -->
 <script type="text/javascript">
-  $("#outercontainer").css({ background: "black" })
+  $(document).ready(function(){
+    $('.rounded').corners();
+    $("#outercontainer").css({ background: "black" })
                       .css({ opacity: 0.9 })
                       .css({ color: "white" })
                       .css({ width: "75%" });
-  $.backstretch("/images/mimosa_pudica.jpg", {speed: 150});
+    $.backstretch("/images/mimosa_pudica.jpg", {speed: 150});
+    });
 </script>
 
 </body>
