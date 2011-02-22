@@ -34,3 +34,7 @@ plugins:
         mimosa:
             dsn:  "dbi:SQLite:dbname=./mimosa.db"
             schema_class: 'Bio::Chado::Schema'
+    Database:
+            dsn: "dbi:SQLite:dbname=./mimosa.db"
+            database: "./mimosa.db"
+

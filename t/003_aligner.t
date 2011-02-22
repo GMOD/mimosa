@@ -1,3 +1,5 @@
+use lib 't/lib';
+use App::Mimosa::Test;
 use Test::More tests => 3;
 use strict;
 use warnings;

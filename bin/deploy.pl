@@ -3,6 +3,7 @@ use warnings;
 use YAML qw/LoadFile/;
 use Bio::Chado::Schema;
 use Test::More;
+use lib 'lib';
 
 my $config = shift;
 die "need configuration file" unless $config;

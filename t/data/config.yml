@@ -27,8 +27,14 @@ template: "mason"
 #     start_tag: '[%'
 #     end_tag:   '%]'
 
+logger: "console"
+
 plugins:
     DBIC:
         mimosa:
             dsn:  "dbi:SQLite::memory:"
             schema_class: 'Bio::Chado::Schema'
+    Database:
+            dsn:  "dbi:SQLite::memory:"
+            database: ":memory:"
+

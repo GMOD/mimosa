@@ -2,6 +2,8 @@ package App::Mimosa;
 
 use Dancer ':syntax';
 use Dancer::Plugin::DBIC qw/schema/;
+use Dancer::Plugin::Database;
+use Dancer::Plugin::SimpleCRUD;
 
 use App::Mimosa::Job;
 use Data::Dumper;
@@ -12,6 +14,29 @@ use Bio::SearchIO::Writer::HTMLResultWriter;
 use Bio::Chado::Schema;
 
 our $VERSION = '0.1';
+
+simple_crud(
+    record_title => 'Sequence Set',
+    prefix => '/sequence_set',
+    db_table => 'mimosa_sequence_set',
+    field_labels => {
+        # country => 'Country of Origin',
+        # type    => 'Widget Type',
+    },
+    key_column => 'mimosa_sequence_set_id',
+    validation => {
+        # weight => qr/\d+/,
+    },
+    editable_columns => [
+        qw(
+           mimosa_sequence_set_id
+           shortname alphabet title description is_public
+           source_spec info_url update_interval lookup_spec
+        ),
+    ],
+    deleteable => 1,
+);
+
 
 get '/' => sub {
     my @sets = schema('mimosa')->resultset('Mimosa::SequenceSet')->all;
