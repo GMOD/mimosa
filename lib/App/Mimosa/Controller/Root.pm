@@ -2,6 +2,7 @@ package App::Mimosa::Controller::Root;
 use Moose;
 use Bio::Chado::Schema;
 use App::Mimosa::Job;
+use Catalyst::Model::DBIC::Schema;
 
 use namespace::autoclean;
 
@@ -32,14 +33,14 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
-    my @sets = $c->dbic_schema('Bio::Chado::Schema')->resultset('Mimosa::SequenceSet')->all;
+    my @sets = $c->model('Bio::Chado::Schema')->resultset('Mimosa::SequenceSet')->all;
     my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
 
     $c->stash->{sequenceset_html} =
             map { "<option value='$_->[0]'> $_->[1] </option>" } @setinfo;
 
     $c->stash->{template} = 'index.mason';
-    $c->stash->{schema}   = $c->dbic_schema('Bio::Chado::Schema');
+    $c->stash->{schema}   = $c->model('Bio::Chado::Schema');
 }
 
 
