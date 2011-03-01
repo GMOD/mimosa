@@ -101,6 +101,7 @@
 </form>
   </td></tr>
 </table>
-Powered by <a href="http://perl.org/">Perl</a> and <a href="http://jquery.org">jQuery</a>
+Powered by <a href="http://perl.org/">Perl 5</a>, <a href="http://www.catalystframework.org/">Catalyst</a>,
+<a href="http://www.iinteractive.com/moose/">Moose</a>, <a href="http://bioperl.org">BioPerl</a>,<a href="http://gmod.org/wiki/Bio::Chado::Schema">Bio::Chado::Schema</a>, many <a href="http://cpan.org">CPAN</a> modules and <a href="http://jquery.org">jQuery</a>
 </div> <!-- advanced -->
 </div>
