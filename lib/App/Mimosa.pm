@@ -1,80 +1,71 @@
 package App::Mimosa;
+use Moose;
+use namespace::autoclean;
 
-use Dancer ':syntax';
-use Dancer::Plugin::DBIC qw/schema/;
+use Catalyst::Runtime 5.80;
 
-use App::Mimosa::Job;
-use Data::Dumper;
-use File::Temp qw/tempfile/;
-use File::Slurp qw/slurp/;
-use Bio::SearchIO;
-use Bio::SearchIO::Writer::HTMLResultWriter;
-use Bio::Chado::Schema;
+# Set flags and add plugins for the application
+#
+#         -Debug: activates the debug mode for very useful log messages
+#   ConfigLoader: will load the configuration from a Config::General file in the
+#                 application's home directory
+# Static::Simple: will serve static files from the application's root
+#                 directory
 
-our $VERSION = '0.1';
+use Catalyst qw/
+    -Debug
+    ConfigLoader
+    Static::Simple
+/;
 
-get '/' => sub {
-    my @sets = schema('mimosa')->resultset('Mimosa::SequenceSet')->all;
-    my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
+extends 'Catalyst';
 
-    template 'index', {
-        sequenceset_html =>
-            map { "<option value='$_->[0]'> $_->[1] </option>" } @setinfo
-    };
-};
+our $VERSION = '0.01';
+$VERSION = eval $VERSION;
 
-get '/results' => sub {
-    template 'results';
-};
+# Configure the application.
+#
+# Note that settings in app_mimosa.conf (or other external
+# configuration file that you set up manually) take precedence
+# over this when using ConfigLoader. Thus configuration
+# details given here can function as a default configuration,
+# with an external configuration file acting as an override for
+# local deployment.
 
-get '/jobs' => sub {
-    template 'jobs';
-};
+__PACKAGE__->config(
+    name => 'App::Mimosa',
+    # Disable deprecated behavior needed by old applications
+    disable_component_resolution_regex_fallback => 1,
+);
 
-post '/submit' => sub {
-    # TODO: VALIDATION!
-    # parse posted info
-    my ($input_fh, $input_filename) = tempfile( CLEANUP => 0 );
-    my ($output_fh, $output_filename) = tempfile( CLEANUP => 0 );
-    my ($html_report_fh, $html_report) = tempfile( CLEANUP => 0 );
+# Start the application
+__PACKAGE__->setup();
 
-    print $input_fh params->{sequence};
-    close $input_fh;
 
-    my $j = App::Mimosa::Job->new(
-        program        => params->{program},
-        output_file    => $output_filename,
-        input_file     => $input_filename,
-              map { $_ => params->{$_} }
-            qw/sequence_input
-               maxhits output_graphs
-               evalue matrix
-              /,
-    );
-    my $error = $j->run;
-    warning("error = $error");
-    if ($error) {
-        template 'error', {
-            error => $error,
-        };
-    } else {
-        my $in = Bio::SearchIO->new(
-                # -format => $bioperl_formats{$params{outformat}},
-                -file   => "< $output_filename",
-        );
-        my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
-        $writer->start_report(sub {''});
-        $writer->end_report(sub {''});
-        my $out = Bio::SearchIO->new(
-            -writer => $writer,
-            -file   => "> $html_report",
-        );
-        $out->write_result($in->next_result);
+=head1 NAME
 
-        template 'results', {
-            output => join "", slurp($html_report),
-        };
-    }
-};
+App::Mimosa - Miniature Model Organism Sequence Aligner
 
-42;
+=head1 SYNOPSIS
+
+    perl script/app_mimosa_server.pl
+
+=head1 DESCRIPTION
+
+
+=head1 SEE ALSO
+
+L<App::Mimosa::Controller::Root>, L<Catalyst>
+
+=head1 AUTHOR
+
+Jonathan "Duke" Leto <jonathan@leto.net>
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
+1;
