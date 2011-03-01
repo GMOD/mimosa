@@ -1,5 +1,8 @@
 package App::Mimosa::Controller::Root;
 use Moose;
+use Bio::Chado::Schema;
+use App::Mimosa::Job;
+
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller' }
@@ -29,20 +32,18 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
-    my @sets = schema('mimosa')->resultset('Mimosa::SequenceSet')->all;
+    my @sets = $c->dbic_schema('Bio::Chado::Schema')->resultset('Mimosa::SequenceSet')->all;
     my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
 
-    template 'index', {
-        sequenceset_html =>
-            map { "<option value='$_->[0]'> $_->[1] </option>" } @setinfo
-    };
+    $c->stash->{sequenceset_html} =
+            map { "<option value='$_->[0]'> $_->[1] </option>" } @setinfo;
 
-    # Hello World
-    $c->response->body( $c->welcome_message );
+    $c->stash->{template} = 'index.mason';
+    $c->stash->{schema}   = $c->dbic_schema('Bio::Chado::Schema');
 }
 
 
-sub submit :Path :Args(0) {
+sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
     # TODO: VALIDATION!
     # parse posted info
@@ -50,14 +51,14 @@ sub submit :Path :Args(0) {
     my ($output_fh, $output_filename) = tempfile( CLEANUP => 0 );
     my ($html_report_fh, $html_report) = tempfile( CLEANUP => 0 );
 
-    print $input_fh params->{sequence};
+    print $input_fh $c->req->param('sequence');
     close $input_fh;
 
     my $j = App::Mimosa::Job->new(
-        program        => params->{program},
+        program        => $c->req->param('program'),
         output_file    => $output_filename,
         input_file     => $input_filename,
-              map { $_ => params->{$_} }
+              map { $_ => $c->req($_) }
             qw/sequence_input
                maxhits output_graphs
                evalue matrix
@@ -66,9 +67,7 @@ sub submit :Path :Args(0) {
     my $error = $j->run;
     warning("error = $error");
     if ($error) {
-        template 'error', {
-            error => $error,
-        };
+        $c->stash->{template} = 'error.mason';
     } else {
         my $in = Bio::SearchIO->new(
                 # -format => $bioperl_formats{$params{outformat}},
@@ -83,9 +82,7 @@ sub submit :Path :Args(0) {
         );
         $out->write_result($in->next_result);
 
-        template 'results', {
-            output => join "", slurp($html_report),
-        };
+        $c->stash->{template} = join "", slurpl($html_report);
     }
 
 }

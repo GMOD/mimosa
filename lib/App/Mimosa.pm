@@ -23,14 +23,7 @@ extends 'Catalyst';
 our $VERSION = '0.01';
 $VERSION = eval $VERSION;
 
-# Configure the application.
-#
-# Note that settings in app_mimosa.conf (or other external
-# configuration file that you set up manually) take precedence
-# over this when using ConfigLoader. Thus configuration
-# details given here can function as a default configuration,
-# with an external configuration file acting as an override for
-# local deployment.
+# Defaults
 
 __PACKAGE__->config(
     name => 'App::Mimosa',

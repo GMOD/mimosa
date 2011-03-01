@@ -5,7 +5,6 @@ use Moose::Util::TypeConstraints;
 use Try::Tiny;
 use File::Slurp qw/slurp/;
 use File::Temp qw/tempfile/;
-use Dancer ':syntax';
 
 # Good breakdown of commandline flags
 # http://www.molbiol.ox.ac.uk/analysis_tools/BLAST/BLAST_blastall.shtml
