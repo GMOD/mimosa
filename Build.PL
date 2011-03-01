@@ -18,6 +18,7 @@ my $builder = Module::Build->new(
         'Bio::Root::Version'                     => '1.006009',
         'Catalyst::Action::RenderView'           => 0,
         'Catalyst::Controller::REST'             => 0,
+        'Catalyst::Model::DBIC::Schema'          => '0.48',
         'Catalyst::Plugin::Authentication'       => 0,
         'Catalyst::Plugin::Authorization::Roles' => 0,
         'Catalyst::Plugin::AutoCRUD'             => '1.110471',
