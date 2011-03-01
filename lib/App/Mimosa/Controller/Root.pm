@@ -33,14 +33,14 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
-    my @sets = $c->model('Bio::Chado::Schema')->resultset('Mimosa::SequenceSet')->all;
+    my @sets = $c->model('Model::BCS')->resultset('Mimosa::SequenceSet')->all;
     my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
 
     $c->stash->{sequenceset_html} =
             map { "<option value='$_->[0]'> $_->[1] </option>" } @setinfo;
 
     $c->stash->{template} = 'index.mason';
-    $c->stash->{schema}   = $c->model('Bio::Chado::Schema');
+    $c->stash->{schema}   = $c->model('Model::BCS');
 }
 
 
