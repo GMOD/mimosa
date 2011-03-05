@@ -17,11 +17,14 @@ a friendly web interface.
 
 Mimosa exists to solve the problem of making a standalone sequence alignment
 web interface. All existing sequence alignment web interfaces are either tightly
-coupled to legacy codebases, difficult to deploy, or just plain *suck*.
+coupled to legacy codebases, difficult to deploy, or just plain *unfriendly* to
+end users.
 
 Mimosa plans on being an easy-to-install standalone sequence aligner, which
 can be integrated into an existing website via a REST interface.
 
 ## What is Mimosa written in?
 
-Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it uses Moose, BioPerl and the Dancer web framework.  On the client side, it uses JQuery, JQuery UI.
+Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it
+uses Moose, BioPerl and the Dancer web framework.  On the client side, it uses
+JQuery, JQuery UI.
