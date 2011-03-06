@@ -78,7 +78,7 @@ sub run {
     my $cmd = <<CMD;
 blastall -d $ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq -M $matrix -b $maxhits -e $evalue -v 1 -p $program -F $filtered -i $input -o $output &> $run_file
 CMD
-    warning("running $cmd");
+    # warning("running $cmd");
     try {
         system($cmd);
     } catch {

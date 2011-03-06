@@ -4,6 +4,10 @@ use Bio::Chado::Schema;
 use App::Mimosa::Job;
 use Catalyst::Model::DBIC::Schema;
 use File::Temp qw/tempfile/;
+use File::Slurp qw/slurp/;
+
+use Bio::SearchIO;
+use Bio::SearchIO::Writer::HTMLResultWriter;
 
 use namespace::autoclean;
 
@@ -60,14 +64,14 @@ sub submit :Path('/submit') :Args(0) {
         program        => $c->req->param('program'),
         output_file    => $output_filename,
         input_file     => $input_filename,
-              map { $_ => $c->req($_) }
+              map { $_ => $c->req->param($_) }
             qw/sequence_input
                maxhits output_graphs
                evalue matrix
               /,
     );
     my $error = $j->run;
-    warning("error = $error");
+    # warning("error = $error");
     if ($error) {
         $c->stash->{template} = 'error.mason';
     } else {
@@ -84,7 +88,7 @@ sub submit :Path('/submit') :Args(0) {
         );
         $out->write_result($in->next_result);
 
-        $c->stash->{template} = join "", slurpl($html_report);
+        $c->stash->{template} = join "", slurp($html_report);
     }
 
 }
