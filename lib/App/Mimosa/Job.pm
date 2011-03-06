@@ -5,7 +5,6 @@ use Moose::Util::TypeConstraints;
 use Try::Tiny;
 use File::Slurp qw/slurp/;
 use File::Temp qw/tempfile/;
-use Dancer ':syntax';
 
 # Good breakdown of commandline flags
 # http://www.molbiol.ox.ac.uk/analysis_tools/BLAST/BLAST_blastall.shtml
@@ -79,7 +78,7 @@ sub run {
     my $cmd = <<CMD;
 blastall -d $ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq -M $matrix -b $maxhits -e $evalue -v 1 -p $program -F $filtered -i $input -o $output &> $run_file
 CMD
-    warning("running $cmd");
+    # warning("running $cmd");
     try {
         system($cmd);
     } catch {

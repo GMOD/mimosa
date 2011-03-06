@@ -1,0 +1,4 @@
+<%args>
+    $report => 'EMPTY!'
+</%args>
+<% $report %>

@@ -1,28 +1,20 @@
-use Test::More tests => 2;
+use Test::More tests => 1;
 use strict;
 use warnings;
 
 use lib 't/lib';
 use App::Mimosa::Test;
 
-# the order is important
-use App::Mimosa;
-use Dancer::Test;
+use Catalyst::Test 'App::Mimosa';
 use File::Slurp qw/slurp/;
-
-route_exists [ POST => '/submit'], 'a route handler is defined for /submit';
+use HTTP::Request::Common;
 
 my $seq = slurp("t/data/blastdb_test.nucleotide.seq");
-
-response_status_is([
-        POST => '/submit',
-        {
-            params => {
+my $response = request POST '/submit', [
                 program  => 'blastn',
                 sequence => $seq,
-                maxhits => 100,
-                matrix => 'BLOSUM62',
-                evalue => 0.1,
-            },
-        }
-], 200 );
+                maxhits  => 100,
+                matrix   => 'BLOSUM62',
+                evalue   => 0.1,
+];
+is($response->code, 200, '/submit returns 200');
