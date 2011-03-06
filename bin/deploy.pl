@@ -1,16 +1,14 @@
 use strict;
 use warnings;
-use YAML qw/LoadFile/;
+use Config::JFDI;
 use Bio::Chado::Schema;
 use Test::More;
+use Data::Dumper;
 
-my $config = shift;
-die "need configuration file" unless $config;
+my $config_file = Config::JFDI->new(file => shift || "app_mimosa.conf");
+my $config = $config_file->get;
 
-my $dancer_conf = LoadFile($config);
-
-my $conf = $dancer_conf->{plugins}->{DBIC}->{mimosa};
-my $schema = Bio::Chado::Schema->connect( $conf->{dsn} );
+my $schema = Bio::Chado::Schema->connect( $config->{dsn} );
 diag "Deploying Mimosa Schema";
 $schema->deploy;
 
