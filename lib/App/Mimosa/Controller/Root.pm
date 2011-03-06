@@ -33,7 +33,7 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
-    my @sets = $c->model('BCS')->resultset('SequenceSet');
+    my @sets = $c->model('BCS')->resultset('Mimosa::SequenceSet')->all;
     my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
 
     $c->stash->{sequenceset_html} =
