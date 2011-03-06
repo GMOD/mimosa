@@ -3,6 +3,7 @@ use Moose;
 use Bio::Chado::Schema;
 use App::Mimosa::Job;
 use Catalyst::Model::DBIC::Schema;
+use File::Temp qw/tempfile/;
 
 use namespace::autoclean;
 

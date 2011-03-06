@@ -30,6 +30,7 @@ my $builder = Module::Build->new(
         'Catalyst::View::HTML::Mason'            => 0,
         'Class::Accessor::Fast'                  => 0,
         'Config::JFDI'                           => 0,
+        'File::Temp'                             => 0,
         'IPC::System::Simple'                    => 0,
         'Moose'                                  => '1.19',
         'namespace::autoclean'                   => 0,
