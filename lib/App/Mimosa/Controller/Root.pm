@@ -61,11 +61,11 @@ sub submit :Path('/submit') :Args(0) {
     close $input_fh;
 
     my $j = App::Mimosa::Job->new(
-        program        => $c->req->param('program'),
         output_file    => $output_filename,
         input_file     => $input_filename,
-              map { $_ => $c->req->param($_) }
-            qw/sequence_input
+              map { $_ => $c->req->param($_) || '' }
+            qw/
+               sequence_input program
                maxhits output_graphs
                evalue matrix
               /,
@@ -88,7 +88,8 @@ sub submit :Path('/submit') :Args(0) {
         );
         $out->write_result($in->next_result);
 
-        $c->stash->{template} = join "", slurp($html_report);
+        $c->stash->{template} = 'report.mason';
+        $c->stash->{report}   = slurp($html_report);
     }
 
 }
@@ -101,7 +102,7 @@ Standard 404 error page
 
 sub default :Path {
     my ( $self, $c ) = @_;
-    $c->response->body( 'Page not found' );
+    $c->response->body( 'Nothing to see here' );
     $c->response->status(404);
 }
 
