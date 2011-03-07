@@ -8,3 +8,5 @@ t/var/*
 mimosa.db
 logs/
 t/logs
+.#*
+#*
