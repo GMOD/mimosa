@@ -7,7 +7,6 @@
 <!-- better to do this statically in CSS -->
 <script type="text/javascript">
   $(document).ready(function(){
-    $('.rounded').corners();
     $("#outercontainer").css({ background: "black" })
                       .css({ opacity: 0.9 })
                       .css({ color: "white" })
