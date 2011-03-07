@@ -1,15 +1,15 @@
 package App::Mimosa::Controller::Root;
 use Moose;
-use Bio::Chado::Schema;
-use App::Mimosa::Job;
-use Catalyst::Model::DBIC::Schema;
-use File::Temp qw/tempfile/;
-use File::Slurp qw/slurp/;
+use namespace::autoclean;
 
+use File::Temp qw/tempfile/;
+use IO::String;
+
+use Bio::Chado::Schema;
 use Bio::SearchIO;
 use Bio::SearchIO::Writer::HTMLResultWriter;
 
-use namespace::autoclean;
+use App::Mimosa::Job;
 
 BEGIN { extends 'Catalyst::Controller' }
 
@@ -55,7 +55,6 @@ sub submit :Path('/submit') :Args(0) {
     # parse posted info
     my ($input_fh, $input_filename) = tempfile( CLEANUP => 0 );
     my ($output_fh, $output_filename) = tempfile( CLEANUP => 0 );
-    my ($html_report_fh, $html_report) = tempfile( CLEANUP => 0 );
 
     print $input_fh $c->req->param('sequence');
     close $input_fh;
@@ -82,14 +81,15 @@ sub submit :Path('/submit') :Args(0) {
         my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
         $writer->start_report(sub {''});
         $writer->end_report(sub {''});
+        my $report = '';
         my $out = Bio::SearchIO->new(
             -writer => $writer,
-            -file   => "> $html_report",
+            -fh   => IO::String->new( \$report ),
         );
         $out->write_result($in->next_result);
 
         $c->stash->{template} = 'report.mason';
-        $c->stash->{report}   = slurp($html_report);
+        $c->stash->{report}   = $report;
     }
 
 }
