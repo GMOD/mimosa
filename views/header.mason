@@ -11,6 +11,7 @@
        td { color: white; font-family: Roman; font-size: 12px; line-height: 12px; -webkit-font-smoothing: antialiased; }
         a { color: magenta; font-weight: bold; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.3); }
         a:hover { color: #990000; border-bottom: 1px solid rgba(255,255,255,1); }
+        #sequence_input { color: black; font-family: monospace; padding: 0.5em; }
     </style>
 </head>
 <body>
