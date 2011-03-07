@@ -1,4 +1,7 @@
 <%args>
     $report => 'EMPTY!'
 </%args>
-<% $report %>
+<div id="report">
+  <% $report %>
+</div>
+
