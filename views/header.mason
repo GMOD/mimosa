@@ -3,7 +3,7 @@
 <title>Mimosa : Genomic Sequence Alignment</title>
 <link rel="stylesheet" href="/css/style.css" />
     <style>
-        * { padding: 0; margin: 0; color: white; font-family: Roman; font-size: 12px; line-height: 14px; }
+        body { padding: 0; margin: 0; color: white; font-family: serif; font-size: 12px; line-height: 14px; }
         select { color: black; }
         input { color: black; }
         p { color: white; font-family: Roman; font-size: 12px; line-height: 12px; -webkit-font-smoothing: antialiased; }

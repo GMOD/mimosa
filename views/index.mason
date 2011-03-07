@@ -4,7 +4,7 @@
 </%args>
 <center>
  <div id="outercontainer" class="rounded">
-<div id="pagetitle"><h3>Mimosa - Miniature Model Organism Sequence Aligner</h3></div>
+<div id="pagetitle"><h1>Mimosa - Miniature Model Organism Sequence Aligner</h1></div>
 
 <form method="post" action="/submit" name="blastform">
   <input type="hidden" checked="checked" name="filterq" value="1" />
