@@ -3,7 +3,7 @@
     $organism_html    => undef
 </%args>
 <center>
- <div id="outercontainer" class="rounded">
+ <div id="outercontainer">
 <div id="pagetitle"><h2>Mimosa - Miniature Model Organism Sequence Aligner</h2></div>
 
 <form method="post" action="/submit" name="main_input_form">

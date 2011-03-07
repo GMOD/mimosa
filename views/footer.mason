@@ -4,13 +4,8 @@
 <script type="text/javascript" src="js/jquery.backstretch.min.js"></script>
 <script type="text/javascript" src="js/jquery.corners.min.js"></script>
 
-<!-- better to do this statically in CSS -->
 <script type="text/javascript">
   $(document).ready(function(){
-    $("#outercontainer").css({ background: "black" })
-                      .css({ opacity: 0.9 })
-                      .css({ color: "white" })
-                      .css({ width: "75%" });
     $.backstretch("/images/mimosa_pudica.jpg", {speed: 150});
     });
 </script>
