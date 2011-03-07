@@ -49,7 +49,7 @@
     <tr><td colspan="2">
       <table width="100%"><tr>
          <td>
-         <div id="advanced" style="display:none">
+         <div id="advanced" style="display:none; width: 700px">
 <table summary="" class="info_table_noborder"  width="100%">
 <tr>
   Filter Query?: <input type="checkbox" checked="checked" name="filtered" value="T" />
