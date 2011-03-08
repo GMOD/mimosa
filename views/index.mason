@@ -23,7 +23,7 @@
 <select id="mimosa_sequence_set_id"  onchange=""  name="database">
 <% $sequenceset_html %>
 </select>
-<a href="sequence_set">Edit Sequence Sets</a>
+<a href="/autocrud/bcs/mimosa_sequence_set">Edit Sequence Sets</a>
 <!--
  <a style="font-size: 80%" title="View details of each database" href="dbinfo.pl">db details</a>
 -->

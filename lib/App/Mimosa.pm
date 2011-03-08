@@ -16,6 +16,7 @@ use Catalyst (
     #'-Debug',
     'ConfigLoader',
     'Static::Simple',
+    'AutoCRUD',
 );
 
 extends 'Catalyst';
