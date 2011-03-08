@@ -46,7 +46,7 @@ sub index :Path :Args(0) {
     my @sets = $c->model('BCS')->resultset('Mimosa::SequenceSet')->all;
     my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
 
-    $c->stash->{sequenceset_html} =
+    $c->stash->{sequenceset_html} = join '',
             map { "<option value='$_->[0]'> $_->[1] </option>" } @setinfo;
 
     $c->stash->{template} = 'index.mason';
