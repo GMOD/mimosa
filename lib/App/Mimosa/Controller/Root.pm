@@ -5,6 +5,10 @@ use namespace::autoclean;
 use File::Temp qw/tempfile/;
 use IO::String;
 
+use Storable 'freeze';
+use Digest::SHA1 'sha1_hex';
+use Path::Class;
+
 use Bio::Chado::Schema;
 use Bio::SearchIO;
 use Bio::SearchIO::Writer::HTMLResultWriter;
@@ -12,6 +16,7 @@ use Bio::SearchIO::Writer::HTMLResultWriter;
 use App::Mimosa::Job;
 
 BEGIN { extends 'Catalyst::Controller' }
+with 'Catalyst::Component::ApplicationAttribute';
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -48,20 +53,27 @@ sub index :Path :Args(0) {
     $c->stash->{schema}   = $c->model('Model::BCS');
 }
 
+sub _temp_file {
+    my $self = shift;
+    my $tmp_base = dir( File::Spec->tmpdir, lc $self->_app->config->{name} );
+    $tmp_base->mkpath unless -d $tmp_base;
+    return $tmp_base->file( @_ );
+}
 
 sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
+    $c->forward('make_job_id');
+
     # TODO: VALIDATION!
     # parse posted info
-    my ($input_fh, $input_filename) = tempfile( CLEANUP => 0 );
-    my ($output_fh, $output_filename) = tempfile( CLEANUP => 0 );
+    my $input_file  = $self->_temp_file( $c->stash->{job_id}.'.in.fasta'  );
+    my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.fasta' );
 
-    print $input_fh $c->req->param('sequence');
-    close $input_fh;
+    $input_file->openw->print( $c->req->param('sequence') );
 
     my $j = App::Mimosa::Job->new(
-        output_file    => $output_filename,
-        input_file     => $input_filename,
+        output_file    => "$output_file",
+        input_file     => "$input_file",
               map { $_ => $c->req->param($_) || '' }
             qw/
                sequence_input program
@@ -75,8 +87,8 @@ sub submit :Path('/submit') :Args(0) {
         $c->stash->{template} = 'error.mason';
     } else {
         my $in = Bio::SearchIO->new(
-                # -format => $bioperl_formats{$params{outformat}},
-                -file   => "< $output_filename",
+                -format => 'blast',
+                -file   => "$output_file",
         );
         my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
         $writer->start_report(sub {''});
@@ -91,6 +103,17 @@ sub submit :Path('/submit') :Args(0) {
         $c->stash->{template} = 'report.mason';
         $c->stash->{report}   = $report;
     }
+
+}
+
+sub make_job_id :Private {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{job_id} = sha1_hex freeze {
+        params  => $c->req->parameters,
+        uploads => $c->req->uploads,
+        #TODO: add the user - user   => $c->user,
+    };
 
 }
 
