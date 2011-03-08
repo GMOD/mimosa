@@ -86,6 +86,13 @@ sub submit :Path('/submit') :Args(0) {
     if ($error) {
         $c->stash->{template} = 'error.mason';
     } else {
+
+        # stat the output file before opening it in hopes of avoiding
+        # some kind of bizarre race condition i've been seeing in
+        # which the file doesn't appear to be visible yet to the web
+        # process after blast exits.
+        $output_file->stat;
+
         my $in = Bio::SearchIO->new(
                 -format => 'blast',
                 -file   => "$output_file",
