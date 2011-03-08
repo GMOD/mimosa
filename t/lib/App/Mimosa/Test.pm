@@ -7,8 +7,8 @@ use Test::More;
 BEGIN{
     diag "Checking for $Bin/../mimosa.db";
     unless (-s "$Bin/../mimosa.db") {
-        diag "Deploying schema with $Bin/../config.yml";
-        qx{$^X -Ilib $Bin/../bin/deploy.pl $Bin/../config.yml}
+        diag "Deploying schema with $Bin/../app_mimosa.conf";
+        qx{$^X -Ilib $Bin/../script/mimosa_deploy.pl $Bin/../app_mimosa.conf}
     };
 };
 

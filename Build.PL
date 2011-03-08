@@ -39,7 +39,7 @@ my $builder = Module::Build->new(
         'Path::Class'                            => 0,
         'YAML'                                   => 0,
     },
-    add_to_cleanup      => [  ],
+    add_to_cleanup      => [ 'mimosa.db' ],
     create_makefile_pl  => 'traditional',
     meta_merge     => {
         resources => {

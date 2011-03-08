@@ -2,7 +2,8 @@ use Test::More tests => 3;
 use strict;
 use warnings;
 
-use lib 'lib';
+use lib 't/lib';
+use App::Mimosa::Test;
 
 BEGIN{ use_ok 'App::Mimosa::Aligner' }
 
