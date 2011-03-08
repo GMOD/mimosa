@@ -26,7 +26,7 @@ $VERSION = eval $VERSION;
 # Defaults
 
 __PACKAGE__->config(
-    name => 'App::Mimosa',
+    name => 'Mimosa',
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
 );
