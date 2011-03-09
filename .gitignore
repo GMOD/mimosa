@@ -5,7 +5,7 @@ blib/
 logs/development.log
 .*sw?
 t/var/*
-mimosa.db
+mimosa*.db
 logs/
 t/logs
 .#*
