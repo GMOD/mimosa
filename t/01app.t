@@ -5,8 +5,7 @@ use Test::More;
 
 use lib 't/lib';
 use App::Mimosa::Test;
-
-BEGIN { use_ok 'Catalyst::Test', 'App::Mimosa' }
+use Test::DBIx::Class;
 
 ok( request('/')->is_success, 'Request should succeed' );
 
