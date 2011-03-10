@@ -7,7 +7,6 @@
 <div id="pagetitle"><h2>Mimosa - Miniature Model Organism Sequence Aligner</h2></div>
 
 <form method="post" action="/submit" name="main_input_form">
-  <input type="hidden" checked="checked" name="filterq" value="1" />
   <input type="hidden" name="interface_type" value="simple" />
   <input type="hidden" name="outformat" value="0" />
 

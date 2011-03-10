@@ -13,8 +13,10 @@ my $builder = Module::Build->new(
         'Catalyst::Test'      => 0,
         'Test::DBIx::Class'   => 0,
         'Test::Most'          => 0,
+        'Test::WWW::Mechanized::Catalyst' => 0,
     },
     requires => {
+        'aliased'                                => 0,
         'autodie'                                => '2.00',
         'Bio::Chado::Schema'                     => '0.08000',
         'Bio::Root::Version'                     => '1.006009',
