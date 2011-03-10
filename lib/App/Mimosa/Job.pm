@@ -1,12 +1,15 @@
 package App::Mimosa::Job;
 use Moose;
+use namespace::autoclean;
+use autodie ':all';
+
 use Bio::SeqIO;
 use Moose::Util::TypeConstraints;
-use Try::Tiny;
+
 use File::Slurp qw/slurp/;
 use File::Temp qw/tempfile/;
 
-use autodie ':all';
+use IPC::Run;
 
 # Good breakdown of commandline flags
 # http://www.molbiol.ox.ac.uk/analysis_tools/BLAST/BLAST_blastall.shtml
@@ -67,26 +70,38 @@ has filtered => (
 
 sub run {
     my ($self) = @_;
-    my $program  = $self->program;
-    my $input    = $self->input_file;
-    my $output   = $self->output_file;
-    my $evalue   = $self->evalue;
-    my $maxhits  = $self->maxhits;
-    my $matrix   = $self->matrix;
-    my $filtered = $self->filtered;
 
-    my ($run_fh, $run_file) = tempfile( CLEANUP => 0 );
+    my @blast_cmd = (
+        'blastall',
+        -d => "$ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq",
+        -M => $self->matrix,
+        -b => $self->maxhits,
+        -e => $self->evalue,
+        -v => 1,
+        -p => $self->program,
+        -F => $self->filtered,
+        -i => $self->input_file,
+        -o => $self->output_file,
+      );
 
-    my $cmd = <<CMD;
-blastall -d $ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq -M $matrix -b $maxhits -e $evalue -v 1 -p $program -F $filtered -i $input -o $output &> $run_file
-CMD
-    # warning("running $cmd");
-    try {
-        system($cmd);
-    } catch {
-        return join "", slurp($run_file);
-    };
+    my $console_output = File::Temp->new;
+    my $success = IPC::Run::run \@blast_cmd, \*STDIN, $console_output, $console_output;
+    $console_output->close;
+    unless( $success ) {
+        return $self->_error_output( $console_output );
+    }
+    return;
+}
 
+sub _error_output {
+    my ( $self, $tempfile ) = @_;
+    my $max_lines    = 50;
+    my $error_output = '';
+    open my $f, "$tempfile";
+    while( $max_lines-- and my $line = <$f> ) {
+        $error_output .= $line;
+    }
+    return $error_output;
 }
 
 1;

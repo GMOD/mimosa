@@ -63,11 +63,15 @@ sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
     $c->forward('make_job_id');
 
-    # TODO: VALIDATION!
+    # validate input
+    unless( length( $c->req->param('sequence') || '' ) > 5 ) {
+        $c->stash->{error} = 'Sequence input too short';
+        $c->detach('/input_error');
+    }
+
     # parse posted info
     my $input_file  = $self->_temp_file( $c->stash->{job_id}.'.in.fasta'  );
     my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.fasta' );
-
     $input_file->openw->print( $c->req->param('sequence') );
 
     my $j = App::Mimosa::Job->new(
@@ -83,7 +87,8 @@ sub submit :Path('/submit') :Args(0) {
     my $error = $j->run;
     # warning("error = $error");
     if ($error) {
-        $c->stash->{template} = 'error.mason';
+        ( $c->stash->{error} = $error ) =~ s!\n!<br />!g;
+        $c->detach( $error =~ /Could not calculate ungapped/i ? '/input_error' : '/error' );
     } else {
 
         # stat the output file before opening it in hopes of avoiding
@@ -133,6 +138,23 @@ sub default :Path {
     my ( $self, $c ) = @_;
     $c->response->body( 'Nothing to see here' );
     $c->response->status(404);
+}
+
+=head2 input_error
+
+Standard page for user-input errors.
+
+=cut
+
+sub input_error :Private {
+    my ( $self, $c ) = @_;
+    $c->res->status( 400 );
+    $c->forward('error');
+}
+sub error :Private {
+    my ( $self, $c ) = @_;
+    $c->stash->{template} = 'error.mason';
+    $c->res->status( 500 ) if ! $c->res->status || $c->res->status == 200;
 }
 
 =head2 end

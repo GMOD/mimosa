@@ -36,6 +36,7 @@ my $builder = Module::Build->new(
         'Config::JFDI'                           => 0,
         'Digest::SHA1'                           => 0,
         'File::Temp'                             => 0,
+        'IPC::Run'                               => 0,
         'IPC::System::Simple'                    => 0,
         'IO::String'                             => 0,
         'Moose'                                  => '1.19',
