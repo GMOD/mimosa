@@ -4,7 +4,6 @@ use warnings;
 
 use base 'DBIx::Class::Schema';
 
-# note: always load upstream classes *first*
 __PACKAGE__->load_namespaces(
     result_namespace    => [
         'Result',
