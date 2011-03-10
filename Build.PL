@@ -10,7 +10,9 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/App/Mimosa.pm',
     include_dirs        => '',
     build_requires => {
-        'Test::Most'      => 0,
+        'Catalyst::Test'      => 0,
+        'Test::DBIx::Class'   => 0,
+        'Test::Most'          => 0,
     },
     requires => {
         'autodie'                                => '2.00',
