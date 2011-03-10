@@ -9,7 +9,6 @@ use Storable 'freeze';
 use Digest::SHA1 'sha1_hex';
 use Path::Class;
 
-use Bio::Chado::Schema;
 use Bio::SearchIO;
 use Bio::SearchIO::Writer::HTMLResultWriter;
 

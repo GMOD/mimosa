@@ -1,4 +1,4 @@
-package Bio::Chado::Schema::Result::Mimosa::SequenceSetOrganism;
+package App::Mimosa::Schema::BCS::Result::Mimosa::SequenceSetOrganism;
 use strict;
 use warnings;
 
@@ -85,7 +85,7 @@ Related object: L<Bio::Chado::Schema::Result::Mimosa::SequenceSet>
 
 __PACKAGE__->belongs_to(
   "sequence_set",
-  "Bio::Chado::Schema::Result::Mimosa::SequenceSet",
+  "App::Mimosa::Schema::BCS::Result::Mimosa::SequenceSet",
   { mimosa_sequence_set_id => "mimosa_sequence_set_id" },
   {
     cascade_copy   => 0,
@@ -108,13 +108,14 @@ Related object: L<Bio::Chado::Schema::Result::Organism::Organism>
 
 =cut
 
-Bio::Chado::Schema->plugin_add_relationship(
-    'Organism::Organism' => 'has_many',
+Bio::Chado::Schema::Result::Organism::Organism->has_many(
     "mimosa_sequence_sets",
-    "Bio::Chado::Schema::Result::Mimosa::SequenceSetOrganism",
+    "App::Mimosa::Schema::BCS::Result::Mimosa::SequenceSetOrganism",
     { "foreign.organism_id" => "self.organism_id" },
     { cascade_copy => 0, cascade_delete => 0 },
   );
 
 ####### also add relations into the BCS modules in question
+
+1;
 

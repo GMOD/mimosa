@@ -1,17 +1,44 @@
 package App::Mimosa::Schema::BCS;
-
 use strict;
 use warnings;
 
-use Moose;
-use MooseX::NonMoose;
-use namespace::autoclean;
-use Bio::Chado::Schema;
+use base 'DBIx::Class::Schema';
 
-extends 'DBIx::Class::Schema';
+# note: always load upstream classes *first*
+__PACKAGE__->load_namespaces(
+    result_namespace    => [
+        'Result',
+        '+Bio::Chado::Schema::Result::Organism',
+      ],
+    resultset_namespace => [
+        'ResultSet',
+        '+Bio::Chado::Schema::ResultSet::Organism',
+      ],
+  );
 
-__PACKAGE__->load_namespaces;
 
+sub deploy {
+    local $SIG{__WARN__} = sub {
+        return if $_[0] =~ /^Ignoring relationship/;
+        warn $_[0];
+    };
+    shift->SUPER::deploy(@_);
+}
 
-__PACKAGE__->meta->make_immutable;
 1;
+
+__END__
+
+=head1 NAME
+
+App::Mimosa::Schema::BCS - DBIx::Class schema used by Mimosa.  A subset of Chado.
+
+=head1 SYNOPSIS
+
+  my $s = App::Mimosa::Schema::BCS->connect(...);
+
+=head1 SEE ALSO
+
+L<DBIx::Class>
+
+=cut

@@ -1,4 +1,4 @@
-package Bio::Chado::Schema::Result::Mimosa::SequenceSet;
+package App::Mimosa::Schema::BCS::Result::Mimosa::SequenceSet;
 use strict;
 use warnings;
 
@@ -138,7 +138,7 @@ Related object: L<Bio::Chado::Schema::Result::Mimosa::SequenceSetOrganism>
 
 __PACKAGE__->has_many(
     "sequence_set_organisms",
-    "Bio::Chado::Schema::Result::Mimosa::SequenceSetOrganism",
+    "App::Mimosa::Schema::BCS::Result::Mimosa::SequenceSetOrganism",
     { "foreign.mimosa_sequence_set_id" => "self.mimosa_sequence_set_id" },
     { cascade_copy => 0, cascade_delete => 0 },
   );

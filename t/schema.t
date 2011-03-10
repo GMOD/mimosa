@@ -3,9 +3,9 @@ use warnings;
 
 use Test::More;
 
-use Bio::Chado::Schema;
+use App::Mimosa::Schema::BCS;
 
-my $schema = Bio::Chado::Schema->connect( "dbi:SQLite::memory:");
+my $schema = App::Mimosa::Schema::BCS->connect( "dbi:SQLite::memory:");
 
 isa_ok $schema, 'DBIx::Class::Schema', 'schema object';
 
@@ -23,7 +23,7 @@ is $schema->resultset('Mimosa::SequenceSet')->search_related('sequence_set_organ
 is $schema->resultset('Mimosa::SequenceSetOrganism')->count, 0,
    'no rows in the sequenceset_organism table right now';
 
-is $schema->resultset('Organism::Organism')->search_related('mimosa_sequence_sets')->count, 0,
+is $schema->resultset('Organism')->search_related('mimosa_sequence_sets')->count, 0,
    'organism has mimosa_sequence_sets rel';
 
 done_testing;

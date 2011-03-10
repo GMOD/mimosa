@@ -4,8 +4,7 @@ use strict;
 use base 'Catalyst::Model::DBIC::Schema';
 
 __PACKAGE__->config(
-    #schema_class => 'App::Mimosa::Schema::BCS',
-    schema_class => 'Bio::Chado::Schema',
+    schema_class => 'App::Mimosa::Schema::BCS',
     connect_info => {
         dsn => 'dbi:SQLite:mimosa.db',
         user => '',

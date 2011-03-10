@@ -1,6 +1,6 @@
 
 {
-  'schema_class' => 'Bio::Chado::Schema',
+  'schema_class' => 'App::Mimosa::Schema::BCS',
   'connect_info' => App::Mimosa::Test::app->model('BCS')->connect_info,
 
   'resultsets' => [],
