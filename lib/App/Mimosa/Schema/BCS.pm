@@ -19,7 +19,7 @@ __PACKAGE__->load_namespaces(
 sub deploy {
     local $SIG{__WARN__} = sub {
         return if $_[0] =~ /^Ignoring relationship/;
-        warn $_[0];
+        warn @_;
     };
     shift->SUPER::deploy(@_);
 }
