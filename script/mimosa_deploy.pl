@@ -1,14 +1,14 @@
 use strict;
 use warnings;
 use Config::JFDI;
-use Bio::Chado::Schema;
 use Test::More;
 use Data::Dumper;
+use App::Mimosa::Schema::BCS;
 
 my $config_file = Config::JFDI->new(file => shift || "app_mimosa.conf");
 my $config = $config_file->get;
 
-my $schema = Bio::Chado::Schema->connect( $config->{'Model::BCS'}{connect_info}->{dsn} );
+my $schema = App::Mimosa::Schema::BCS->connect( $config->{'Model::BCS'}{connect_info}->{dsn} );
 diag "Deploying Mimosa Schema";
 $schema->deploy;
 
