@@ -10,10 +10,10 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/App/Mimosa.pm',
     include_dirs        => '',
     build_requires => {
-        'Catalyst::Test'      => 0,
-        'Test::DBIx::Class'   => 0,
-        'Test::Most'          => 0,
-        'Test::WWW::Mechanized::Catalyst' => 0,
+        'Catalyst::Test'                 => 0,
+        'Test::DBIx::Class'              => 0,
+        'Test::Most'                     => 0,
+        'Test::WWW::Mechanize::Catalyst' => 0,
     },
     requires => {
         'aliased'                                => 0,
