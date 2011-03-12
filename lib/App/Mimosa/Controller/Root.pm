@@ -52,6 +52,13 @@ sub index :Path :Args(0) {
     $c->stash->{schema}   = $c->model('Model::BCS');
 }
 
+sub poweredby :Path("/poweredby") :Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{schema}   = $c->model('Model::BCS');
+    $c->stash->{template} = 'poweredby.mason';
+}
+
 sub _temp_file {
     my $self = shift;
     my $tmp_base = dir( File::Spec->tmpdir, lc $self->_app->config->{name} );
