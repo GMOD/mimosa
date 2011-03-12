@@ -1,4 +1,4 @@
-use Test::More tests => 6;
+use Test::More tests => 10;
 use strict;
 use warnings;
 
@@ -13,3 +13,7 @@ action_ok '/poweredby', 'a route handler is defined for /poweredby';
 action_ok '/autocrud';
 action_ok '/autocrud/bcs';
 action_ok '/autocrud/bcs/organism';
+action_ok '/autocrud/bcs/organism_dbxref';
+action_ok '/autocrud/bcs/mimosa_sequence_set_organism';
+action_ok '/autocrud/bcs/mimosa_sequence_set';
+action_ok '/autocrud/bcs/organismprop';
