@@ -2,6 +2,34 @@
 <head>
   <title>Mimosa : Genomic Sequence Alignment</title>
   <link rel="stylesheet" href="/css/style.css" />
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="/js/ext-3.3.1/resources/css/ext-all.css" />
+
+<!-- overrides to base library -->
+
+
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="/js/ext-3.3.1/adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="/js/ext-3.3.1/ext-all.js"></script>
+
+
+<!-- overrides to library -->
+
+<!-- extensions -->
+
+<!-- page specific -->
+
+<script type="text/javascript">
+// Path to the blank image should point to a valid location on your server
+Ext.BLANK_IMAGE_URL = '/js/ext-3.3.1/resources/images/default/s.gif';
+
+Ext.onReady(function(){
+
+});
+</script>
 </head>
 <body>
  
