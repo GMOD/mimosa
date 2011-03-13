@@ -3,7 +3,8 @@
     $organism_html    => undef
 </%args>
 <center>
- <div id="outercontainer">
+<div id="tabs1">
+ <div id="t1_content">
 <div id="pagetitle"><h2>Mimosa - Miniature Model Organism Sequence Aligner</h2></div>
 
 <form method="post" action="/submit" name="main_input_form">
@@ -111,4 +112,6 @@
 </table>
 <a href="/poweredby/">Powered By Open Source</a>
 </div> <!-- advanced -->
+</div>
+
 </div>

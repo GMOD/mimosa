@@ -8,6 +8,7 @@
 
 <!-- overrides to base library -->
 
+<link rel="stylesheet" type="text/css" href="/css/tabs.css" />
 
 <!-- ** Javascript ** -->
 <!-- ExtJS library: base/adapter -->
@@ -21,6 +22,8 @@
 <!-- extensions -->
 
 <!-- page specific -->
+
+<script type="text/javascript" src="/js/tabs.js"></script>
 
 <script type="text/javascript">
 // Path to the blank image should point to a valid location on your server
