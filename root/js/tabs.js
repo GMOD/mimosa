@@ -8,7 +8,8 @@ Ext.onReady(function(){
         defaults:  {autoHeight: true},
         items:[
             {contentEl:'t1_content', title: 'Align'},
-            {contentEl:'t2_content', title: 'Preferences'}
+            {contentEl:'t2_content', title: 'Preferences'},
+            {contentEl:'t3_content', title: 'Admin'},
         ]
     });
 

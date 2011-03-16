@@ -7,6 +7,9 @@
  <div id="t1_content">
 <div id="pagetitle"><h2>Mimosa - Miniature Model Organism Sequence Aligner</h2></div>
 
+<div id="mimosa-grid">
+</div>
+
 <form method="post" action="/submit" name="main_input_form">
   <input type="hidden" name="interface_type" value="simple" />
   <input type="hidden" name="outformat" value="0" />
@@ -114,7 +117,10 @@
 </div> <!-- advanced -->
 </div>
 
-<div id="t2_content">
+<div id="t2_content" style="">
 Choose your user preferences here and stuff
+</div>
+<div id="t3_content" style="">
+Adminy stuff
 </div>
 </div>

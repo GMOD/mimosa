@@ -24,6 +24,7 @@
 <!-- page specific -->
 
 <script type="text/javascript" src="/js/tabs.js"></script>
+<script type="text/javascript" src="/js/mimosa-grid.js"></script>
 
 <script type="text/javascript">
 // Path to the blank image should point to a valid location on your server
