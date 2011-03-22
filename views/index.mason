@@ -35,7 +35,7 @@
 </select>
 </td></tr>
     <tr><td colspan="2" align="center"><b>Query sequence</b></td></tr>
-    <tr><td colspan="2"><textarea name="sequence" id="sequence_input" rows="8" cols="80"></textarea></td></tr>
+    <tr><td colspan="2"><textarea spellcheck="false" name="sequence" id="sequence_input" rows="8" cols="80"></textarea></td></tr>
 <tr>
     <td>
         <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')"><label for="advanced_control">Advanced Options</label>
