@@ -10,8 +10,7 @@ Ext.onReady(function(){
         { name: 'lookup_spec' },
         { name: 'info_url' },
         { name: 'update_interval' },
-        { name: 'is_public' },
-        { name: 'sequence_set_organisms' }
+        { name: 'is_public' }
     ]);
 
     // create the Data Store
@@ -27,67 +26,74 @@ Ext.onReady(function(){
         store: store,
         columns: [
             {
-                id       :'company',
-                header   : 'Company', 
-                width    : 160, 
-                sortable : true, 
-                dataIndex: 'company'
+                id       :'mimosa_sequence_set_id',
+                header   : 'mimosa_sequence_set_id',
+                width    : 8,
+                sortable : true,
+                dataIndex: 'mimosa_sequence_set_id'
             },
             {
-                header   : 'Price', 
-                width    : 75, 
-                sortable : true, 
-                renderer : 'usMoney', 
-                dataIndex: 'price'
+                id       :'shortname',
+                header   : 'shortname',
+                sortable : true,
+                dataIndex: 'shortname'
             },
             {
-                header   : 'Change', 
-                width    : 75, 
-                sortable : true, 
-                dataIndex: 'change'
+                id       :'title',
+                header   : 'title',
+                sortable : true,
+                dataIndex: 'title'
             },
             {
-                header   : '% Change', 
-                width    : 75, 
-                sortable : true, 
-                dataIndex: 'pctChange'
+                id       :'description',
+                header   : 'description',
+                sortable : true,
+                dataIndex: 'description'
             },
             {
-                header   : 'Last Updated', 
-                width    : 85, 
-                sortable : true, 
-                renderer : Ext.util.Format.dateRenderer('m/d/Y'), 
-                dataIndex: 'lastChange'
+                id       :'alphabet',
+                header   : 'alphabet',
+                sortable : true,
+                dataIndex: 'alphabet'
             },
             {
-                xtype: 'actioncolumn',
-                width: 50,
-                items: [{
-                    icon   : '../shared/icons/fam/delete.gif',  // Use a URL in the icon config
-                    tooltip: 'Sell stock',
-                    handler: function(grid, rowIndex, colIndex) {
-                        var rec = store.getAt(rowIndex);
-                        alert("Sell " + rec.get('company'));
-                    }
-                }, {
-                    getClass: function(v, meta, rec) {          // Or return a class from a function
-                        if (rec.get('change') < 0) {
-                            this.items[1].tooltip = 'Do not buy!';
-                            return 'alert-col';
-                        } else {
-                            this.items[1].tooltip = 'Buy stock';
-                            return 'buy-col';
-                        }
-                    },
-                    handler: function(grid, rowIndex, colIndex) {
-                        var rec = store.getAt(rowIndex);
-                        alert("Buy " + rec.get('company'));
-                    }
-                }]
-            }
+                id       :'source_spec',
+                header   : 'source_spec',
+                width    : 8,
+                sortable : true,
+                dataIndex: 'source_spec'
+            },
+            {
+                id       :'lookup_spec',
+                header   : 'lookup_spec',
+                width    : 8,
+                sortable : true,
+                dataIndex: 'lookup_spec'
+            },
+            {
+                id       :'info_url',
+                header   : 'info_url',
+                width    : 8,
+                sortable : true,
+                dataIndex: 'info_url'
+            },
+            {
+                id       :'update_interval',
+                header   : 'update_interval',
+                width    : 8,
+                sortable : true,
+                dataIndex: 'update_interval'
+            },
+            {
+                id       :'is_public',
+                header   : 'is_public',
+                width    : 8,
+                sortable : true,
+                dataIndex: 'is_public'
+            },
         ],
         stripeRows: true,
-        autoExpandColumn: 'company',
+        autoExpandColumn: 'shortname',
         height: 350,
         width: 600,
         title: 'Available BLAST Databases',
