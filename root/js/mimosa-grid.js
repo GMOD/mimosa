@@ -27,67 +27,62 @@ Ext.onReady(function(){
         columns: [
             {
                 id       :'mimosa_sequence_set_id',
-                header   : 'mimosa_sequence_set_id',
-                width    : 8,
+                header   : 'Sequence Set ID',
+                width    : 20,
                 sortable : true,
                 dataIndex: 'mimosa_sequence_set_id'
             },
             {
                 id       :'shortname',
-                header   : 'shortname',
+                header   : 'Short Name',
                 sortable : true,
                 dataIndex: 'shortname'
             },
             {
                 id       :'title',
-                header   : 'title',
+                header   : 'Title',
                 sortable : true,
                 dataIndex: 'title'
             },
             {
                 id       :'description',
-                header   : 'description',
+                header   : 'Description',
                 sortable : true,
                 dataIndex: 'description'
             },
             {
                 id       :'alphabet',
-                header   : 'alphabet',
+                header   : 'Alphabet',
                 sortable : true,
                 dataIndex: 'alphabet'
             },
             {
                 id       :'source_spec',
-                header   : 'source_spec',
-                width    : 8,
+                header   : 'Source spec',
                 sortable : true,
                 dataIndex: 'source_spec'
             },
             {
                 id       :'lookup_spec',
-                header   : 'lookup_spec',
-                width    : 8,
+                header   : 'Lookup spec',
                 sortable : true,
                 dataIndex: 'lookup_spec'
             },
             {
                 id       :'info_url',
-                header   : 'info_url',
-                width    : 8,
+                header   : 'Info URL',
                 sortable : true,
                 dataIndex: 'info_url'
             },
             {
                 id       :'update_interval',
-                header   : 'update_interval',
-                width    : 8,
+                header   : 'Update interval',
                 sortable : true,
                 dataIndex: 'update_interval'
             },
             {
                 id       :'is_public',
-                header   : 'is_public',
-                width    : 8,
+                header   : 'Public?',
                 sortable : true,
                 dataIndex: 'is_public'
             },
@@ -95,7 +90,7 @@ Ext.onReady(function(){
         stripeRows: true,
         autoExpandColumn: 'shortname',
         height: 350,
-        width: 600,
+        width: '100%',
         title: 'Available BLAST Databases',
         // config options for stateful behavior
         stateful: true,
