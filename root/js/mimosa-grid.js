@@ -21,10 +21,13 @@ Ext.onReady(function(){
         remoteSort    : true,
         totalProperty : 'total',
     });
-       // create the Grid
-    var grid = new Ext.grid.GridPanel({
-        store: store,
+
+    // create the Grid
+    var xg = Ext.grid;
+    var sm = new xg.CheckboxSelectionModel();
+    var grid = new xg.GridPanel({
         columns: [
+            sm,
             {
                 id       :'mimosa_sequence_set_id',
                 header   : 'Sequence Set ID',
@@ -87,8 +90,13 @@ Ext.onReady(function(){
                 dataIndex: 'is_public'
             },
         ],
+        frame: true,
+        iconCls:'icon-grid',
+        store: store,
+        sm: sm,
+        columnLines: true,
         stripeRows: true,
-        autoExpandColumn: 'shortname',
+        // autoExpandColumn: 'shortname',
         height: 350,
         width: '100%',
         title: 'Available BLAST Databases',
