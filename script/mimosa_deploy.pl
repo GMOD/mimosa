@@ -16,4 +16,6 @@ diag "Populating default Mimosa Schema";
 $schema->populate('Mimosa::SequenceSet', [
     [qw/shortname title description alphabet source_spec lookup_spec info_url update_interval is_public/],
     ['solanum_peruvianum_mrna', 'Solanum peruvianum SGN mRNA sequences', 'mRNA sequences for S. peruvianum', 'nucleotide', '', '', ,'', 30, 1    ],
+    ['solanum_foobarium_dna', 'Solanum foobarium DNA sequences', 'DNA sequences for S. foobarium', 'nucleotide', '', '', ,'', 30, 0    ],
+    ['Blargopod_foobarium_protein', 'Blargopod foobarium protein sequences', 'Protein sequences for B. foobarium', 'protein', '', '', ,'', 60, 1    ],
 ]);
