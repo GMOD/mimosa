@@ -1,6 +1,8 @@
 use strict;
 use warnings;
 
+use lib 't/lib';
+use App::Mimosa::Test;
 use Test::More;
 
 use aliased 'Test::WWW::Mechanize::Catalyst' => 'Mech';
