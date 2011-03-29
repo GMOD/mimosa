@@ -15,6 +15,7 @@ my $builder = Module::Build->new(
         'Test::Most'                     => 0,
         'Test::WWW::Mechanize::Catalyst' => 0,
     },
+    recursive_test_files => 1,
     requires => {
         'aliased'                                => 0,
         'autodie'                                => '2.00',
