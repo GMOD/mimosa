@@ -3,6 +3,10 @@ use warnings;
 
 use Test::More;
 
+use lib 't/lib';
+use App::Mimosa::Test;
+use Test::DBIx::Class;
+
 use aliased 'Test::WWW::Mechanize::Catalyst' => 'Mech';
 
 my $mech = Mech->new( catalyst_app => 'App::Mimosa' );
