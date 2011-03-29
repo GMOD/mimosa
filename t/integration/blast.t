@@ -1,17 +1,12 @@
 use strict;
 use warnings;
 
-use lib 't/lib';
-use App::Mimosa::Test;
 use Test::More;
 
 use lib 't/lib';
-use App::Mimosa::Test;
-use Test::DBIx::Class;
+use aliased 'App::Mimosa::Test::Mech';
 
-use aliased 'Test::WWW::Mechanize::Catalyst' => 'Mech';
-
-my $mech = Mech->new( catalyst_app => 'App::Mimosa' );
+my $mech = Mech->new;
 
 $mech->get_ok('/');
 
