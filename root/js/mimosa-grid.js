@@ -31,6 +31,9 @@ Ext.onReady(function(){
         remoteSort    : true,
     });
 
+    // sort sequence sets by title
+    store.setDefaultSort('title', 'ASC');
+
     // create the Grid
     var xg = Ext.grid;
     var sm = new xg.CheckboxSelectionModel();
@@ -40,7 +43,6 @@ Ext.onReady(function(){
             {
                 id       :'mimosa_sequence_set_id',
                 header   : 'Sequence Set ID',
-                width    : 20,
                 sortable : true,
                 dataIndex: 'mimosa_sequence_set_id'
             },
