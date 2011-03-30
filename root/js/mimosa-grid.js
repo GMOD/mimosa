@@ -63,7 +63,7 @@ Ext.onReady(function(){
                 id       :'description',
                 header   : 'Description',
                 sortable : true,
-                width    : 200,
+                width    : 250,
                 dataIndex: 'description'
             },
             {
@@ -71,18 +71,6 @@ Ext.onReady(function(){
                 header   : 'Alphabet',
                 sortable : true,
                 dataIndex: 'alphabet'
-            },
-            {
-                id       :'source_spec',
-                header   : 'Source spec',
-                sortable : true,
-                dataIndex: 'source_spec'
-            },
-            {
-                id       :'lookup_spec',
-                header   : 'Lookup spec',
-                sortable : true,
-                dataIndex: 'lookup_spec'
             },
             {
                 id       :'info_url',
