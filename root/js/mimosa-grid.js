@@ -62,6 +62,7 @@ Ext.onReady(function(){
                 id       :'description',
                 header   : 'Description',
                 sortable : true,
+                width    : 200,
                 dataIndex: 'description'
             },
             {
