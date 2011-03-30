@@ -1,5 +1,15 @@
 Ext.onReady(function(){
     Ext.QuickTips.init();
+
+    // Apply a set of config properties to the singleton
+    Ext.apply(Ext.QuickTips.getQuickTip(), {
+        showDelay: 0
+        ,trackMouse: true
+        ,mouseOffset: [-60,20] // otherwise Delete tt overruns browser win
+        ,autoWidth: true
+        ,dismissDelay: 0
+    });
+
     var rowRecord = Ext.data.Record.create([
         { name: 'mimosa_sequence_set_id' },
         { name: 'shortname' },
@@ -19,7 +29,6 @@ Ext.onReady(function(){
         root          : 'rows',
         fields        : rowRecord,
         remoteSort    : true,
-        totalProperty : 'total',
     });
 
     // create the Grid
