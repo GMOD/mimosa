@@ -15,22 +15,8 @@
   <input type="hidden" name="outformat" value="0" />
 
   <table id="main_input_form" align="center" summary="" cellpadding="0" cellspacing="15" border="0">
-    <tr><td><b>Organism</b> </td><td>
-<select id="mimosa_organism_id"  onchange=""  name="organism">
-<option>Tomato</option>
-<option>Potato</option>
-<% $organism_html %>
-    </td></tr>
 
-    <tr><td><b>Sequence Set</b> </td><td>
-<select id="mimosa_sequence_set_id"  onchange=""  name="database">
-<% $sequenceset_html %>
-</select>
 <a href="/autocrud/bcs/mimosa_sequence_set">Edit Sequence Sets</a>
-<!--
- <a style="font-size: 80%" title="View details of each database" href="dbinfo.pl">db details</a>
--->
-
 </td></tr>
     <tr><td><b>Program</b> </td><td><select id="simple_selectbox_1"   name="program">
 <option value="blastn">BLASTN (nucleotide to nucleotide)</option>
