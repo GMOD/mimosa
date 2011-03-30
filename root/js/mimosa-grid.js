@@ -29,6 +29,7 @@ Ext.onReady(function(){
         root          : 'rows',
         fields        : rowRecord,
         remoteSort    : true,
+        autoLoad      : true,
     });
 
     // sort sequence sets by title
