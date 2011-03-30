@@ -111,7 +111,7 @@ Ext.onReady(function(){
         // autoExpandColumn: 'shortname',
         height: 350,
         width: '100%',
-        title: 'Available BLAST Databases',
+        title: 'Available Sequence Sets',
         // config options for stateful behavior
         stateful: true,
         stateId: 'grid'
