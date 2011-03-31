@@ -31,6 +31,7 @@ Ext.onReady(function(){
         remoteSort    : true,
         autoLoad      : true,
     });
+    store.filter('is_public', 1, false, false);
 
     // sort sequence sets by title
     store.setDefaultSort('title', 'DESC');
@@ -67,6 +68,7 @@ Ext.onReady(function(){
                 id       :'title',
                 header   : 'Title',
                 sortable : true,
+                width    : 100,
                 dataIndex: 'title'
             },
             {
@@ -93,13 +95,15 @@ Ext.onReady(function(){
                 header   : 'Update interval',
                 sortable : true,
                 dataIndex: 'update_interval'
-            },
-            {
-                id       :'is_public',
-                header   : 'Public?',
-                sortable : true,
-                dataIndex: 'is_public'
-            },
+            }
+            // This should only be shown if the current user is logged in
+            // and can view private sets
+            //{
+            //    id       :'is_public',
+            //    header   : 'Public?',
+            //    sortable : true,
+            //    dataIndex: 'is_public'
+            //},
         ],
         frame: true,
         iconCls:'icon-grid',
