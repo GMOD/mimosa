@@ -41,6 +41,8 @@ Ext.onReady(function(){
     var sm = new xg.CheckboxSelectionModel({
         listeners: {
             selectionchange: function(sm) {
+                jQuery("#mimosa_sequence_set_id").val( sm.mimosa_sequence_set_id );
+                alert(""+ jQuery("#mimosa_sequence_set_id").val());
                 if (sm.getCount()) {
                     // clicking an unselected checkbox
                 } else {
@@ -105,16 +107,19 @@ Ext.onReady(function(){
             //    dataIndex: 'is_public'
             //},
         ],
+        animCollapse: true,
+        // autoExpandColumn: 'shortname',
+        collapsible: true,
+        columnLines: true,
         frame: true,
         iconCls:'icon-grid',
-        store: store,
         sm: sm,
-        columnLines: true,
+        store: store,
         stripeRows: true,
-        // autoExpandColumn: 'shortname',
         height: 350,
-        width: '100%',
         title: 'Available Sequence Sets',
+        width: '100%',
+
         // config options for stateful behavior
         stateful: true,
         stateId: 'grid'
