@@ -5,6 +5,7 @@ use autodie ':all';
 
 use Bio::SeqIO;
 use Moose::Util::TypeConstraints;
+use Bio::BLAST::Database;
 
 use File::Slurp qw/slurp/;
 use File::Temp qw/tempfile/;
@@ -75,6 +76,14 @@ has filtered => (
 
 sub run {
     my ($self) = @_;
+
+    my $dbname = "foo";
+    my $name = "$ENV{PWD}/examples/data/$dbname";
+    my $db = Bio::BLAST::Database->open(
+        full_file_basename => $name,
+    );
+
+    $db->format_from_file( seqfile => "$name.seq" );
 
     my @blast_cmd = (
         'blastall',

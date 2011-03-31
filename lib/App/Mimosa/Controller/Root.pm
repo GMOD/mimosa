@@ -83,6 +83,8 @@ sub submit :Path('/submit') :Args(0) {
     $input_file->openw->print( $c->req->param('sequence') );
 
     my $ss_id = $c->req->param('mimosa_sequence_set_id');
+    my $ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
+                    ->search({'mimosa_sequence_set_id' => $ss_id })->single;
     my $j;
 
     try {
