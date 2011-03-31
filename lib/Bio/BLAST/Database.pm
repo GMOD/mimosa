@@ -332,11 +332,11 @@ sub format_from_file {
       }
   }
 
-  #now run formatdb, formatting into files with a -mimosa-blast-db-new
+  #now run formatdb, formatting into files with a -blast-db-new
   #appended to the filebase, so the old databases are still available
   #while the format is running
   my $ffbn = $self->full_file_basename;
-  my $new_ffbn = "$ffbn-mimosa-blast-db-new";
+  my $new_ffbn = "$ffbn-blast-db-new";
   my (undef,$ffbn_subdir,undef) = fileparse($ffbn);
   #make sure the destination directories exist.  Create them if not.
   -d $ffbn_subdir or $self->create_dirs && mkpath([$ffbn_subdir])
@@ -356,7 +356,7 @@ sub format_from_file {
            -p => $self->type eq 'protein' ? 'T' : 'F',
          );
 
-  #now if it made an alias file, fix it up to remove the -mimosa-blast-db-new
+  #now if it made an alias file, fix it up to remove the -blast-db-new
   #and the absolute paths, so that when we move it into place, it works
   if( my $aliasfile = do {
           my %exts = ( protein => '.pal', nucleotide => '.nal');
@@ -365,7 +365,7 @@ sub format_from_file {
       }
      ) {
     my $aliases = slurp($aliasfile);
-    $aliases =~ s/-mimosa-blast-db-new//g; #remove the new extension
+    $aliases =~ s/-blast-db-new//g; #remove the new extension
     $aliases =~ s/$ffbn_subdir\/*//g; #remove absolute paths
     CORE::open my $a_fh, '>', $aliasfile or confess "Could not open $aliasfile for writing";
     print $a_fh $aliases;
@@ -378,7 +378,7 @@ sub format_from_file {
   #move the newly formatted files (almost) seamlessly into place
   foreach my $newfile ( sort (_list_files($new_ffbn,$self->type)) ) {
     my $dest = $newfile;
-    $dest =~ s/-mimosa-blast-db-new\./\./;
+    $dest =~ s/-blast-db-new\./\./;
 
     #move it into the right place
     move( $newfile => $dest );
