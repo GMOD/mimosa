@@ -78,7 +78,7 @@ sub run {
 
     my @blast_cmd = (
         'blastall',
-        -d => "$ENV{PWD}/t/data/solanum_peruvianum_mRNA.seq",
+        -d => "$ENV{PWD}/examples/data/solanum_peruvianum_mRNA.seq",
         -M => $self->matrix,
         -b => $self->maxhits,
         -e => $self->evalue,
