@@ -37,7 +37,17 @@ Ext.onReady(function(){
 
     // create the Grid
     var xg = Ext.grid;
-    var sm = new xg.CheckboxSelectionModel();
+    var sm = new xg.CheckboxSelectionModel({
+        listeners: {
+            selectionchange: function(sm) {
+                if (sm.getCount()) {
+                    // clicking an unselected checkbox
+                } else {
+                    // clicking an already selected checkbox
+                }
+            }
+        }
+    });
     var grid = new xg.GridPanel({
         columns: [
             sm,
