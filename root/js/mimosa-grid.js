@@ -41,12 +41,13 @@ Ext.onReady(function(){
     var sm = new xg.CheckboxSelectionModel({
         listeners: {
             selectionchange: function(sm) {
-                jQuery("#mimosa_sequence_set_id").val( sm.mimosa_sequence_set_id );
-                alert(""+ jQuery("#mimosa_sequence_set_id").val());
-                if (sm.getCount()) {
-                    // clicking an unselected checkbox
-                } else {
-                    // clicking an already selected checkbox
+                if (sm.getCount()) { // clicking an unselected checkbox
+                    // This only gets the first selection
+                    var selected_data = sm.getSelected().data;
+                    jQuery("#mimosa_sequence_set_id").html( selected_data['mimosa_sequence_set_id'] );
+                } else { // clicking an already selected checkbox
+                    // Replace the default of 0, which means "no sequence sets are selected"
+                    jQuery("#mimosa_sequence_set_id").html( 0 );
                 }
             }
         }
