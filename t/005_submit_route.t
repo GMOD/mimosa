@@ -23,7 +23,6 @@ my $seq = slurp("t/data/blastdb_test.nucleotide.seq");
 }
 
 {
-    local $TODO = "this no worky";
     my $f = sub {
         return request POST '/submit', [
                     program                => 'blastn',
@@ -33,7 +32,8 @@ my $seq = slurp("t/data/blastdb_test.nucleotide.seq");
                     evalue                 => 0.1,
        ];
     };
-    dies_ok sub { $f->() }, 'submitting without mimosa_sequence_set_id explodes';
+    my $res = $f->();
+    is($res->code, 400, '/submit returns 400 without a mimosa_sequence_set_id');
 }
 
 

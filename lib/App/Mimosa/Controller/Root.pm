@@ -13,6 +13,7 @@ use Bio::SearchIO;
 use Bio::SearchIO::Writer::HTMLResultWriter;
 
 use App::Mimosa::Job;
+use Try::Tiny;
 
 BEGIN { extends 'Catalyst::Controller' }
 with 'Catalyst::Component::ApplicationAttribute';
@@ -82,47 +83,54 @@ sub submit :Path('/submit') :Args(0) {
     $input_file->openw->print( $c->req->param('sequence') );
 
     my $ss_id = $c->req->param('mimosa_sequence_set_id');
-    my $j = App::Mimosa::Job->new(
-        mimosa_sequence_set_id => $ss_id,
-        output_file            => "$output_file",
-        input_file             => "$input_file",
-              map { $_ => $c->req->param($_) || '' }
-            qw/
-               sequence_input program
-               maxhits output_graphs
-               evalue matrix
-              /,
-    );
-    my $error = $j->run;
-    # warning("error = $error");
-    if ($error) {
-        ( $c->stash->{error} = $error ) =~ s!\n!<br />!g;
-        $c->detach( $error =~ /Could not calculate ungapped/i ? '/input_error' : '/error' );
-    } else {
+    my $j;
 
-        # stat the output file before opening it in hopes of avoiding
-        # some kind of bizarre race condition i've been seeing in
-        # which the file doesn't appear to be visible yet to the web
-        # process after blast exits.
-        $output_file->stat;
-
-        my $in = Bio::SearchIO->new(
-                -format => 'blast',
-                -file   => "$output_file",
+    try {
+        $j = App::Mimosa::Job->new(
+            mimosa_sequence_set_id => $ss_id,
+            output_file            => "$output_file",
+            input_file             => "$input_file",
+                map { $_ => $c->req->param($_) || '' }
+                qw/
+                sequence_input program
+                maxhits output_graphs
+                evalue matrix
+                /,
         );
-        my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
-        $writer->start_report(sub {''});
-        $writer->end_report(sub {''});
-        my $report = '';
-        my $out = Bio::SearchIO->new(
-            -writer => $writer,
-            -fh   => IO::String->new( \$report ),
-        );
-        $out->write_result($in->next_result);
+        my $error = $j->run;
+        if ($error) {
+            ( $c->stash->{error} = $error ) =~ s!\n!<br />!g;
+            $c->detach( $error =~ /Could not calculate ungapped/i ? '/input_error' : '/error' );
+        } else {
 
-        $c->stash->{template} = 'report.mason';
-        $c->stash->{report}   = $report;
-    }
+            # stat the output file before opening it in hopes of avoiding
+            # some kind of bizarre race condition i've been seeing in
+            # which the file doesn't appear to be visible yet to the web
+            # process after blast exits.
+            $output_file->stat;
+
+            my $in = Bio::SearchIO->new(
+                    -format => 'blast',
+                    -file   => "$output_file",
+            );
+            my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
+            $writer->start_report(sub {''});
+            $writer->end_report(sub {''});
+            my $report = '';
+            my $out = Bio::SearchIO->new(
+                -writer => $writer,
+                -fh   => IO::String->new( \$report ),
+            );
+            $out->write_result($in->next_result);
+
+            $c->stash->{template} = 'report.mason';
+            $c->stash->{report}   = $report;
+        }
+    } catch {
+        $c->stash->{error} = 'Invalid input';
+        $c->forward('input_error');
+    };
+
 
 }
 
