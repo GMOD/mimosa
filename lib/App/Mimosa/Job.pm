@@ -73,25 +73,29 @@ has filtered => (
     default => 'T',
 );
 
+has db_basename => (
+    isa     => 'Str',
+    is      => 'rw',
+    required => 1,
+);
+
 
 sub run {
     my ($self) = @_;
 
-    my $dbname = "foo";
-    my $name = "$ENV{PWD}/examples/data/$dbname";
     my $db = Bio::BLAST::Database->open(
-        full_file_basename => $name,
+        full_file_basename => $self->db_basename,
     );
 
-    $db->format_from_file( seqfile => "$name.seq" );
+    $db->format_from_file( seqfile => catfile($self->db_basename, "seq.fasta"));
 
     my @blast_cmd = (
         'blastall',
-        -d => "$ENV{PWD}/examples/data/solanum_peruvianum_mRNA.seq",
+        -v => 1,
+        -d => $self->db_basename,
         -M => $self->matrix,
         -b => $self->maxhits,
         -e => $self->evalue,
-        -v => 1,
         -p => $self->program,
         -F => $self->filtered,
         -i => $self->input_file,

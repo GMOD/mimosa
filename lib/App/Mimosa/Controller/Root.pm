@@ -87,8 +87,12 @@ sub submit :Path('/submit') :Args(0) {
                     ->search({'mimosa_sequence_set_id' => $ss_id })->single;
     my $j;
 
+    my $seq_root = $self->_app->config->{sequence_data_dir};
+    my $ss_name  = $ss->shortname;
+
     try {
         $j = App::Mimosa::Job->new(
+            db_basename => "$seq_root/$ss_name",
             mimosa_sequence_set_id => $ss_id,
             output_file            => "$output_file",
             input_file             => "$input_file",
