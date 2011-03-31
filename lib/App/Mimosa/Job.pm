@@ -31,6 +31,11 @@ has program => (
     default => 'blastn',
 );
 
+has mimosa_sequence_set_id => (
+    is      => 'ro',
+    isa     => 'Int',
+);
+
 has input_file => (
     isa => 'Str',
     is  => 'rw',

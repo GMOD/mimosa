@@ -81,9 +81,11 @@ sub submit :Path('/submit') :Args(0) {
     my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.fasta' );
     $input_file->openw->print( $c->req->param('sequence') );
 
+    my $ss_id = $c->req->param('mimosa_sequence_set_id');
     my $j = App::Mimosa::Job->new(
-        output_file    => "$output_file",
-        input_file     => "$input_file",
+        mimosa_sequence_set_id => $ss_id,
+        output_file            => "$output_file",
+        input_file             => "$input_file",
               map { $_ => $c->req->param($_) || '' }
             qw/
                sequence_input program
