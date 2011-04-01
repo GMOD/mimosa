@@ -14,7 +14,7 @@ use File::Basename;
 use File::Copy;
 use File::Path;
 use File::Slurp qw/slurp/;
-use File::Spec::Functions qw/splitdir catdir/;
+use File::Spec::Functions qw/splitdir catdir catfile/;
 
 use IPC::System::Simple 'systemx';
 
@@ -123,8 +123,8 @@ sub open {
         # open succeeds if all the files are there
         return $self if $self->files_are_complete;
 
-        #carp "cannot open for reading, not a complete set of files:\n",
-        #    map "  - $_\n", $self->list_files;
+        carp "cannot open for reading, not a complete set of files:\n",
+            map "  - $_\n", $self->list_files;
         return;
     }
 }
@@ -336,7 +336,11 @@ sub format_from_file {
   #appended to the filebase, so the old databases are still available
   #while the format is running
   my $ffbn = $self->full_file_basename;
-  my $new_ffbn = "$ffbn-mimosa-blast-db-new";
+
+  # TODO: obey create_dirs
+  mkpath(["$ffbn-blast-db-new"]) unless -e "$ffbn-blast-db-new";
+
+  my $new_ffbn = catfile("$ffbn-blast-db-new", 'seq' );
   my (undef,$ffbn_subdir,undef) = fileparse($ffbn);
   #make sure the destination directories exist.  Create them if not.
   -d $ffbn_subdir or $self->create_dirs && mkpath([$ffbn_subdir])
@@ -347,14 +351,16 @@ sub format_from_file {
   }
   -w $ffbn_subdir or croak "Directory '$ffbn_subdir' is not writable\n";
 
-  systemx( 'formatdb',
+  my @formatdb_cmd = ('formatdb',
            -i => $seqfile,
            -n => $new_ffbn,
            ($title ? (-t => $title) : ()),
            -l => '/dev/null',
            -o => $args{indexed_seqs}      ? 'T' : 'F',
            -p => $self->type eq 'protein' ? 'T' : 'F',
-         );
+  );
+
+  systemx(@formatdb_cmd);
 
   #now if it made an alias file, fix it up to remove the -mimosa-blast-db-new
   #and the absolute paths, so that when we move it into place, it works
@@ -391,7 +397,7 @@ sub format_from_file {
   #delete any old files that were not overwritten
   if(@oldfiles) {
     unlink @oldfiles;
-    carp "WARNING: these files for database ".$self->file_base." are no longer used and have been removed:\n",map {"-$_\n"} @oldfiles;
+    carp "WARNING: these files for database ".$self->full_file_basename." are no longer used and have been removed:\n",map {"-$_\n"} @oldfiles;
   }
 
 

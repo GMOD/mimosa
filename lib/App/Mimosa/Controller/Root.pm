@@ -12,6 +12,7 @@ use Path::Class;
 
 use Bio::SearchIO;
 use Bio::SearchIO::Writer::HTMLResultWriter;
+use File::Spec::Functions;
 
 use App::Mimosa::Job;
 use Try::Tiny;
@@ -101,6 +102,7 @@ sub submit :Path('/submit') :Args(0) {
         $j = App::Mimosa::Job->new(
             db_basename            => $db_basename,
             mimosa_sequence_set_id => $ss_id,
+            alphabet               => $ss[0]->alphabet,
             output_file            => "$output_file",
             input_file             => "$input_file",
                 map { $_ => $c->req->param($_) || '' }

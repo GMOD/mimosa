@@ -24,11 +24,6 @@ BEGIN {
     delete $ENV{APP_MIMOSA_SERVER};
     $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} = 'testing';
 
-    # TODO: Look this up in app_mimosa_testing.conf
-    unless (-e "mimosa_test.db") {
-        system("$^X -Ilib ./script/mimosa_deploy.pl app_mimosa_testing.conf");
-
-    }
 }
 
 # load the app, grab the context object so we can use it for configuration

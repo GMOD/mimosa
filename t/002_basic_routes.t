@@ -1,12 +1,12 @@
-use Test::Most tests => 9;
+use Test::Most tests => 10;
 use strict;
 use warnings;
 
 use lib 't/lib';
 use App::Mimosa::Test;
-#use Test::DBIx::Class;
+use Test::DBIx::Class;
 
-#fixtures_ok 'basic';
+fixtures_ok 'basic';
 
 action_ok '/', 'a route handler is defined for /';
 action_ok '/poweredby', 'a route handler is defined for /poweredby';
