@@ -56,18 +56,6 @@ Ext.onReady(function(){
         columns: [
             sm,
             {
-                id       :'mimosa_sequence_set_id',
-                header   : 'Sequence Set ID',
-                sortable : true,
-                dataIndex: 'mimosa_sequence_set_id'
-            },
-            {
-                id       :'shortname',
-                header   : 'Short Name',
-                sortable : true,
-                dataIndex: 'shortname'
-            },
-            {
                 id       :'title',
                 header   : 'Title',
                 sortable : true,
@@ -78,7 +66,7 @@ Ext.onReady(function(){
                 id       :'description',
                 header   : 'Description',
                 sortable : true,
-                width    : 250,
+                width    : 400,
                 dataIndex: 'description'
             },
             {
@@ -86,18 +74,6 @@ Ext.onReady(function(){
                 header   : 'Alphabet',
                 sortable : true,
                 dataIndex: 'alphabet'
-            },
-            {
-                id       :'info_url',
-                header   : 'Info URL',
-                sortable : true,
-                dataIndex: 'info_url'
-            },
-            {
-                id       :'update_interval',
-                header   : 'Update interval',
-                sortable : true,
-                dataIndex: 'update_interval'
             }
             // This should only be shown if the current user is logged in
             // and can view private sets
