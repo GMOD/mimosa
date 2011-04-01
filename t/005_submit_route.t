@@ -17,7 +17,7 @@ my $seq = slurp("t/data/blastdb_test.nucleotide.seq");
                     maxhits                => 100,
                     matrix                 => 'BLOSUM62',
                     evalue                 => 0.1,
-                    mimosa_sequence_set_id => 42,
+                    mimosa_sequence_set_id => 1,
     ];
     is($response->code, 200, '/submit returns 200');
 }

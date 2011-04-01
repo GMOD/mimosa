@@ -4,6 +4,7 @@ use namespace::autoclean;
 
 use File::Temp qw/tempfile/;
 use IO::String;
+use File::Spec::Functions;
 
 use Storable 'freeze';
 use Digest::SHA1 'sha1_hex';
@@ -83,16 +84,19 @@ sub submit :Path('/submit') :Args(0) {
     $input_file->openw->print( $c->req->param('sequence') );
 
     my $ss_id = $c->req->param('mimosa_sequence_set_id');
-    my $ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
-                    ->search({'mimosa_sequence_set_id' => $ss_id })->single;
+    my ($ss) = $c->model('BCS')->resultset('Mimosa::SequenceSet')
+                    ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
     my $j;
 
-    my $seq_root = $self->_app->config->{sequence_data_dir};
-    my $ss_name  = $ss->shortname;
+    my $seq_root = $self->_app->config->{sequence_data_dir} || 'examples/data';
+    my $ss_name  = $ss->next->shortname();
+    my $db_basename = catfile($seq_root,$ss_name);
+
+    use Data::Dumper; warn Dumper [ $ss, $db_basename ];
 
     try {
         $j = App::Mimosa::Job->new(
-            db_basename => "$seq_root/$ss_name",
+            db_basename            => $db_basename,
             mimosa_sequence_set_id => $ss_id,
             output_file            => "$output_file",
             input_file             => "$input_file",
@@ -133,7 +137,7 @@ sub submit :Path('/submit') :Args(0) {
             $c->stash->{report}   = $report;
         }
     } catch {
-        $c->stash->{error} = 'Invalid input';
+        $c->stash->{error} = "Invalid input: $@",
         $c->forward('input_error');
     };
 
