@@ -8,8 +8,9 @@ use App::Mimosa::Test;
 use Catalyst::Test 'App::Mimosa';
 use File::Slurp qw/slurp/;
 use HTTP::Request::Common;
+use File::Spec::Functions;
 
-my $seq = slurp("t/data/blastdb_test.nucleotide.seq");
+my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide seq.fasta/));
 {
     my $response = request POST '/submit', [
                     program                => 'blastn',

@@ -65,7 +65,7 @@ for my $t ( \@t, [reverse @t] ) {
 
 foreach my $type ('nucleotide','protein') {
 
-    my $test_seq_file = catfile( $DATADIR, "blastdb_test.$type.seq" );
+    my $test_seq_file = catfile( $DATADIR, "blastdb_test.$type", 'seq.fasta' );
 
     #use Smart::Comments;
     ### test new creation...
@@ -204,7 +204,7 @@ throws_ok {
 chmod 0744,$permdir;
 ok(! $fs3->check_format_permissions, 'check_format_permissions OK again' );
 
-my $test_seq_file = catfile( $DATADIR, "blastdb_test.nucleotide.seq" );
+my $test_seq_file = catfile( $DATADIR, "blastdb_test.nucleotide","seq.fasta" );
 $fs3->format_from_file( seqfile => $test_seq_file );
 my @newfiles = $fs3->list_files;
 is( scalar @newfiles, 3, 'format succeeded in new dir' );
