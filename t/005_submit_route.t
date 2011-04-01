@@ -1,4 +1,4 @@
-use Test::Most tests => 2;
+use Test::Most tests => 3;
 use strict;
 use warnings;
 
@@ -20,6 +20,17 @@ my $seq = slurp("t/data/blastdb_test.nucleotide.seq");
                     mimosa_sequence_set_id => 42,
     ];
     is($response->code, 200, '/submit returns 200');
+}
+{
+    my $response = request POST '/submit', [
+                    program                => 'blastn',
+                    sequence               => "small",
+                    maxhits                => 100,
+                    matrix                 => 'BLOSUM62',
+                    evalue                 => 0.1,
+                    mimosa_sequence_set_id => 42,
+    ];
+    is($response->code, 400, "/submit with too small input sequence returns 400");
 }
 
 {
