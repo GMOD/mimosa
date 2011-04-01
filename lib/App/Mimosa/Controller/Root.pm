@@ -84,15 +84,18 @@ sub submit :Path('/submit') :Args(0) {
     $input_file->openw->print( $c->req->param('sequence') );
 
     my $ss_id = $c->req->param('mimosa_sequence_set_id');
-    my ($ss) = $c->model('BCS')->resultset('Mimosa::SequenceSet')
+    my @ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
                     ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
     my $j;
 
-    my $seq_root = $self->_app->config->{sequence_data_dir} || 'examples/data';
-    my $ss_name  = $ss->next->shortname();
+    unless (@ss) {
+        $c->stash->{error} = 'Invalid mimosa_sequence_set_id';
+        $c->detach('/input_error');
+    }
+    # TODO: support multiple sequence sets in the future
+    my $ss_name     = $ss[0]->shortname();
+    my $seq_root    = $self->_app->config->{sequence_data_dir} || 'examples/data';
     my $db_basename = catfile($seq_root,$ss_name);
-
-    use Data::Dumper; warn Dumper [ $ss, $db_basename ];
 
     try {
         $j = App::Mimosa::Job->new(
