@@ -28,3 +28,11 @@ can be integrated into an existing website via a REST interface.
 Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it
 uses Moose, BioPerl and the Dancer web framework.  On the client side, it uses
 JQuery, JQuery UI.
+
+## How do I start Mimosa ?
+
+    perl script/mimosa_server.pl -p 8080
+
+## How do I get involved?
+
+Please join our mailing list at http://groups.google.com/group/gmod-mimosa
