@@ -59,15 +59,13 @@ Ext.onReady(function(){
                 id       :'title',
                 header   : 'Title',
                 sortable : true,
-                width    : 100,
                 dataIndex: 'title'
             },
             {
                 id       :'description',
                 header   : 'Description',
                 sortable : true,
-                width    : 400,
-                dataIndex: 'description'
+                dataIndex: 'description',
             },
             {
                 id       :'alphabet',
@@ -93,9 +91,9 @@ Ext.onReady(function(){
         sm: sm,
         store: store,
         stripeRows: true,
-        height: 350,
         title: 'Available Sequence Sets',
-        width: '100%',
+        autoWidth: true,
+        autoHeight: true,
 
         // config options for stateful behavior
         stateful: true,
