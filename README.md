@@ -31,6 +31,12 @@ JQuery, JQuery UI.
 
 ## How do I start Mimosa ?
 
+To start Mimosa on the default port of 3000 :
+
+    perl script/mimosa_server.pl
+
+If you want to run it on a specific port, then pass the -p param :
+
     perl script/mimosa_server.pl -p 8080
 
 ## How do I get involved?
