@@ -341,12 +341,12 @@ sub format_from_file {
   my $db_dir = "$ffbn-blast-db-new";
   my $errors;
   unless (-e $db_dir ){
-    mkpath($db_dir, { verbose => 0, error => \$errors });
+    mkpath($db_dir, { verbose => 1, error => \$errors });
   }
 
   die @$errors if defined @$errors;
 
-  my $new_ffbn = catfile("$ffbn-blast-db-new");
+  my $new_ffbn = catdir("$ffbn-blast-db-new");
   my (undef,$ffbn_subdir,undef) = fileparse($ffbn);
   #make sure the destination directories exist.  Create them if not.
   -d $ffbn_subdir or $self->create_dirs && mkpath([$ffbn_subdir])
@@ -359,14 +359,14 @@ sub format_from_file {
 
   my @formatdb_cmd = ('formatdb',
            -i => $seqfile,
-           -n => $new_ffbn,
+           -n => catfile($new_ffbn, 'seq'),
            # $title needs to be cleansed
            # ($title ? (-t => $title) : ()),
            -l => catfile("$new_ffbn",'formatdb.log'),
            -o => $args{indexed_seqs}      ? 'T' : 'F',
            -p => $self->type eq 'protein' ? 'T' : 'F',
   );
-  # warn("@formatdb_cmd");
+  warn("@formatdb_cmd");
 
   systemx(@formatdb_cmd);
 
@@ -549,7 +549,7 @@ sub files_are_complete {
 
   #list of files belonging to this db
   my @files = $self->list_files;
-  # warn "files = @files";
+  warn "files = @files";
 
   #certainly not complete if fewer than 3 files
   return 0 unless @files >= 3;
@@ -609,7 +609,6 @@ sub list_files {
 #and a db type, and returns all the files that go with that database
 sub _list_files {
   my ($ffbn,$type) = @_;
-  # warn "ffbn=$ffbn, type=$type";
 
   #file extensions for each type of blast database
   my %valid_extensions = (
@@ -625,9 +624,12 @@ sub _list_files {
   my @myfiles =
     grep {
       my $file = $_;
-      grep {$file =~ /^$ffbn(\.\d{2})?$_$/} @search_extensions
-    } glob("$ffbn*");
-
+      grep {
+        #warn "regex = $ffbn/seq$_";
+        $file =~ m!^$ffbn/seq$_$!
+        } @search_extensions
+    } glob("$ffbn/*");
+  #use Data::Dumper; warn Dumper [ @myfiles ];
   for (@myfiles) { -f or confess 'sanity check failed' };
 
   return @myfiles;
@@ -707,7 +709,7 @@ sub _read_fastacmd_info {
     my $ffbn = $self->full_file_basename;
     my $cmd = "fastacmd -d $ffbn -I";
     my $fastacmd = `$cmd 2>&1`;
-    #warn "$fastacmd";
+    warn "fastacmd = $cmd 2>&1 ";
 
     my ($title) = $fastacmd =~ /Database:\s*([\s\S]+)sequences/
       or die "could not parse output of fastacmd (0):\n$fastacmd";
