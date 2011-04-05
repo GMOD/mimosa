@@ -95,7 +95,7 @@ sub submit :Path('/submit') :Args(0) {
     }
     # TODO: support multiple sequence sets in the future
     my $ss_name     = $ss[0]->shortname();
-    my $seq_root    = $self->_app->config->{sequence_data_dir} || 'examples/data';
+    my $seq_root    = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
     my $db_basename = catfile($seq_root,$ss_name);
 
     try {
