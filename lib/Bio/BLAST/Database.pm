@@ -549,6 +549,7 @@ sub files_are_complete {
 
   #list of files belonging to this db
   my @files = $self->list_files;
+  # warn "files = @files";
 
   #certainly not complete if fewer than 3 files
   return 0 unless @files >= 3;
@@ -608,11 +609,13 @@ sub list_files {
 #and a db type, and returns all the files that go with that database
 sub _list_files {
   my ($ffbn,$type) = @_;
+  # warn "ffbn=$ffbn, type=$type";
 
   #file extensions for each type of blast database
-  my %valid_extensions = ( protein     => [qw/.psq .phr .pin .psd .psi .pal .pnd .pni/],
-			   nucleotide  => [qw/.nsq .nhr .nin .nsd .nsi .nal .nnd .nni/],
-			 );
+  my %valid_extensions = (
+    protein     => [qw/.psq .phr .pin .psd .psi .pal .pnd .pni/],
+    nucleotide  => [qw/.nsq .nhr .nin .nsd .nsi .nal .nnd .nni/],
+  );
 
   #file extensions for _this_ database
   $valid_extensions{$type} or confess 'invalid type '.$type;

@@ -62,7 +62,7 @@ for my $t ( \@t, [reverse @t] ) {
     unlink $intheway;
 }
 
-
+{
 foreach my $type ('nucleotide','protein') {
 
     my $test_seq_file = catfile( $DATADIR, "blastdb_test.$type", 'seq.fasta' );
@@ -158,28 +158,36 @@ foreach my $type ('nucleotide','protein') {
 
 
     ### test opening
-    my $fs2 = Bio::BLAST::Database->open( full_file_basename => catfile( $DATADIR, "blastdb_test.$type" ) );
-    ok( $fs2, 'db open succeeded' );
-    is( $fs2->sequences_count, $test_seq_count, 'sequences count of opened database looks right' );
-    ok( !$fs2->write, 'write is NOT set on an opened database' );
+    my $test_dir = catfile( $DATADIR, "blastdb_test.$type");
+    ok(-d $test_dir, "the test directory exists and is a directory");
+    diag("test_dir = $test_dir");
+    my $fs2 = Bio::BLAST::Database->open( full_file_basename => $test_dir, type => $type );
+    isa_ok( $fs2, 'Bio::BLAST::Database');
+    if( defined $fs2 ) {
+        is( $fs2->sequences_count, $test_seq_count, 'sequences count of opened database looks right' );
+        ok( !$fs2->write, 'write is NOT set on an opened database' );
 
-    ok( $fs2->files_are_complete, 'newly opened db shows files complete');
-    is( $fs2->type, $type, 'got right type for opened db');
-    ok( ! $fs2->is_split, 'returns false for is_split');
+        ok( $fs2->files_are_complete, 'newly opened db shows files complete');
+        is( $fs2->type, $type, 'got right type for opened db');
+        ok( ! $fs2->is_split, 'returns false for is_split');
 
-    # get_sequence should die since test db not indexed
-    throws_ok {
-        $fs2->get_sequence('whatever')
-    } qr/not.+indexed/i, 'get_sequence dies if db not indexed';
+        # get_sequence should die since test db not indexed
+        throws_ok {
+            $fs2->get_sequence('whatever')
+        } qr/not.+indexed/i, 'get_sequence dies if db not indexed';
 
-    # test to_fasta
-    my $from_db = Bio::SeqIO->new( -fh => $fs2->to_fasta, -format => 'fasta' );
-    my $from_file = Bio::SeqIO->new( -file => $test_seq_file, -format => 'fasta' );
-    while ( my $db = $from_db->next_seq ) {
-        my $bpseq = $from_file->next_seq;
-        my $d = $bpseq->desc; $d =~ s/\s+$//; $bpseq->desc($d); #< strip whitespace from bioperl's defline, because fastacmd strips it
-        same_seqs( $bpseq, $db );
+        # test to_fasta
+        my $from_db = Bio::SeqIO->new( -fh => $fs2->to_fasta, -format => 'fasta' );
+        my $from_file = Bio::SeqIO->new( -file => $test_seq_file, -format => 'fasta' );
+        while ( my $db = $from_db->next_seq ) {
+            my $bpseq = $from_file->next_seq;
+            my $d = $bpseq->desc; $d =~ s/\s+$//; $bpseq->desc($d); #< strip whitespace from bioperl's defline, because fastacmd strips it
+            same_seqs( $bpseq, $db );
+        }
+    } else {
+        ok(0, "failed to open $test_dir");
     }
+}
 }
 
 # compares two Bio::PrimarySeqI objects - 5 tests
