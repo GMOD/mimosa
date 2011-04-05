@@ -39,6 +39,17 @@ If you want to run it on a specific port, then pass the -p param :
 
     perl script/mimosa_server.pl -p 8080
 
+## How do I configure Mimosa ?
+
+The file called "app_mimosa.conf" contaings your configuration. In it, you can
+tell Mimosa what your database backend is (SQLite, MySQL, PostgreSQL, Oracle, and
+anything else that DBI supports) and set various paramters. Here is a partial list:
+
+    min_sequence_input_length 6
+
+This sets the smallest sequence input length. If a sequence smaller than this length
+is submitted, an exception is thrown and an error page is shown to the user.
+
 ## How do I get involved?
 
 Please join our mailing list at http://groups.google.com/group/gmod-mimosa
