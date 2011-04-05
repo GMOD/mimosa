@@ -332,7 +332,7 @@ sub format_from_file {
       }
   }
 
-  #now run formatdb, formatting into files with a -mimosa-blast-db-new
+  #now run formatdb, formatting into files with a -blast-db-new
   #appended to the filebase, so the old databases are still available
   #while the format is running
   my $ffbn = $self->full_file_basename;
@@ -362,7 +362,7 @@ sub format_from_file {
 
   systemx(@formatdb_cmd);
 
-  #now if it made an alias file, fix it up to remove the -mimosa-blast-db-new
+  #now if it made an alias file, fix it up to remove the -blast-db-new
   #and the absolute paths, so that when we move it into place, it works
   if( my $aliasfile = do {
           my %exts = ( protein => '.pal', nucleotide => '.nal');
@@ -371,7 +371,7 @@ sub format_from_file {
       }
      ) {
     my $aliases = slurp($aliasfile);
-    $aliases =~ s/-mimosa-blast-db-new//g; #remove the new extension
+    $aliases =~ s/-blast-db-new//g; #remove the new extension
     $aliases =~ s/$ffbn_subdir\/*//g; #remove absolute paths
     CORE::open my $a_fh, '>', $aliasfile or confess "Could not open $aliasfile for writing";
     print $a_fh $aliases;
@@ -384,7 +384,7 @@ sub format_from_file {
   #move the newly formatted files (almost) seamlessly into place
   foreach my $newfile ( sort (_list_files($new_ffbn,$self->type)) ) {
     my $dest = $newfile;
-    $dest =~ s/-mimosa-blast-db-new\./\./;
+    $dest =~ s/-blast-db-new\./\./;
 
     #move it into the right place
     move( $newfile => $dest );
@@ -503,8 +503,7 @@ sub check_format_permissions {
       $err_str .= "Blast DB component file $_ exists, but is not overwritable\n";
     }
   }
-  return $err_str if $err_str;
-  return;
+  die $err_str if $err_str;
 }
 
 =head2 is_split
