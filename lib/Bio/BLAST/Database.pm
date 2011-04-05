@@ -338,9 +338,15 @@ sub format_from_file {
   my $ffbn = $self->full_file_basename;
 
   # TODO: obey create_dirs
-  mkpath(["$ffbn-blast-db-new"]) unless -e "$ffbn-blast-db-new";
+  my $db_dir = "$ffbn-blast-db-new";
+  my $errors;
+  unless (-e $db_dir ){
+    mkpath($db_dir, { verbose => 0, error => \$errors });
+  }
 
-  my $new_ffbn = catfile("$ffbn-blast-db-new", 'seq' );
+  die @$errors if defined @$errors;
+
+  my $new_ffbn = catfile("$ffbn-blast-db-new");
   my (undef,$ffbn_subdir,undef) = fileparse($ffbn);
   #make sure the destination directories exist.  Create them if not.
   -d $ffbn_subdir or $self->create_dirs && mkpath([$ffbn_subdir])
@@ -354,11 +360,13 @@ sub format_from_file {
   my @formatdb_cmd = ('formatdb',
            -i => $seqfile,
            -n => $new_ffbn,
-           ($title ? (-t => $title) : ()),
-           -l => '/dev/null',
+           # $title needs to be cleansed
+           # ($title ? (-t => $title) : ()),
+           -l => catfile("$new_ffbn",'formatdb.log'),
            -o => $args{indexed_seqs}      ? 'T' : 'F',
            -p => $self->type eq 'protein' ? 'T' : 'F',
   );
+  # warn("@formatdb_cmd");
 
   systemx(@formatdb_cmd);
 
