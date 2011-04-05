@@ -138,11 +138,15 @@ sub submit :Path('/submit') :Args(0) {
             );
             $out->write_result($in->next_result);
 
+            # TODO: Fix this stuff upstream
+            $report =~ s!\Q<CENTER><H1><a href="http://bioperl.org">Bioperl</a> Reformatted HTML of BLASTN Search Report<br> for </H1></CENTER>\E!!g;
+            $report =~ s!<p><p><hr><h5>Produced by Bioperl .*\$</h5>!!gs;
+
             $c->stash->{template} = 'report.mason';
             $c->stash->{report}   = $report;
         }
     } catch {
-        $c->stash->{error} = "Invalid input: $@",
+        $c->stash->{error} = "Invalid input: $_",
         $c->forward('input_error');
     };
 
