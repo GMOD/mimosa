@@ -14,7 +14,7 @@ use File::Basename;
 use File::Copy;
 use File::Path;
 use File::Slurp qw/slurp/;
-use File::Spec::Functions qw/splitdir catdir catfile/;
+use File::Spec::Functions qw/splitdir catdir/;
 
 use IPC::System::Simple 'systemx';
 
@@ -123,8 +123,8 @@ sub open {
         # open succeeds if all the files are there
         return $self if $self->files_are_complete;
 
-        carp "cannot open for reading, not a complete set of files:\n",
-            map "  - $_\n", $self->list_files;
+        #carp "cannot open for reading, not a complete set of files:\n",
+        #    map "  - $_\n", $self->list_files;
         return;
     }
 }
@@ -336,17 +336,7 @@ sub format_from_file {
   #appended to the filebase, so the old databases are still available
   #while the format is running
   my $ffbn = $self->full_file_basename;
-
-  # TODO: obey create_dirs
-  my $db_dir = "$ffbn-blast-db-new";
-  my $errors;
-  unless (-e $db_dir ){
-    mkpath($db_dir, { verbose => 1, error => \$errors });
-  }
-
-  die @$errors if defined @$errors;
-
-  my $new_ffbn = catdir("$ffbn-blast-db-new");
+  my $new_ffbn = "$ffbn-blast-db-new";
   my (undef,$ffbn_subdir,undef) = fileparse($ffbn);
   #make sure the destination directories exist.  Create them if not.
   -d $ffbn_subdir or $self->create_dirs && mkpath([$ffbn_subdir])
@@ -357,18 +347,14 @@ sub format_from_file {
   }
   -w $ffbn_subdir or croak "Directory '$ffbn_subdir' is not writable\n";
 
-  my @formatdb_cmd = ('formatdb',
+  systemx( 'formatdb',
            -i => $seqfile,
-           -n => catfile($new_ffbn, 'seq'),
-           # $title needs to be cleansed
-           # ($title ? (-t => $title) : ()),
-           -l => catfile("$new_ffbn",'formatdb.log'),
+           -n => $new_ffbn,
+           ($title ? (-t => $title) : ()),
+           -l => '/dev/null',
            -o => $args{indexed_seqs}      ? 'T' : 'F',
            -p => $self->type eq 'protein' ? 'T' : 'F',
-  );
-  warn("@formatdb_cmd");
-
-  systemx(@formatdb_cmd);
+         );
 
   #now if it made an alias file, fix it up to remove the -blast-db-new
   #and the absolute paths, so that when we move it into place, it works
@@ -405,7 +391,7 @@ sub format_from_file {
   #delete any old files that were not overwritten
   if(@oldfiles) {
     unlink @oldfiles;
-    carp "WARNING: these files for database ".$self->full_file_basename." are no longer used and have been removed:\n",map {"-$_\n"} @oldfiles;
+    carp "WARNING: these files for database ".$self->file_base." are no longer used and have been removed:\n",map {"-$_\n"} @oldfiles;
   }
 
 
@@ -511,7 +497,8 @@ sub check_format_permissions {
       $err_str .= "Blast DB component file $_ exists, but is not overwritable\n";
     }
   }
-  die $err_str if $err_str;
+  return $err_str if $err_str;
+  return;
 }
 
 =head2 is_split
@@ -549,7 +536,6 @@ sub files_are_complete {
 
   #list of files belonging to this db
   my @files = $self->list_files;
-  warn "files = @files";
 
   #certainly not complete if fewer than 3 files
   return 0 unless @files >= 3;
@@ -611,10 +597,9 @@ sub _list_files {
   my ($ffbn,$type) = @_;
 
   #file extensions for each type of blast database
-  my %valid_extensions = (
-    protein     => [qw/.psq .phr .pin .psd .psi .pal .pnd .pni/],
-    nucleotide  => [qw/.nsq .nhr .nin .nsd .nsi .nal .nnd .nni/],
-  );
+  my %valid_extensions = ( protein     => [qw/.psq .phr .pin .psd .psi .pal .pnd .pni/],
+			   nucleotide  => [qw/.nsq .nhr .nin .nsd .nsi .nal .nnd .nni/],
+			 );
 
   #file extensions for _this_ database
   $valid_extensions{$type} or confess 'invalid type '.$type;
@@ -624,9 +609,9 @@ sub _list_files {
   my @myfiles =
     grep {
       my $file = $_;
-        grep {$file =~ /^$ffbn(\.\d{2})?$_$/} @search_extensions
+      grep {$file =~ /^$ffbn(\.\d{2})?$_$/} @search_extensions
     } glob("$ffbn*");
-  #use Data::Dumper; warn Dumper [ @myfiles ];
+
   for (@myfiles) { -f or confess 'sanity check failed' };
 
   return @myfiles;
@@ -706,7 +691,7 @@ sub _read_fastacmd_info {
     my $ffbn = $self->full_file_basename;
     my $cmd = "fastacmd -d $ffbn -I";
     my $fastacmd = `$cmd 2>&1`;
-    warn "fastacmd = $cmd 2>&1 ";
+    #warn "$fastacmd";
 
     my ($title) = $fastacmd =~ /Database:\s*([\s\S]+)sequences/
       or die "could not parse output of fastacmd (0):\n$fastacmd";
