@@ -23,11 +23,26 @@ end users.
 Mimosa plans on being an easy-to-install standalone sequence aligner, which
 can be integrated into an existing website via a REST interface.
 
-## What is Mimosa written in?
+## How do I get Mimosa?
 
-Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it
-uses Moose, BioPerl and the Dancer web framework.  On the client side, it uses
-JQuery, JQuery UI.
+Currently, Mimosa does not have distribution packages, so you must use git. This
+will change as Mimosa gets closer to a public release.
+
+If you have cpanminus:
+
+    git clone git://github.com/GMOD/mimosa.git
+    cd mimosa
+    cpanm --installdeps . # install necessary dependencies
+    perl Build.PL
+    ./Build
+
+If you don't have cpanminus:
+
+    git clone git://github.com/GMOD/mimosa.git
+    cd mimosa
+    perl Build.PL
+    ./Build --installdeps # install necessary dependencies
+    ./Build
 
 ## How do I start Mimosa ?
 
@@ -50,6 +65,15 @@ anything else that DBI supports) and set various paramters. Here is a partial li
 This sets the smallest sequence input length. If a sequence smaller than this length
 is submitted, an exception is thrown and an error page is shown to the user.
 
+## What is Mimosa written in?
+
+Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it
+uses Moose, BioPerl and the Dancer web framework.  On the client side, it uses
+JQuery, JQuery UI.
+
+
 ## How do I get involved?
 
-Please join our mailing list at http://groups.google.com/group/gmod-mimosa
+Please join our mailing list at http://groups.google.com/group/gmod-mimosa and
+take a look at our Github issues for ideas about what we need help with:
+https://github.com/GMOD/mimosa/issues
