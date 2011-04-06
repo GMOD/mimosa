@@ -36,7 +36,7 @@ BEGIN {
 }
 
 
-my $tempdir = tempdir( CLEANUP => 0 );
+my $tempdir = tempdir( CLEANUP => 1);
 
 
 ###  test die cases
@@ -62,31 +62,26 @@ for my $t ( \@t, [reverse @t] ) {
     unlink $intheway;
 }
 
-{
+
 foreach my $type ('nucleotide','protein') {
 
-    my $test_seq_file = catfile( $DATADIR, "blastdb_test.$type", 'seq.fasta' );
-    ok(-e $test_seq_file, "The test sequence file exists");
-    ok(-s $test_seq_file, "The test sequence file has non-zero size");
+    my $test_seq_file = catfile( $DATADIR, "blastdb_test.$type.seq" );
 
     #use Smart::Comments;
     ### test new creation...
-    my $test_ffbn = catfile( $DATADIR, "blastdb_test.$type" );
+    my $test_ffbn = catfile( $tempdir, "testdb_$type" );
 
     throws_ok {
-        Bio::BLAST::Database->open(
-            full_file_basename => $test_ffbn,
-            write              => 1,
-        );
+        Bio::BLAST::Database->open( full_file_basename => $test_ffbn,
+                                      write => 1,
+                                     );
     } qr/type.+could not guess/,
       'de novo creation dies without type';
 
-    warn "ffbn = $test_ffbn/seq";
-    my $fs = Bio::BLAST::Database->open(
-            full_file_basename => "$test_ffbn/seq",
-            type               => $type,
-            write              => 1,
-    );
+    my $fs = Bio::BLAST::Database->open( full_file_basename => $test_ffbn,
+                                           type => $type,
+                                           write => 1,
+                                         );
     is( scalar $fs->list_files, 0, 'new db does not have any files' );
     ok( !$fs->format_time, 'format_time returns nothing for no files');
     ok( !$fs->files_are_complete, 'files_are_complete returns false for empty DB');
@@ -95,7 +90,7 @@ foreach my $type ('nucleotide','protein') {
     is( $fs->type, $type, 'correct initial type');
 
     ### test formatting from file
-    foreach my $index (1,0) {
+    foreach my $index (0,1) {
 
         my $st = time;
         unlink $fs->list_files;
@@ -103,20 +98,17 @@ foreach my $type ('nucleotide','protein') {
         ok(! $fs->check_format_permissions, 'check_format_permissions should be OK' );
 
         my $test_title = "test title,dflgksjdf;\nholycow";
-        $fs->format_from_file(
-                seqfile      => $test_seq_file,
-                title        => $test_title,
-                indexed_seqs => $index,
-        );
-
+        $fs->format_from_file( seqfile => $test_seq_file,
+                               title => $test_title,
+                               indexed_seqs => $index,
+                             );
         my $et = time;
 
         is( scalar $fs->list_files, ($index ? 5 : 3), 'newly formatted db has the right number of files' )
             or diag "actual files:\n",map "  $_\n",$fs->list_files;
-        {
-            local $TODO = "cleanse title before sending it to the command-line";
-            is( $fs->title, $test_title, 'got correct title' );
-        }
+
+        is( $fs->title, $test_title, 'got correct title' );
+
         my $ftime = $fs->format_time;
         # do times within 60 seconds because format_time only has
         # resolution of nearest minute
@@ -127,10 +119,8 @@ foreach my $type ('nucleotide','protein') {
         cmp_ok( $mtime, '>=', $st-1, 'modtime reasonable 1');
         cmp_ok( $mtime, '<=', $et+1, 'modtime reasonable 2');
 
-        {
-            local $TODO = "cleanse title before sending it to the command-line";
-            is( $fs->title, $test_title, 'got correct title' );
-        }
+        is( $fs->title, $test_title, 'got correct title' );
+
         ok( $fs->files_are_complete, 'files read as complete' );
 
         ok( ! $fs->is_split, 'returns false for is_split');
@@ -146,52 +136,43 @@ foreach my $type ('nucleotide','protein') {
         unlink @fake_split;
     }
 
-    #ok( ! defined $fs->get_sequence('this is nonexistent ya ya ya'), 'get_sequence returns undef for nonexistent sequence' );
+    ok( ! defined $fs->get_sequence('this is nonexistent ya ya ya'), 'get_sequence returns undef for nonexistent sequence' );
 
     # $fs should be indexed now, test get_sequence
     my $seqio = Bio::SeqIO->new( -file => $test_seq_file, -format => 'fasta');
     my $test_seq_count = 0;
     while ( my $one = $seqio->next_seq ) {
         my $d = $one->desc; $d =~ s/\s+$//; $one->desc($d); #< strip whitespace from bioperl's defline, because fastacmd strips it
-        # same_seqs( $fs->get_sequence($one->id), $one );
+        same_seqs( $fs->get_sequence($one->id), $one );
         $test_seq_count++;
     }
 
-    # is( $fs->sequences_count, $test_seq_count, 'sequences_count looks right' );
+    is( $fs->sequences_count, $test_seq_count, 'sequences_count looks right' );
 
 
     ### test opening
-    my $test_dir = catfile( $tempdir , "testdb_$type-blast-db-new");
-    ok(-d $test_dir, "the test directory exists and is a directory");
-    diag("test_dir = $test_dir");
-    my $fs2 = Bio::BLAST::Database->open( full_file_basename => "$test_dir", type => $type );
-    isa_ok( $fs2, 'Bio::BLAST::Database');
-    if( defined $fs2 ) {
-        is( $fs2->sequences_count, $test_seq_count, 'sequences count of opened database looks right' );
-        ok( !$fs2->write, 'write is NOT set on an opened database' );
+    my $fs2 = Bio::BLAST::Database->open( full_file_basename => catfile( $DATADIR, "blastdb_test.$type" ) );
+    ok( $fs2, 'db open succeeded' );
+    is( $fs2->sequences_count, $test_seq_count, 'sequences count of opened database looks right' );
+    ok( !$fs2->write, 'write is NOT set on an opened database' );
 
-        ok( $fs2->files_are_complete, 'newly opened db shows files complete');
-        is( $fs2->type, $type, 'got right type for opened db');
-        ok( ! $fs2->is_split, 'returns false for is_split');
+    ok( $fs2->files_are_complete, 'newly opened db shows files complete');
+    is( $fs2->type, $type, 'got right type for opened db');
+    ok( ! $fs2->is_split, 'returns false for is_split');
 
-        # get_sequence should die since test db not indexed
-        throws_ok {
-            $fs2->get_sequence('whatever')
-        } qr/not.+indexed/i, 'get_sequence dies if db not indexed';
+    # get_sequence should die since test db not indexed
+    throws_ok {
+        $fs2->get_sequence('whatever')
+    } qr/not.+indexed/i, 'get_sequence dies if db not indexed';
 
-        # test to_fasta
-        my $from_db   = Bio::SeqIO->new( -fh   => $fs2->to_fasta, -format => 'fasta' );
-        my $from_file = Bio::SeqIO->new( -file => $test_seq_file, -format => 'fasta' );
-
-        while ( my $db = $from_db->next_seq ) {
-            my $bpseq = $from_file->next_seq;
-            my $d = $bpseq->desc; $d =~ s/\s+$//; $bpseq->desc($d); #< strip whitespace from bioperl's defline, because fastacmd strips it
-            same_seqs( $bpseq, $db );
-        }
-    } else {
-        ok(0, "failed to open $test_dir");
+    # test to_fasta
+    my $from_db = Bio::SeqIO->new( -fh => $fs2->to_fasta, -format => 'fasta' );
+    my $from_file = Bio::SeqIO->new( -file => $test_seq_file, -format => 'fasta' );
+    while ( my $db = $from_db->next_seq ) {
+        my $bpseq = $from_file->next_seq;
+        my $d = $bpseq->desc; $d =~ s/\s+$//; $bpseq->desc($d); #< strip whitespace from bioperl's defline, because fastacmd strips it
+        same_seqs( $bpseq, $db );
     }
-}
 }
 
 # compares two Bio::PrimarySeqI objects - 5 tests
@@ -223,7 +204,7 @@ throws_ok {
 chmod 0744,$permdir;
 ok(! $fs3->check_format_permissions, 'check_format_permissions OK again' );
 
-my $test_seq_file = catfile( $DATADIR, "blastdb_test.nucleotide","seq.fasta" );
+my $test_seq_file = catfile( $DATADIR, "blastdb_test.nucleotide.seq" );
 $fs3->format_from_file( seqfile => $test_seq_file );
 my @newfiles = $fs3->list_files;
 is( scalar @newfiles, 3, 'format succeeded in new dir' );
