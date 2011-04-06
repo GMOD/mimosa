@@ -99,12 +99,12 @@ sub run {
         create_dirs        => 1,
     );
 
-    $db->format_from_file( seqfile => catfile($self->db_basename,'seq.fasta') );
+    $db->format_from_file( seqfile => catfile($self->db_basename . '.seq') );
 
     my @blast_cmd = (
         'blastall',
         -v => 1,
-        -d => $self->db_basename . 'blast-db-new',
+        -d => $self->db_basename,
         -M => $self->matrix,
         -b => $self->maxhits,
         -e => $self->evalue,
