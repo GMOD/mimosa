@@ -71,7 +71,7 @@ foreach my $type ('nucleotide','protein') {
 
     #use Smart::Comments;
     ### test new creation...
-    my $test_ffbn = catfile( $tempdir, "testdb_$type" );
+    my $test_ffbn = catfile( $DATADIR, "blastdb_test.$type" );
 
     throws_ok {
         Bio::BLAST::Database->open(
@@ -81,8 +81,9 @@ foreach my $type ('nucleotide','protein') {
     } qr/type.+could not guess/,
       'de novo creation dies without type';
 
+    warn "ffbn = $test_ffbn/seq";
     my $fs = Bio::BLAST::Database->open(
-            full_file_basename => $test_ffbn,
+            full_file_basename => "$test_ffbn/seq",
             type               => $type,
             write              => 1,
     );

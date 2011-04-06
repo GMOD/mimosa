@@ -624,11 +624,8 @@ sub _list_files {
   my @myfiles =
     grep {
       my $file = $_;
-      grep {
-        #warn "regex = $ffbn/seq$_";
-        $file =~ m!^$ffbn/seq$_$!
-        } @search_extensions
-    } glob("$ffbn/*");
+        grep {$file =~ /^$ffbn(\.\d{2})?$_$/} @search_extensions
+    } glob("$ffbn*");
   #use Data::Dumper; warn Dumper [ @myfiles ];
   for (@myfiles) { -f or confess 'sanity check failed' };
 
