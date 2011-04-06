@@ -25,31 +25,42 @@ use Bio::PrimarySeq;
 
 =head1 NAME
 
-Bio::BLAST::Database - represents a formatted blast database on
-disk, which is a set of files, the exact structure of which varies a
-bit with the type and size of the sequence set
+Bio::BLAST::Database - work with formatted BLAST databases
 
 =head1 SYNOPSIS
 
   use Bio::BLAST::Database;
 
   # open an existing bdb for reading
-  my $fs = Bio::BLAST::Database->open( full_file_basename => '/path/to/my_bdb',
-                                       );
+  my $fs = Bio::BLAST::Database->open(
+               full_file_basename => '/path/to/my_bdb',
+             );
+  # will read from /path/to/my_bdb.nin, /path/to/my_bdb.nsq, etc
 
   my @filenames = $fs->list_files;
 
   #reopen it for writing
-  $fs = Bio::BLAST::Database->open( full_file_basename => '/path/to/my_bdb',
-                                      write => 1,
-                                    );
+  $fs = Bio::BLAST::Database->open(
+            full_file_basename => '/path/to/my_bdb',
+            write => 1,
+          );
 
+  # replace it with a different set of sequences
   $fs->format_from_file('myseqs.seq');
 
+  # can also get some metadata about it
+  print "db's title is ".$fs->title;
   print "db was last formatted on ".localtime( $fs->format_time );
   print "db file modification was ".localtime( $fs->file_modtime );
 
 =head1 DESCRIPTION
+
+Each object of this class represents an NCBI-formatted sequence
+database on disk, which is a set of files, the exact structure of
+which varies a bit with the type and size of the sequence set.
+
+This is mostly an object-oriented wrapper for using C<fastacmd> and
+C<formatdb>.
 
 =head1 BASE CLASS(ES)
 
@@ -65,7 +76,11 @@ use base qw/ Class::Accessor::Fast /;
 
 =head2 open
 
-  Usage: my $fs = Bio::BLAST::Database->open({ full_file_basename => $ffbn, write => 1, create_dirs => 1});
+  Usage: my $fs = Bio::BLAST::Database->open({
+                      full_file_basename => $ffbn,
+                      write => 1,
+                      create_dirs => 1,
+                   });
   Desc : open a BlastDB with the given ffbn.
   Args : hashref of params as:
          {  full_file_basename => full path plus basename of files in this blastdb,
@@ -162,11 +177,11 @@ true/false flag for whether to write any files that are in the way when formatte
 
 __PACKAGE__->mk_accessors('write');
 
-# =head2 title
+=head2 title
 
-# title of this blast database, not set yet
+title of this blast database, if set
 
-# =cut
+=cut
 
 __PACKAGE__->mk_accessors('title');
 
