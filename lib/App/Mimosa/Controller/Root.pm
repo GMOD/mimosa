@@ -85,9 +85,9 @@ sub submit :Path('/submit') :Args(0) {
     $input_file->openw->print( $c->req->param('sequence') );
 
     my $ss_id = $c->req->param('mimosa_sequence_set_id');
+
     my @ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
                     ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
-    my $j;
 
     unless (@ss) {
         $c->stash->{error} = 'Invalid mimosa_sequence_set_id';
@@ -98,6 +98,7 @@ sub submit :Path('/submit') :Args(0) {
     my $seq_root    = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
     my $db_basename = catfile($seq_root,$ss_name);
 
+    my $j;
     try {
         $j = App::Mimosa::Job->new(
             db_basename            => $db_basename,

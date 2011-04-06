@@ -5,6 +5,9 @@ use Test::More;
 
 use lib 't/lib';
 use aliased 'App::Mimosa::Test::Mech';
+use Test::DBIx::Class;
+
+fixtures_ok('basic');
 
 my $mech = Mech->new;
 
@@ -13,23 +16,25 @@ $mech->get_ok('/');
 $mech->submit_form_ok({
     form_name => 'main_input_form',
     fields => {
-        sequence => 'ATGCTAGTCGTCGATAGTCGTAGTAGCTGA',
+        sequence               => 'ATGCTAGTCGTCGATAGTCGTAGTAGCTGA',
         mimosa_sequence_set_id => 1,
       },
 },
 'submit single sequence with defaults',
 );
+diag($mech->content) if $mech->status != 200;
 
-$mech->content_contains('Report');
-$mech->content_contains('Altschul');
+$mech->content_contains('Sequences producing significant alignments') or diag $mech->content;
+
+$mech->content_contains('Altschul') or diag $mech->content;;
 
 # now try a spammy submission
 $mech->get_ok('/');
 $mech->submit_form_ok({
     form_name => 'main_input_form',
     fields => {
-        sequence => '<a href="spammy.html">Spammy McSpammerson!</a>',
-        mimosa_sequence_set_id => 0,
+        sequence               => '<a href="spammy.html">Spammy McSpammerson!</a>',
+        mimosa_sequence_set_id => 1,
     },
 });
 $mech->content_like( qr!Hits_to_DB</td>\s*<td>0!i )
@@ -41,7 +46,7 @@ $mech->submit_form(
     form_name => 'main_input_form',
     fields => {
         sequence => '',
-        mimosa_sequence_set_id => 0,
+        mimosa_sequence_set_id => 1,
     },
 );
 $mech->content_like( qr/error/i );
