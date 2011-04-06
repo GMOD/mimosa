@@ -92,4 +92,6 @@ JQuery, JQuery UI.
 
 Please join our mailing list at <http://groups.google.com/group/gmod-mimosa> and
 take a look at our Github issues for ideas about what we need help with:
-<https://github.com/GMOD/mimosa/issues>
+<https://github.com/GMOD/mimosa/issues> . You are also welcome to join the #gmod
+IRC channel on irc.freenode.net, where many GMOD developers hang out and talk
+about various GMOD projects.
