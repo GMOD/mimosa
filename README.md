@@ -44,6 +44,22 @@ If you don't have cpanminus:
     ./Build --installdeps # install necessary dependencies
     ./Build
 
+## How do I run the Mimosa test suite ?
+
+After you have run the command
+
+    perl Build.PL
+
+you can either type:
+
+    ./Build test
+
+or use prove:
+
+    prove -Ilib -rv t/
+
+to run the Mimosa test suite.
+
 ## How do I start Mimosa ?
 
 To start Mimosa on the default port of 3000 :
