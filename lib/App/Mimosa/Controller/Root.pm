@@ -4,6 +4,7 @@ use namespace::autoclean;
 
 use File::Temp qw/tempfile/;
 use IO::String;
+use File::Spec::Functions;
 
 use Storable 'freeze';
 use Digest::SHA1 'sha1_hex';
@@ -11,6 +12,7 @@ use Path::Class;
 
 use Bio::SearchIO;
 use Bio::SearchIO::Writer::HTMLResultWriter;
+use File::Spec::Functions;
 
 use App::Mimosa::Job;
 use Try::Tiny;
@@ -84,11 +86,25 @@ sub submit :Path('/submit') :Args(0) {
     $input_file->openw->print( $c->req->param('sequence') );
 
     my $ss_id = $c->req->param('mimosa_sequence_set_id');
-    my $j;
 
+    my @ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
+                    ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
+
+    unless (@ss) {
+        $c->stash->{error} = 'Invalid mimosa_sequence_set_id';
+        $c->detach('/input_error');
+    }
+    # TODO: support multiple sequence sets in the future
+    my $ss_name     = $ss[0]->shortname();
+    my $seq_root    = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
+    my $db_basename = catfile($seq_root,$ss_name);
+
+    my $j;
     try {
         $j = App::Mimosa::Job->new(
+            db_basename            => $db_basename,
             mimosa_sequence_set_id => $ss_id,
+            alphabet               => $ss[0]->alphabet,
             output_file            => "$output_file",
             input_file             => "$input_file",
                 map { $_ => $c->req->param($_) || '' }
@@ -124,11 +140,15 @@ sub submit :Path('/submit') :Args(0) {
             );
             $out->write_result($in->next_result);
 
+            # TODO: Fix this stuff upstream
+            $report =~ s!\Q<CENTER><H1><a href="http://bioperl.org">Bioperl</a> Reformatted HTML of BLASTN Search Report<br> for </H1></CENTER>\E!!g;
+            $report =~ s!<p><p><hr><h5>Produced by Bioperl .*\$</h5>!!gs;
+
             $c->stash->{template} = 'report.mason';
             $c->stash->{report}   = $report;
         }
     } catch {
-        $c->stash->{error} = 'Invalid input';
+        $c->stash->{error} = "Invalid input: $_",
         $c->forward('input_error');
     };
 

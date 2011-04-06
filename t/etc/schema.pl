@@ -1,5 +1,5 @@
 
-{
+return {
   'schema_class' => 'App::Mimosa::Schema::BCS',
   'connect_info' => App::Mimosa::Test::app->model('BCS')->connect_info,
 
@@ -15,10 +15,10 @@
         'basic' => {
             'Mimosa::SequenceSet' => [
                 [qw/ mimosa_sequence_set_id shortname title description alphabet source_spec lookup_spec info_url update_interval is_public /],
-                [ 1, 'solanum_peruvianum_mrna', 'Solanum peruvianum mRNA sequences', 'mRNA sequences for S. peruvianum', 'nucleotide', '', '', ,'', 30, 1    ],
+                [ 1, 'blastdb_test.nucleotide', 'test db', 'test db', 'nucleotide', '', '', ,'', 30, 1    ],
                 [ 2, 'solanum_foobarium_dna', 'Solanum foobarium DNA sequences', 'DNA sequences for S. foobarium', 'nucleotide', '', '', ,'', 30, 0    ],
                 [ 3, 'Blargopod_foobarium_protein', 'Blargopod foobarium protein sequences', 'Protein sequences for B. foobarium', 'protein', '', '', ,'', 60, 1    ],
               ],
         },
   },
-}
+};

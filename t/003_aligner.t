@@ -1,9 +1,12 @@
-use Test::More tests => 3;
+use Test::Most tests => 4;
 use strict;
 use warnings;
 
 use lib 't/lib';
 use App::Mimosa::Test;
+use Test::DBIx::Class;
+
+fixtures_ok 'basic';
 
 BEGIN{ use_ok 'App::Mimosa::Aligner' }
 

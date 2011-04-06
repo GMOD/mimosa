@@ -8,8 +8,12 @@ use App::Mimosa::Test;
 use Catalyst::Test 'App::Mimosa';
 use File::Slurp qw/slurp/;
 use HTTP::Request::Common;
+use File::Spec::Functions;
+use Test::DBIx::Class;
 
-my $seq = slurp("t/data/blastdb_test.nucleotide.seq");
+fixtures_ok 'basic';
+
+my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
 {
     my $response = request POST '/submit', [
                     program                => 'blastn',
@@ -17,9 +21,11 @@ my $seq = slurp("t/data/blastdb_test.nucleotide.seq");
                     maxhits                => 100,
                     matrix                 => 'BLOSUM62',
                     evalue                 => 0.1,
-                    mimosa_sequence_set_id => 42,
+                    mimosa_sequence_set_id => 1,
+                    alphabet               => 'nucleotide',
     ];
     is($response->code, 200, '/submit returns 200');
+    diag($response->content) if $response->code != 200;
 }
 {
     my $response = request POST '/submit', [
@@ -36,11 +42,12 @@ my $seq = slurp("t/data/blastdb_test.nucleotide.seq");
 {
     my $f = sub {
         return request POST '/submit', [
-                    program                => 'blastn',
-                    sequence               => $seq,
-                    maxhits                => 100,
-                    matrix                 => 'BLOSUM62',
-                    evalue                 => 0.1,
+                    program  => 'blastn',
+                    sequence => $seq,
+                    maxhits  => 100,
+                    alphabet => 'nucleotide',
+                    matrix   => 'BLOSUM62',
+                    evalue   => 0.1,
        ];
     };
     my $res = $f->();

@@ -44,11 +44,12 @@ Ext.onReady(function(){
                 if (sm.getCount()) { // clicking an unselected checkbox
                     // This only gets the first selection
                     var selected_data = sm.getSelected().data;
-                    jQuery("#mimosa_sequence_set_id").html( selected_data['mimosa_sequence_set_id'] );
+                    jQuery("#mimosa_sequence_set_id").val( selected_data['mimosa_sequence_set_id'] );
                 } else { // clicking an already selected checkbox
                     // Replace the default of 0, which means "no sequence sets are selected"
-                    jQuery("#mimosa_sequence_set_id").html( 0 );
+                    jQuery("#mimosa_sequence_set_id").val( 0 );
                 }
+                //alert( jQuery("#mimosa_sequence_set_id").html() );
             }
         }
     });

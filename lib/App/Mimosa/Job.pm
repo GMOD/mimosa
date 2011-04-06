@@ -5,6 +5,8 @@ use autodie ':all';
 
 use Bio::SeqIO;
 use Moose::Util::TypeConstraints;
+use Bio::BLAST::Database;
+use File::Spec::Functions;
 
 use File::Slurp qw/slurp/;
 use File::Temp qw/tempfile/;
@@ -66,23 +68,46 @@ has matrix => (
 
 enum 'BoolStr' => qw(T F);
 
+enum 'Alphabet' => qw(protein nucleotide);
+
+has alphabet => (
+    isa     => 'Alphabet',
+    is      => 'rw',
+    required => 1,
+);
+
 has filtered => (
     isa     => 'BoolStr',
     is      => 'rw',
     default => 'T',
 );
 
+has db_basename => (
+    isa     => 'Str',
+    is      => 'rw',
+    required => 1,
+);
+
 
 sub run {
     my ($self) = @_;
 
+    my $db = Bio::BLAST::Database->open(
+        full_file_basename => $self->db_basename,
+        type               => $self->alphabet,
+        write              => 1,
+        create_dirs        => 1,
+    );
+
+    $db->format_from_file( seqfile => catfile($self->db_basename . '.seq') );
+
     my @blast_cmd = (
         'blastall',
-        -d => "$ENV{PWD}/examples/data/solanum_peruvianum_mRNA.seq",
+        -v => 1,
+        -d => $self->db_basename,
         -M => $self->matrix,
         -b => $self->maxhits,
         -e => $self->evalue,
-        -v => 1,
         -p => $self->program,
         -F => $self->filtered,
         -i => $self->input_file,
