@@ -90,6 +90,6 @@ JQuery, JQuery UI.
 
 ## How do I get involved?
 
-Please join our mailing list at http://groups.google.com/group/gmod-mimosa and
+Please join our mailing list at <http://groups.google.com/group/gmod-mimosa> and
 take a look at our Github issues for ideas about what we need help with:
-https://github.com/GMOD/mimosa/issues
+<https://github.com/GMOD/mimosa/issues>
