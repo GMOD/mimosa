@@ -13,7 +13,7 @@ use Test::DBIx::Class;
 
 fixtures_ok 'basic';
 
-my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide seq.fasta/));
+my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
 {
     my $response = request POST '/submit', [
                     program                => 'blastn',
