@@ -1,5 +1,5 @@
 <%args>
-    $report => 'EMPTY!'
+    $report => 'No hits!'
 </%args>
 <div id="report">
   <% $report %>

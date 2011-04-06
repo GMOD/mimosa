@@ -144,8 +144,12 @@ sub submit :Path('/submit') :Args(0) {
             $report =~ s!\Q<CENTER><H1><a href="http://bioperl.org">Bioperl</a> Reformatted HTML of BLASTN Search Report<br> for </H1></CENTER>\E!!g;
             $report =~ s!<p><p><hr><h5>Produced by Bioperl .*\$</h5>!!gs;
 
-            $c->stash->{template} = 'report.mason';
-            $c->stash->{report}   = $report;
+            if( $report =~ m/Hits_to_DB/ ){
+                $c->stash->{template} = 'report.mason';
+                $c->stash->{report}   = $report;
+            } else {
+                $c->stash->{template} = 'report.mason';
+            }
         }
     } catch {
         $c->stash->{error} = "Invalid input: $_",
