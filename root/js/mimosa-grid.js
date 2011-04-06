@@ -3,11 +3,11 @@ Ext.onReady(function(){
 
     // Apply a set of config properties to the singleton
     Ext.apply(Ext.QuickTips.getQuickTip(), {
-        showDelay: 0
-        ,trackMouse: true
-        ,mouseOffset: [-60,20] // otherwise Delete tt overruns browser win
-        ,autoWidth: true
-        ,dismissDelay: 0
+        showDelay: 0,
+        trackMouse: true,
+        mouseOffset: [-60,20], // otherwise Delete tt overruns browser win
+        autoWidth: true,
+        dismissDelay: 0
     });
 
     var rowRecord = Ext.data.Record.create([
@@ -23,18 +23,31 @@ Ext.onReady(function(){
         { name: 'is_public' }
     ]);
 
+    var writer = new Ext.data.JsonWriter({
+        encode: false,
+    });
     // create the Data Store
     var store = new Ext.data.JsonStore({
-        url: '/autocrud/site/default/schema/bcs/source/mimosa_sequence_set/list',
-        root          : 'rows',
-        fields        : rowRecord,
-        remoteSort    : true,
-        autoLoad      : true,
+        url        : '/autocrud/site/default/schema/bcs/source/mimosa_sequence_set/list',
+        root       : 'rows',
+        fields     : rowRecord,
+        autoSave   : false,
+        autoDestroy: true,
+        remoteSort : true,
+//        autoLoad   : true,
+        writer     : writer,
     });
     store.filter('is_public', 1, false, false);
 
     // sort sequence sets by title
-    store.setDefaultSort('title', 'DESC');
+    store.setDefaultSort('title', 'ASC');
+    store.load({
+        callback: function() {
+            store.removeAt(0);
+        }
+    });
+    store.save();
+
 
     // create the Grid
     var xg = Ext.grid;
@@ -95,6 +108,7 @@ Ext.onReady(function(){
         title: 'Available Sequence Sets',
         autoWidth: true,
         autoHeight: true,
+        stripeRows : true,
 
         // config options for stateful behavior
         stateful: true,
@@ -103,5 +117,6 @@ Ext.onReady(function(){
 
     // render the grid to the specified div in the page
     grid.render('mimosa-grid');
+
 
 });
