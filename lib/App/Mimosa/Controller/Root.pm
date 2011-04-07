@@ -55,6 +55,10 @@ sub index :Path :Args(0) {
     $c->stash->{schema}   = $c->model('Model::BCS');
 }
 
+sub download_raw :Path("/api/report/raw") :Args(1) {
+    my ( $self, $c, $job_id ) = @_;
+}
+
 sub poweredby :Path("/poweredby") :Args(0) {
     my ( $self, $c ) = @_;
 
