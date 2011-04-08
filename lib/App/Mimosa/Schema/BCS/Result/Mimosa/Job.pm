@@ -48,7 +48,7 @@ __PACKAGE__->add_columns(
   { data_type => "datetime", is_nullable => 0 },
 
   'end_time',
-  { data_type => "datetime", is_nullable => 0 },
+  { data_type => "datetime", is_nullable => 1 },
 
 );
 
