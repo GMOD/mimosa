@@ -44,8 +44,11 @@ __PACKAGE__->add_columns(
   'sha1',
   { data_type => "varchar", is_nullable => 0, size => 40 },
 
-  'finished',
-  { data_type => "bool", is_nullable => 0, default => 0 },
+  'start_time',
+  { data_type => "datetime", is_nullable => 0 },
+
+  'end_time',
+  { data_type => "datetime", is_nullable => 0 },
 
 );
 
