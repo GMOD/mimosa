@@ -1,4 +1,4 @@
-package App::Mimosa::Schema::Result::Job;
+package App::Mimosa::Schema::BCS::Result::Mimosa::Job;
 use strict;
 use warnings;
 
@@ -6,7 +6,7 @@ use base 'DBIx::Class::Core';
 
 =head1 NAME
 
-App::Mimosa::Result::Job - Mimosa Job
+App::Mimosa::Schema::BCS::Result::Mimosa::Job - Mimosa Job
 
 =head1 COLUMNS
 
