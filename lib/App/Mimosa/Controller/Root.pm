@@ -57,6 +57,14 @@ sub index :Path :Args(0) {
 
 sub download_raw :Path("/api/report/raw") :Args(1) {
     my ( $self, $c, $job_id ) = @_;
+
+    my $jobs = $c->model('BCS')->resultset('Mimosa::Job');
+    my $rs   = $jobs->search({ mimosa_job_id => $job_id });
+    if ($rs->count) {
+    } else {
+        $c->stash->{error} = 'That job does not exist';
+        $c->detach('/input_error');
+    }
 }
 
 sub poweredby :Path("/poweredby") :Args(0) {
@@ -166,11 +174,26 @@ sub submit :Path('/submit') :Args(0) {
 sub make_job_id :Private {
     my ( $self, $c ) = @_;
 
-    $c->stash->{job_id} = sha1_hex freeze {
+    my $sha1 =  sha1_hex freeze {
         params  => $c->req->parameters,
         uploads => $c->req->uploads,
         #TODO: add the user - user   => $c->user,
     };
+
+    my $rs = $c->model('BCS')->resultset('Mimosa::Job');
+    if ($rs->search( { sha1 => $sha1 })->count == 0) { # not a duplicate job, proceed
+        my $job = $rs->create({
+            sha1 => $sha1,
+            user => 'foo',
+            start_time => '42',
+            # end_time =>
+        });
+        $c->stash->{job_id} = $job->mimosa_job_id();
+    } else { # this is a duplicate, notify user that it is already running
+        # TODO: add more info to the error message
+        $c->stash->{error} = 'This job is already running';
+        $c->detach('/input_error');
+    }
 
 }
 
