@@ -44,6 +44,12 @@ __PACKAGE__->add_columns(
   'sha1',
   { data_type => "varchar", is_nullable => 0, size => 40 },
 
+  # This is text because we will need to interface to many different
+  # kinds of authentication systems. We won't necessarily have a user_id
+  # in our own schema to look up
+  'user',
+  { data_type => 'varchar', is_nullable => 1, size => 64 },
+
   'start_time',
   { data_type => "datetime", is_nullable => 0 },
 
