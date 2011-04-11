@@ -35,6 +35,7 @@ my $builder = Module::Build->new(
         'Catalyst::View::HTML::Mason'            => 0,
         'Class::Accessor::Fast'                  => 0,
         'Config::JFDI'                           => 0,
+        'DateTime'                               => 0,
         'Digest::SHA1'                           => 0,
         'DBIx::Class'                            => '0.08127',
         'File::Temp'                             => 0,

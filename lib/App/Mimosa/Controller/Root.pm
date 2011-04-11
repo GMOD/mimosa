@@ -16,6 +16,7 @@ use File::Spec::Functions;
 
 use App::Mimosa::Job;
 use Try::Tiny;
+use DateTime;
 
 BEGIN { extends 'Catalyst::Controller' }
 with 'Catalyst::Component::ApplicationAttribute';
@@ -183,10 +184,10 @@ sub make_job_id :Private {
     my $rs = $c->model('BCS')->resultset('Mimosa::Job');
     if ($rs->search( { sha1 => $sha1 })->count == 0) { # not a duplicate job, proceed
         my $job = $rs->create({
-            sha1 => $sha1,
-            user => 'foo',
-            start_time => '42',
-            # end_time =>
+            sha1       => $sha1,
+            user       => 'anonymous',
+            start_time => DateTime->now(),
+            end_time   => 'NULL',
         });
         $c->stash->{job_id} = $job->mimosa_job_id();
     } else { # this is a duplicate, notify user that it is already running

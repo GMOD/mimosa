@@ -4,6 +4,9 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
+__PACKAGE__->load_components(qw/InflateColumn::DateTime/);
+
+
 =head1 NAME
 
 App::Mimosa::Schema::BCS::Result::Mimosa::Job - Mimosa Job
