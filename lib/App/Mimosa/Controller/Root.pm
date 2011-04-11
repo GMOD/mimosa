@@ -102,6 +102,7 @@ sub submit :Path('/submit') :Args(0) {
     my $j;
     try {
         $j = App::Mimosa::Job->new(
+            config                 => $self->_app->config,
             db_basename            => $db_basename,
             mimosa_sequence_set_id => $ss_id,
             alphabet               => $ss[0]->alphabet,

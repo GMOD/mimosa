@@ -88,6 +88,9 @@ has db_basename => (
     required => 1,
 );
 
+has config => (
+    is      => 'rw',
+);
 
 sub run {
     my ($self) = @_;
@@ -101,26 +104,32 @@ sub run {
 
     $db->format_from_file( seqfile => catfile($self->db_basename . '.seq') );
 
-    my @blast_cmd = (
-        'blastall',
-        -v => 1,
-        -d => $self->db_basename,
-        -M => $self->matrix,
-        -b => $self->maxhits,
-        -e => $self->evalue,
-        -p => $self->program,
-        -F => $self->filtered,
-        -i => $self->input_file,
-        -o => $self->output_file,
-      );
+    # Consult our configuration to see if qsub should be used
 
-    my $console_output = File::Temp->new;
-    my $success = IPC::Run::run \@blast_cmd, \*STDIN, $console_output, $console_output;
-    $console_output->close;
-    unless( $success ) {
-        return $self->_error_output( $console_output );
+    if( $self->config->{disable_qsub} ) {
+        my @blast_cmd = (
+            'blastall',
+            -v => 1,
+            -d => $self->db_basename,
+            -M => $self->matrix,
+            -b => $self->maxhits,
+            -e => $self->evalue,
+            -p => $self->program,
+            -F => $self->filtered,
+            -i => $self->input_file,
+            -o => $self->output_file,
+        );
+
+        my $console_output = File::Temp->new;
+        my $success = IPC::Run::run \@blast_cmd, \*STDIN, $console_output, $console_output;
+        $console_output->close;
+        unless( $success ) {
+            return $self->_error_output( $console_output );
+        }
+        return;
+    } else { # invoke qsub, if it was detected
+
     }
-    return;
 }
 
 sub _error_output {
