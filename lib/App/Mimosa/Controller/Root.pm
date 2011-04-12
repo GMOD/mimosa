@@ -16,6 +16,7 @@ use File::Spec::Functions;
 
 use App::Mimosa::Job;
 use Try::Tiny;
+use DateTime;
 
 BEGIN { extends 'Catalyst::Controller' }
 with 'Catalyst::Component::ApplicationAttribute';
@@ -53,6 +54,22 @@ sub index :Path :Args(0) {
 
     $c->stash->{template} = 'index.mason';
     $c->stash->{schema}   = $c->model('Model::BCS');
+}
+
+sub download_raw :Path("/api/report/raw") :Args(1) {
+    my ( $self, $c, $job_id ) = @_;
+
+    my $jobs = $c->model('BCS')->resultset('Mimosa::Job');
+    my $rs   = $jobs->search({ mimosa_job_id => $job_id });
+    if ($rs->count) {
+        my $job = $rs->single;
+        $c->stash->{job} = $job;
+        my $output_file = $self->_temp_file( "$job_id.out.fasta" );
+        $c->serve_static_file( $output_file );
+    } else {
+        $c->stash->{error} = 'That job does not exist';
+        $c->detach('/input_error');
+    }
 }
 
 sub poweredby :Path("/poweredby") :Args(0) {
@@ -163,11 +180,39 @@ sub submit :Path('/submit') :Args(0) {
 sub make_job_id :Private {
     my ( $self, $c ) = @_;
 
-    $c->stash->{job_id} = sha1_hex freeze {
+    my $sha1 =  sha1_hex freeze {
         params  => $c->req->parameters,
         uploads => $c->req->uploads,
         #TODO: add the user - user   => $c->user,
     };
+
+    my $rs = $c->model('BCS')->resultset('Mimosa::Job');
+    my $jobs = $rs->search( { sha1 => $sha1 } );
+    if ($jobs->count == 0) { # not a duplicate job, proceed
+        my $job = $rs->create({
+            sha1       => $sha1,
+            user       => 'anonymous',
+            start_time => DateTime->now(),
+            end_time   => 'NULL',
+        });
+        $c->stash->{job_id} = $job->mimosa_job_id();
+    } else { # this is a duplicate, check if it is still running and notify user appropriately
+        my $job = $jobs->single;
+        my ($start,$end) = ($job->start_time, $job->end_time);
+        my $jid          = $job->mimosa_job_id;
+        my $user         = $job->user;
+        # TODO: add more info to the error message
+        if( $end ) { # already finished
+            $c->stash->{error} = <<ERROR;
+This job (# $jid) was started at $start by $user and finished at $end
+ERROR
+        } else {
+            $c->stash->{error} = <<ERROR;
+This job (# $jid) was started at $start by $user and is still running.
+ERROR
+        }
+        $c->detach('/input_error');
+    }
 
 }
 

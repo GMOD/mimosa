@@ -19,6 +19,10 @@ return {
                 [ 2, 'solanum_foobarium_dna', 'Solanum foobarium DNA sequences', 'DNA sequences for S. foobarium', 'nucleotide', '', '', ,'', 30, 0    ],
                 [ 3, 'Blargopod_foobarium_protein', 'Blargopod foobarium protein sequences', 'Protein sequences for B. foobarium', 'protein', '', '', ,'', 60, 1    ],
               ],
+            'Mimosa::Job' => [
+                [qw/mimosa_job_id sha1 user start_time end_time/],
+                [ 1, 'deadbeef', 'blarg', '1010102011', undef, ],
+            ],
         },
   },
 };

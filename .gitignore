@@ -11,3 +11,4 @@ t/logs
 .#*
 #*
 MYMETA.json
+t/data/blastdb_test.nucleotide.nin
