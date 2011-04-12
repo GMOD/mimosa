@@ -62,6 +62,10 @@ sub download_raw :Path("/api/report/raw") :Args(1) {
     my $jobs = $c->model('BCS')->resultset('Mimosa::Job');
     my $rs   = $jobs->search({ mimosa_job_id => $job_id });
     if ($rs->count) {
+        my $job = $rs->single;
+        $c->stash->{job} = $job;
+        my $output_file = $self->_temp_file( "$job_id.out.fasta" );
+        $c->serve_static_file( $output_file );
     } else {
         $c->stash->{error} = 'That job does not exist';
         $c->detach('/input_error');
