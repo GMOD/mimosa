@@ -182,7 +182,8 @@ sub make_job_id :Private {
     };
 
     my $rs = $c->model('BCS')->resultset('Mimosa::Job');
-    if ($rs->search( { sha1 => $sha1 })->count == 0) { # not a duplicate job, proceed
+    my $jobs = $rs->search( { sha1 => $sha1 } );
+    if ($jobs->count == 0) { # not a duplicate job, proceed
         my $job = $rs->create({
             sha1       => $sha1,
             user       => 'anonymous',
@@ -190,9 +191,21 @@ sub make_job_id :Private {
             end_time   => 'NULL',
         });
         $c->stash->{job_id} = $job->mimosa_job_id();
-    } else { # this is a duplicate, notify user that it is already running
+    } else { # this is a duplicate, check if it is still running and notify user appropriately
+        my $job = $jobs->single;
+        my ($start,$end) = ($job->start_time, $job->end_time);
+        my $jid          = $job->mimosa_job_id;
+        my $user         = $job->user;
         # TODO: add more info to the error message
-        $c->stash->{error} = 'This job is already running';
+        if( $job->end_time ) { # already finished
+            $c->stash->{error} = <<ERROR;
+This job (# $jid) was started at $start by $user and finished at $end
+ERROR
+        } else {
+            $c->stash->{error} = <<ERROR;
+This job (# $jid) was started at $start by $user and is still running.
+ERROR
+        }
         $c->detach('/input_error');
     }
 
