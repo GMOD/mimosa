@@ -12,11 +12,18 @@ use Catalyst::Runtime 5.80;
 # Static::Simple: will serve static files from the application's root
 #                 directory
 
-use Catalyst (
+use Catalyst ((
     #'-Debug',
-    'ConfigLoader',
-    'Static::Simple',
-    'AutoCRUD',
+    qw/
+    ConfigLoader
+    Static::Simple
+    AutoCRUD
+    Authentication
+    Authorization::Roles
+    Session
+    Session::State::Cookie
+    Session::Store::FastMmap
+    /)
 );
 
 extends 'Catalyst';
