@@ -197,7 +197,7 @@ sub make_job_id :Private {
         my $jid          = $job->mimosa_job_id;
         my $user         = $job->user;
         # TODO: add more info to the error message
-        if( $job->end_time ) { # already finished
+        if( $end ) { # already finished
             $c->stash->{error} = <<ERROR;
 This job (# $jid) was started at $start by $user and finished at $end
 ERROR

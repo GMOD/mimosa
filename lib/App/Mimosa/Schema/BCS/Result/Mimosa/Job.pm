@@ -28,9 +28,21 @@ requests for jobs that are already running.
 
 Not null, varchar(40).
 
-=head2 finished
+=head2 start_time
 
-Boolean value describing whether this job is finished.
+When the job was submitted.
+
+Not null, datetime.
+
+=head2 end_time
+
+When the job finished. NULL if still running.
+
+=head2 user
+
+User that submitted the job.
+
+Nullable, varchar(64).
 
 =cut
 
