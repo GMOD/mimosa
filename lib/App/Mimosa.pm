@@ -36,9 +36,10 @@ __PACKAGE__->config(
         default_realm => 'members',
         members       => {
             credential  => {
-                class          => 'Password',
-                password_field => 'password',
-                password_type  => 'clear'
+                class              => 'Password',
+                password_field     => 'password',
+                password_type      => 'hashed',
+                password_hash_type => 'SHA-1',
                 },
             store => {
                 class       => 'DBIx::Class',
