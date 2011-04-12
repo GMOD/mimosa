@@ -27,12 +27,28 @@ $VERSION = eval $VERSION;
 # Defaults
 
 __PACKAGE__->config(
-    name => 'Mimosa',
+    name                                                     => 'Mimosa',
     # Disable deprecated behavior needed by old applications
-    disable_component_resolution_regex_fallback => 1,
+    disable_component_resolution_regex_fallback              => 1,
 
-    default_view => 'Mason',
+    default_view                                             => 'Mason',
+    'Plugin::Authentication'                                 => {
+        default_realm => 'members',
+        members       => {
+            credential  => {
+                class          => 'Password',
+                password_field => 'password',
+                password_type  => 'clear'
+                },
+            store => {
+                class       => 'DBIx::Class',
+                user_model  => 'App::Mimosa::Users',
+                role_column => 'roles',
+            }
+        },
+    },
 );
+
 
 # Start the application
 __PACKAGE__->setup();
