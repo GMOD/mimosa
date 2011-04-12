@@ -106,9 +106,8 @@ sub submit :Path('/submit') :Args(0) {
 
     my @ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
                     ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
-
     unless (@ss) {
-        $c->stash->{error} = 'Invalid mimosa_sequence_set_id';
+        $c->stash->{error} = "Invalid mimosa_sequence_set_id";
         $c->detach('/input_error');
     }
     # TODO: support multiple sequence sets in the future

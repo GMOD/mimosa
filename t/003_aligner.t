@@ -6,7 +6,7 @@ use lib 't/lib';
 use App::Mimosa::Test;
 use Test::DBIx::Class;
 
-fixtures_ok 'basic';
+fixtures_ok 'basic_ss';
 
 BEGIN{ use_ok 'App::Mimosa::Aligner' }
 

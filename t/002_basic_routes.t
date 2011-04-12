@@ -6,7 +6,7 @@ use lib 't/lib';
 use App::Mimosa::Test;
 use Test::DBIx::Class;
 
-fixtures_ok 'basic';
+fixtures_ok 'basic_ss';
 
 action_ok '/', 'a route handler is defined for /';
 action_ok '/poweredby', 'a route handler is defined for /poweredby';

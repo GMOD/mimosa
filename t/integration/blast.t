@@ -7,7 +7,7 @@ use lib 't/lib';
 use aliased 'App::Mimosa::Test::Mech';
 use Test::DBIx::Class;
 
-fixtures_ok('basic');
+fixtures_ok('basic_ss');
 
 my $mech = Mech->new;
 

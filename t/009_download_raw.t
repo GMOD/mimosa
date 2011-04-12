@@ -11,7 +11,7 @@ use HTTP::Request::Common;
 use File::Spec::Functions;
 use Test::DBIx::Class;
 
-fixtures_ok 'basic';
+fixtures_ok 'basic_job';
 
 {
     my $response = request GET '/api/report/raw/42', [

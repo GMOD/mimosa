@@ -4,14 +4,14 @@ use warnings;
 
 use lib 't/lib';
 use App::Mimosa::Test;
+use Test::DBIx::Class;
 
 use Catalyst::Test 'App::Mimosa';
 use File::Slurp qw/slurp/;
 use HTTP::Request::Common;
 use File::Spec::Functions;
-use Test::DBIx::Class;
 
-fixtures_ok 'basic';
+fixtures_ok 'basic_ss';
 
 my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
 {
