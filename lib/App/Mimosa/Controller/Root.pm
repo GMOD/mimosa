@@ -190,7 +190,7 @@ sub make_job_id :Private {
     if ($jobs->count == 0) { # not a duplicate job, proceed
         my $job = $rs->create({
             sha1       => $sha1,
-            user       => 'anonymous',
+            user       => $c->user_exists ? $c->user->get('username') : 'anonymous',
             start_time => DateTime->now(),
             end_time   => 'NULL',
         });
