@@ -20,7 +20,8 @@
   <input type="hidden" name="outformat" value="0" />
 </td></tr>
     <tr><td><b>Program</b></td></tr>
-    <tr><td> <select id="simple_selectbox_1"   name="program">
+    <tr><td> <select id="program_selector"   name="program">
+<option value="none">Choose a BLAST program</a>
 <option value="blastn">BLASTN (nucleotide to nucleotide)</option>
 <option value="tblastx">TBLASTX (protein to protein; both database and query are translated)</option>
 <option value="tblastn">TBLASTN (protein to nucleotide; database translated to protein)</option>

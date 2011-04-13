@@ -37,16 +37,15 @@ Ext.onReady(function(){
 //        autoLoad   : true,
         writer     : writer,
     });
-    store.filter('is_public', 1, false, false);
 
     // sort sequence sets by title
     store.setDefaultSort('title', 'ASC');
     store.load({
         callback: function() {
             store.removeAt(0);
+            store.filter('is_public', 1);
         }
     });
-    store.save();
 
 
     // create the Grid
@@ -118,5 +117,21 @@ Ext.onReady(function(){
     // render the grid to the specified div in the page
     grid.render('mimosa-grid');
 
+    // Make the program selector filter the grid
+
+    jQuery("#program_selector").change(function() {
+        var program = jQuery("#program_selector").val();
+
+        // Which databases should we filter?
+        if( program == "blastn" || program == "tblastn") {
+            // only nucleotide databases should be show
+            store.filter('alphabet', 'nucleotide');
+        } else if (program == "tblastx") {
+            // only protein databases
+            store.filter('alphabet', 'protein');
+        } else {
+            store.filter('is_public', 1);
+        }
+    });
 
 });
