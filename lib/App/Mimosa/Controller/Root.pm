@@ -88,6 +88,11 @@ sub _temp_file {
 
 sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
+
+    unless ($self->_app->config->{allow_anonymous}) {
+        $c->stash->{error} = 'Anonymous users are not allowed to submit BLAST jobs. Please log in.';
+        $c->detach('/input_error');
+    }
     $c->forward('make_job_id');
 
     my $min_length = $self->_app->config->{min_sequence_input_length};
