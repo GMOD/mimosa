@@ -98,7 +98,7 @@ sub submit :Path('/submit') :Args(0) {
     my $min_length = $self->_app->config->{min_sequence_input_length};
     # validate input
     unless( length( $c->req->param('sequence') || '' ) >= $min_length ) {
-        $c->stash->{error} = 'Sequence input too short';
+        $c->stash->{error} = "Sequence input too short. Must have a length of at least $min_length";
         $c->detach('/input_error');
     }
 

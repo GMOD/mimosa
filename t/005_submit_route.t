@@ -1,4 +1,4 @@
-use Test::Most tests => 4;
+use Test::Most tests => 5;
 use strict;
 use warnings;
 
@@ -37,6 +37,7 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
                     mimosa_sequence_set_id => 42,
     ];
     is($response->code, 400, "/submit with too small input sequence returns 400");
+    like($response->content,qr/Sequence input too short\. Must have a length of at least 6/, "error explains the min length");
 }
 
 {
