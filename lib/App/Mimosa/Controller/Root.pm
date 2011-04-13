@@ -102,6 +102,11 @@ sub submit :Path('/submit') :Args(0) {
         $c->detach('/input_error');
     }
 
+    if( $c->req->param('program') eq 'none' ) {
+        $c->stash->{error} = "You must select a BLAST program to generate your report with.";
+        $c->detach('/input_error');
+    }
+
     # parse posted info
     my $input_file  = $self->_temp_file( $c->stash->{job_id}.'.in.fasta'  );
     my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.fasta' );
