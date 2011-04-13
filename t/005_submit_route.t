@@ -1,4 +1,4 @@
-use Test::Most tests => 5;
+use Test::Most tests => 6;
 use strict;
 use warnings;
 
@@ -26,6 +26,7 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
     ];
     is($response->code, 200, '/submit returns 200');
     diag($response->content) if $response->code != 200;
+    like($response->content,qr!Download Raw Report.*/api/report/raw/\d+!, 'download raw report link')
 }
 {
     my $response = request POST '/submit', [

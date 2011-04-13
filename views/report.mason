@@ -1,6 +1,11 @@
 <%args>
     $report => 'No hits found! Please try changing some of the advanced options, such as the e-value'
+    $job_id
 </%args>
+<div id="raw_download">
+Download Raw Report <a href="/api/report/raw/<% $job_id %>">Report #<% $job_id %></a>
+</div>
+
 <div id="report">
   <% $report %>
 </div>
