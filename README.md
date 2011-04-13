@@ -90,7 +90,7 @@ jobs for reports.
 ## What is Mimosa written in?
 
 Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it
-uses Moose, BioPerl and the Dancer web framework.  On the client side, it uses
+uses Moose, BioPerl and the Catalyst web framework.  On the client side, it uses
 JQuery, JQuery UI.
 
 
