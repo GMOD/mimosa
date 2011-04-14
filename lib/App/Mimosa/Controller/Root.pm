@@ -114,7 +114,9 @@ sub submit :Path('/submit') :Args(0) {
     # parse posted info
     my $input_file  = $self->_temp_file( $c->stash->{job_id}.'.in.fasta'  );
     my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.fasta' );
-    $input_file->openw->print( $c->req->param('sequence') );
+
+    # If we accepted a POSTed sequence as input, it will be HTML encoded
+    $input_file->openw->print( decode_entities($c->req->param('sequence')) );
 
     my $ss_id = $c->req->param('mimosa_sequence_set_id');
 
@@ -140,8 +142,7 @@ sub submit :Path('/submit') :Args(0) {
             input_file             => "$input_file",
                 map { $_ => $c->req->param($_) || '' }
                 qw/
-                sequence_input program
-                maxhits output_graphs
+                program maxhits output_graphs
                 evalue matrix
                 /,
         );
