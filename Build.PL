@@ -21,6 +21,7 @@ my $builder = Module::Build->new(
         'autodie'                                      => '2.00',
         'Bio::BLAST::Database'                         => '0.2',
         'Bio::Chado::Schema'                           => '0.08100',
+        'Bio::GMOD::Blast::Graph'                      => '0.20',
         'Bio::Root::Version'                           => '1.006009',
         'Catalyst::Action::RenderView'                 => 0,
         'Catalyst::Authentication::Store::DBIx::Class' => 0,
