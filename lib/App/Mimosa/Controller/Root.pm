@@ -177,20 +177,19 @@ sub submit :Path('/submit') :Args(0) {
             $report =~ s!\Q<CENTER><H1><a href="http://bioperl.org">Bioperl</a> Reformatted HTML of BLASTN Search Report<br> for </H1></CENTER>\E!!g;
             $report =~ s!<p><p><hr><h5>Produced by Bioperl .*\$</h5>!!gs;
 
-            my $fh = new FileHandle->new("/tmp/mimosa/blastgraph.$$.tmp");
-
-            my $graph = Bio::GMOD::Blast::Graph->new(
-                                              -outputfile => $output_file,
-                                              -fh         => $fh,
-                                              -dstDir     => "/tmp/mimosa/",
-                                              -dstURL     => "/graphics/",
-                                              -imgName    => $c->stash->{job_id} . '.png',
-                                             );
-            $graph->showGraph;
-
             if( $report =~ m/Hits_to_DB/ ){
+                my $graph_html = '';
+                my $graph = Bio::GMOD::Blast::Graph->new(
+                                                -outputfile => $output_file,
+                                                -format     => 'blast',
+                                                -fh         => IO::String->new( \$graph_html ),
+                                                -dstDir     => "/tmp/mimosa/",
+                                                -dstURL     => "/graphics/",
+                                                -imgName    => $c->stash->{job_id} . '.png',
+                                                );
+                $graph->showGraph;
                 $c->stash->{template} = 'report.mason';
-                $c->stash->{report}   = $report;
+                $c->stash->{report}   = $graph_html . $report;
             } else {
                 $c->stash->{template} = 'report.mason';
             }
