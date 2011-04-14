@@ -17,6 +17,7 @@ use File::Spec::Functions;
 use App::Mimosa::Job;
 use Try::Tiny;
 use DateTime;
+use HTML::Entities;
 
 BEGIN { extends 'Catalyst::Controller' }
 with 'Catalyst::Component::ApplicationAttribute';
@@ -52,8 +53,11 @@ sub index :Path :Args(0) {
     $c->stash->{sequenceset_html} = join '',
             map { "<option value='$_->[0]'> $_->[1] </option>" } @setinfo;
 
-    $c->stash->{template} = 'index.mason';
-    $c->stash->{schema}   = $c->model('Model::BCS');
+    $c->stash->{template}       = 'index.mason';
+    $c->stash->{schema}         = $c->model('Model::BCS');
+
+    # Must encode HTML entities here to prevent XSS attack
+    $c->stash->{sequence_input} = encode_entities($c->req->param('sequence_input')) || '';
 }
 
 sub download_raw :Path("/api/report/raw") :Args(1) {
