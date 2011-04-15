@@ -25,9 +25,7 @@ $mech->submit_form_ok({
 );
 diag($mech->content) if $mech->status != 200;
 
-$mech->content_contains('Sequences producing significant alignments') or diag $mech->content;
-
-$mech->content_contains('Altschul') or diag $mech->content;;
+$mech->content_contains('No hits found') or diag $mech->content;
 
 # now try a spammy submission
 $mech->get_ok('/');
@@ -39,7 +37,7 @@ $mech->submit_form_ok({
         program                => 'blastn',
     },
 });
-$mech->content_like( qr!Hits_to_DB</td>\s*<td>0!i )
+$mech->content_like( qr!No hits found!i )
   or diag $mech->content;
 
 # now try a spammy submission

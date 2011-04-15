@@ -26,7 +26,6 @@ subtype 'SubstitutionMatrix'
                     /^(BLOSUM|PAM)\d\d$/;
                 };
 
-# validate!
 has program => (
     isa     => 'Program',
     is      => 'rw',
@@ -90,6 +89,12 @@ has db_basename => (
 
 has config => (
     is      => 'rw',
+);
+
+has job_id => (
+    is       => 'ro',
+    isa      => 'Int',
+    required => 1,
 );
 
 sub run {

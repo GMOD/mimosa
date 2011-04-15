@@ -13,6 +13,7 @@ use Path::Class;
 use Bio::SearchIO;
 use Bio::SearchIO::Writer::HTMLResultWriter;
 use File::Spec::Functions;
+use Bio::GMOD::Blast::Graph;
 
 use App::Mimosa::Job;
 use Try::Tiny;
@@ -76,6 +77,18 @@ sub download_raw :Path("/api/report/raw") :Args(1) {
     }
 }
 
+sub graphics :Path("/graphics") :Args(1) {
+    my ($self, $c, $filename) = @_;
+
+    my $graphic = catfile($self->_app->config->{tmp_dir},$filename);
+    if (-e $graphic) {
+        $c->serve_static_file($graphic);
+    } else {
+        $c->stash->{error} = 'That graphic does not exist';
+        $c->detach('/input_error');
+    }
+}
+
 sub poweredby :Path("/poweredby") :Args(0) {
     my ( $self, $c ) = @_;
 
@@ -134,6 +147,7 @@ sub submit :Path('/submit') :Args(0) {
     my $j;
     try {
         $j = App::Mimosa::Job->new(
+            job_id                 => $c->stash->{job_id},
             config                 => $self->_app->config,
             db_basename            => $db_basename,
             mimosa_sequence_set_id => $ss_id,
@@ -146,6 +160,11 @@ sub submit :Path('/submit') :Args(0) {
                 evalue matrix
                 /,
         );
+
+        # Regardless of it working, the job is now complete
+        my $rs   = $c->model('BCS')->resultset('Mimosa::Job');
+        $rs->search( { mimosa_job_id => $j->job_id } )->update( { end_time => DateTime->now } );
+
         my $error = $j->run;
         if ($error) {
             ( $c->stash->{error} = $error ) =~ s!\n!<br />!g;
@@ -168,7 +187,7 @@ sub submit :Path('/submit') :Args(0) {
             my $report = '';
             my $out = Bio::SearchIO->new(
                 -writer => $writer,
-                -fh   => IO::String->new( \$report ),
+                -fh     => IO::String->new( \$report ),
             );
             $out->write_result($in->next_result);
 
@@ -176,9 +195,19 @@ sub submit :Path('/submit') :Args(0) {
             $report =~ s!\Q<CENTER><H1><a href="http://bioperl.org">Bioperl</a> Reformatted HTML of BLASTN Search Report<br> for </H1></CENTER>\E!!g;
             $report =~ s!<p><p><hr><h5>Produced by Bioperl .*\$</h5>!!gs;
 
-            if( $report =~ m/Hits_to_DB/ ){
+            if( $report =~ m/Sbjct: / ){
+                my $graph_html = '';
+                my $graph = Bio::GMOD::Blast::Graph->new(
+                                                -outputfile => $output_file,
+                                                -format     => 'blast',
+                                                -fh         => IO::String->new( \$graph_html ),
+                                                -dstDir     => $self->_app->config->{tmp_dir} || "/tmp/mimosa",
+                                                -dstURL     => "/graphics/",
+                                                -imgName    => $c->stash->{job_id} . '.png',
+                                                );
+                $graph->showGraph;
                 $c->stash->{template} = 'report.mason';
-                $c->stash->{report}   = $report;
+                $c->stash->{report}   = $graph_html . $report;
             } else {
                 $c->stash->{template} = 'report.mason';
             }
@@ -207,7 +236,6 @@ sub make_job_id :Private {
             sha1       => $sha1,
             user       => $c->user_exists ? $c->user->get('username') : 'anonymous',
             start_time => DateTime->now(),
-            end_time   => 'NULL',
         });
         $c->stash->{job_id} = $job->mimosa_job_id();
     } else { # this is a duplicate, check if it is still running and notify user appropriately
