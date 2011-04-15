@@ -177,7 +177,7 @@ sub submit :Path('/submit') :Args(0) {
             $report =~ s!\Q<CENTER><H1><a href="http://bioperl.org">Bioperl</a> Reformatted HTML of BLASTN Search Report<br> for </H1></CENTER>\E!!g;
             $report =~ s!<p><p><hr><h5>Produced by Bioperl .*\$</h5>!!gs;
 
-            if( $report =~ m/Hits_to_DB/ ){
+            if( $report =~ m/Sbjct: / ){
                 my $graph_html = '';
                 my $graph = Bio::GMOD::Blast::Graph->new(
                                                 -outputfile => $output_file,
@@ -218,7 +218,6 @@ sub make_job_id :Private {
             sha1       => $sha1,
             user       => $c->user_exists ? $c->user->get('username') : 'anonymous',
             start_time => DateTime->now(),
-            end_time   => 'NULL',
         });
         $c->stash->{job_id} = $job->mimosa_job_id();
     } else { # this is a duplicate, check if it is still running and notify user appropriately
