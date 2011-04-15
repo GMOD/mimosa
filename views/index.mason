@@ -86,7 +86,7 @@
 <option value="bioperl_histogram">all</option>
 <option value="none">none</option>
 <option value="bioperl_only">alignment summary only</option>
-<option value="histogram_only">conservedness histogram only</option>
+<!-- <option value="histogram_only">conservedness histogram only</option> -->
 </select>
 
     </div>
