@@ -78,6 +78,31 @@ $mech->submit_form(
 $mech->content_like( qr/Error!/i);
 is $mech->status, 400, 'input error if no program is selected';
 
+{
 
+    my $fasta = <<FASTA;
+>foo
+TCTGCGAGATGCAGAAACTAAAATAGTTCCAATTCCAATATCTCACAAAGCCACTACCCC
+CCACCCCCACTCCCCCAAAAAAAAGGCTGCCACACTAAGATATAGTAAGGCTCAACCATC
+TAATAAATAAAGAATGAAAATCATTACTGCCTGATTGAGAACTTATTTTGCTAAATAAAA
+FASTA
+
+    $mech->get_ok('/');
+    $mech->submit_form_ok({
+        form_name => 'main_input_form',
+        fields => {
+            mimosa_sequence_set_id => 1,
+            filtered               => 'T',
+            sequence               => $fasta,
+            program                => "blastn",
+        },
+    });
+    diag($mech->content) if $mech->status != 200;
+    $mech->content_like( qr/Sbjct: /, 'got a blast hit');
+
+    my @links = $mech->find_all_links( url_regex => qr!/api/! );
+    $mech->links_ok( \@links, "All /api links work");
+
+}
 
 done_testing;
