@@ -77,6 +77,18 @@ sub download_raw :Path("/api/report/raw") :Args(1) {
     }
 }
 
+sub graphics :Path("/graphics") :Args(1) {
+    my ($self, $c, $filename) = @_;
+
+    my $graphic = catfile($self->_app->config->{tmp_dir},$filename);
+    if (-e $graphic) {
+        $c->serve_static_file($graphic);
+    } else {
+        $c->stash->{error} = 'That graphic does not exist';
+        $c->detach('/input_error');
+    }
+}
+
 sub poweredby :Path("/poweredby") :Args(0) {
     my ( $self, $c ) = @_;
 
@@ -189,7 +201,7 @@ sub submit :Path('/submit') :Args(0) {
                                                 -outputfile => $output_file,
                                                 -format     => 'blast',
                                                 -fh         => IO::String->new( \$graph_html ),
-                                                -dstDir     => "/tmp/mimosa/",
+                                                -dstDir     => $self->_app->config->{tmp_dir} || "/tmp/mimosa",
                                                 -dstURL     => "/graphics/",
                                                 -imgName    => $c->stash->{job_id} . '.png',
                                                 );
