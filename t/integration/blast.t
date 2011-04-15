@@ -103,6 +103,10 @@ FASTA
     my @links = $mech->find_all_links( url_regex => qr!/api/! );
     $mech->links_ok( \@links, "All /api links work");
 
+    for my $img ($mech->find_all_images()) {
+        $mech->get_ok($img->url, $img->url . " works");
+    }
+
 }
 
 done_testing;
