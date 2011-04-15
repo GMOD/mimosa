@@ -135,6 +135,7 @@ sub submit :Path('/submit') :Args(0) {
     my $j;
     try {
         $j = App::Mimosa::Job->new(
+            job_id                 => $c->stash->{job_id},
             config                 => $self->_app->config,
             db_basename            => $db_basename,
             mimosa_sequence_set_id => $ss_id,
@@ -147,6 +148,11 @@ sub submit :Path('/submit') :Args(0) {
                 evalue matrix
                 /,
         );
+
+        # Regardless of it working, the job is now complete
+        my $rs   = $c->model('BCS')->resultset('Mimosa::Job');
+        $rs->search( { mimosa_job_id => $j->job_id } )->update( { end_time => DateTime->now } );
+
         my $error = $j->run;
         if ($error) {
             ( $c->stash->{error} = $error ) =~ s!\n!<br />!g;
