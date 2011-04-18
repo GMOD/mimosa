@@ -5,7 +5,7 @@ use namespace::autoclean;
 use File::Temp qw/tempfile/;
 use IO::String;
 use File::Spec::Functions;
-use File::Slurp qw/write_file/;
+use File::Slurp qw/write_file slurp/;
 
 use Storable 'freeze';
 use Digest::SHA1 'sha1_hex';
@@ -232,6 +232,14 @@ sub submit :Path('/submit') :Args(0) {
 
 }
 
+sub show_cached_report :Private {
+    my ( $self, $c ) = @_;
+
+    $c->stash->{report}   = slurp( $self->_temp_file( $c->stash->{job_id} . '.html' ) );
+    $c->stash->{template} = 'report.mason';
+
+}
+
 sub make_job_id :Private {
     my ( $self, $c ) = @_;
 
@@ -257,9 +265,8 @@ sub make_job_id :Private {
         my $user         = $job->user;
         # TODO: add more info to the error message
         if( $end ) { # already finished
-            $c->stash->{error} = <<ERROR;
-This job (# $jid) was started at $start by $user and finished at $end
-ERROR
+            $c->stash->{job_id} = $jid;
+            $c->detach('/show_cached_report');
         } else {
             $c->stash->{error} = <<ERROR;
 This job (# $jid) was started at $start by $user and is still running.
