@@ -69,7 +69,7 @@ sub download_raw :Path("/api/report/raw") :Args(1) {
     if ($rs->count) {
         my $job = $rs->single;
         $c->stash->{job} = $job;
-        my $output_file = $self->_temp_file( "$job_id.out.fasta" );
+        my $output_file = $self->_temp_file( "$job_id.out.blast" );
         $c->serve_static_file( $output_file );
     } else {
         $c->stash->{error} = 'That job does not exist';
@@ -126,7 +126,7 @@ sub submit :Path('/submit') :Args(0) {
 
     # parse posted info
     my $input_file  = $self->_temp_file( $c->stash->{job_id}.'.in.fasta'  );
-    my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.fasta' );
+    my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.blast' );
 
     # If we accepted a POSTed sequence as input, it will be HTML encoded
     $input_file->openw->print( decode_entities($c->req->param('sequence')) );
