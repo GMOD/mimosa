@@ -5,6 +5,7 @@ use namespace::autoclean;
 use File::Temp qw/tempfile/;
 use IO::String;
 use File::Spec::Functions;
+use File::Slurp qw/write_file/;
 
 use Storable 'freeze';
 use Digest::SHA1 'sha1_hex';
@@ -195,6 +196,9 @@ sub submit :Path('/submit') :Args(0) {
             $report =~ s!\Q<CENTER><H1><a href="http://bioperl.org">Bioperl</a> Reformatted HTML of BLASTN Search Report<br> for </H1></CENTER>\E!!g;
             $report =~ s!<p><p><hr><h5>Produced by Bioperl .*\$</h5>!!gs;
 
+            my $cached_report_file = $self->_temp_file( $c->stash->{job_id}.'.html' );
+            my $report_html;
+
             if( $report =~ m/Sbjct: / ){
                 my $graph_html = '';
                 my $graph = Bio::GMOD::Blast::Graph->new(
@@ -206,11 +210,19 @@ sub submit :Path('/submit') :Args(0) {
                                                 -imgName    => $c->stash->{job_id} . '.png',
                                                 );
                 $graph->showGraph;
-                $c->stash->{template} = 'report.mason';
-                $c->stash->{report}   = $graph_html . $report;
+
+                $report_html        = $graph_html . $report;
+                $c->stash->{report} = $report_html;
             } else {
-                $c->stash->{template} = 'report.mason';
+                # Don't show a report if there were no hits.
+                # The user can always download the raw report if they want.
+                # This is why we don't assign to $c->stash->{report}
+
+                $report_html  = $report;
             }
+            $c->stash->{template} = 'report.mason';
+
+            write_file( $cached_report_file, $report_html );
         }
     } catch {
         $c->stash->{error} = "Invalid input: $_",

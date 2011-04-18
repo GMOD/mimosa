@@ -45,6 +45,7 @@ my $builder = Module::Build->new(
         'Digest::SHA1'                                 => 0,
         'DBIx::Class'                                  => '0.08127',
         'File::Temp'                                   => 0,
+        'File::Slurp'                                  => '9999.15',
         'HTML::Entities'                               => 0,
         'IPC::Run'                                     => 0,
         'IPC::System::Simple'                          => 0,

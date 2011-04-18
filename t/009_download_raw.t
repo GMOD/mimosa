@@ -24,5 +24,5 @@ fixtures_ok 'basic_job';
     my $response = request GET '/api/report/raw/1', [
     ];
     is($response->code, 200, 'get a raw report');
-    like($response->content,qr/Reference: Altschul, Stephen F/);
+    like($response->content,qr/Altschul, Stephen F/);
 }
