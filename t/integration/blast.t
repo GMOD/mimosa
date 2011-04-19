@@ -87,6 +87,7 @@ CCACCCCCACTCCCCCAAAAAAAAGGCTGCCACACTAAGATATAGTAAGGCTCAACCATC
 TAATAAATAAAGAATGAAAATCATTACTGCCTGATTGAGAACTTATTTTGCTAAATAAAA
 FASTA
 
+sub test_blast_hits() {
     $mech->get_ok('/');
     $mech->submit_form_ok({
         form_name => 'main_input_form',
@@ -106,6 +107,14 @@ FASTA
     for my $img ($mech->find_all_images()) {
         $mech->get_ok($img->url, $img->url . " works");
     }
+
+}
+    test_blast_hits();
+
+    # We do this again to verify that already-generated
+    # reports are cached and the user is redirected to them
+
+    test_blast_hits();
 
 }
 
