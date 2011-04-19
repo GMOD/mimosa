@@ -50,6 +50,7 @@ my $builder = Module::Build->new(
         'IPC::Run'                                     => 0,
         'IPC::System::Simple'                          => 0,
         'IO::String'                                   => 0,
+        'JSON::Any'                                    => '1.25',
         'Moose'                                        => '1.19',
         'SQL::Translator'                              => '0.11007',
         'namespace::autoclean'                         => 0,

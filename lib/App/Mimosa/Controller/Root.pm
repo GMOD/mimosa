@@ -1,6 +1,7 @@
 package App::Mimosa::Controller::Root;
 use Moose;
 use namespace::autoclean;
+use JSON::Any;
 
 use File::Temp qw/tempfile/;
 use IO::String;
@@ -60,6 +61,12 @@ sub index :Path :Args(0) {
 
     # Must encode HTML entities here to prevent XSS attack
     $c->stash->{sequence_input} = encode_entities($c->req->param('sequence_input')) || '';
+}
+
+# Serve customn JSON to the ExtJS grid
+sub grid_json :Path("/api/grid/json.json") :Args(0) {
+    my ( $self, $c, $job_id ) = @_;
+
 }
 
 sub download_raw :Path("/api/report/raw") :Args(1) {
