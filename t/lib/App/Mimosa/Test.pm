@@ -22,7 +22,10 @@ our @EXPORT = (
 BEGIN {
     delete $ENV{CATALYST_SERVER};
     delete $ENV{APP_MIMOSA_SERVER};
-    $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} = 'testing';
+
+    # if it set before loading this module, the test file specified a non-default config file,
+    # so we only set this if it is undefined
+    $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} ||= 'testing';
 
 }
 
