@@ -81,7 +81,7 @@ is $mech->status, 400, 'input error if no program is selected';
 {
 
     my $fasta = <<FASTA;
->foo
+>OMGBBQWTF
 TCTGCGAGATGCAGAAACTAAAATAGTTCCAATTCCAATATCTCACAAAGCCACTACCCC
 CCACCCCCACTCCCCCAAAAAAAAGGCTGCCACACTAAGATATAGTAAGGCTCAACCATC
 TAATAAATAAAGAATGAAAATCATTACTGCCTGATTGAGAACTTATTTTGCTAAATAAAA
@@ -100,6 +100,7 @@ sub test_blast_hits() {
     });
     diag($mech->content) if $mech->status != 200;
     $mech->content_like( qr/Sbjct: /, 'got a blast hit');
+    $mech->content_like( qr/OMGBBQWTF/, 'fasta defline found in report');
 
     my @links = $mech->find_all_links( url_regex => qr!/api/! );
     $mech->links_ok( \@links, "All /api links work");
