@@ -14,6 +14,7 @@ my $builder = Module::Build->new(
         'Test::DBIx::Class'              => 0,
         'Test::Most'                     => 0,
         'Test::WWW::Mechanize::Catalyst' => 0,
+        'Test::JSON'                     => '0.11',
     },
     recursive_test_files => 1,
     requires => {
