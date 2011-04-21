@@ -1,4 +1,4 @@
-use Test::Most tests => 3;
+use Test::Most tests => 6;
 use strict;
 use warnings;
 
@@ -12,5 +12,12 @@ fixtures_ok 'basic_ss';
 action_ok '/api/grid/json.json';
 
 my $r = request('/api/grid/json.json');
+my $content = $r->content;
 
-is_valid_json( $r->content, 'it returns valid JSON');
+is_valid_json( $content, 'it returns valid JSON');
+cmp_ok(length $content,'>', 3, 'got non-empty-looking content');
+
+like($content, qr/mimosa_sequence_set_id/, 'mimosa_sequence_set_id appears in JSON');
+like($content, qr/description/, 'description appears in JSON');
+
+#diag $content;
