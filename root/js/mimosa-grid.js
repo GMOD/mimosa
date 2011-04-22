@@ -58,6 +58,12 @@ Ext.onReady(function(){
         columns: [
             sm,
             {
+                id       :'mimosa_sequence_set_id',
+                header   : 'Id',
+                sortable : true,
+                dataIndex: 'mimosa_sequence_set_id'
+            },
+            {
                 id       :'name',
                 header   : 'Name',
                 sortable : true,
