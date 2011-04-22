@@ -13,6 +13,14 @@ sub grid_json :Path("/api/grid/json.json") :ActionClass('REST') :Local { }
 # Answer GET requests to the above Path
 sub grid_json_GET {
     my ( $self, $c ) = @_;
+
+    my $data = _grid_json_data($c);
+    # Return a 200 OK, with the data in entity serialized in the body
+    $self->status_ok( $c, entity => $data );
+}
+
+sub _grid_json_data {
+    my ($c) = @_;
     my $bcs = $c->model('BCS');
 
     # Mimosa resultsets
@@ -23,7 +31,7 @@ sub grid_json_GET {
     my $org_rs = $bcs->resultset('Organism');
     my ($common_name, $binomial, $name);
 
-    my $data = [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
+    return [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
                         if ($rs->count) {
                             my $org      = $org_rs->find( { organism_id => $rs->single->organism_id });
                             $common_name = $org->common_name;
@@ -40,11 +48,16 @@ sub grid_json_GET {
                             name                   => $name,
                             alphabet               => $_->alphabet,
                         };
-                      } @sets ];
+    } @sets ];
 
+}
+
+# Just treat a POST as a GET
+sub grid_json_POST {
+    my ( $self, $c ) = @_;
+    my $data = _grid_json_data($c);
     # Return a 200 OK, with the data in entity serialized in the body
     $self->status_ok( $c, entity => $data );
 }
-
 
 1;

@@ -3,24 +3,18 @@ Ext.onReady(function(){
 
     // Apply a set of config properties to the singleton
     Ext.apply(Ext.QuickTips.getQuickTip(), {
-        showDelay: 0,
-        trackMouse: true,
-        mouseOffset: [-60,20], // otherwise Delete tt overruns browser win
-        autoWidth: true,
-        dismissDelay: 0
+        showDelay    : 0,
+        trackMouse   : true,
+        mouseOffset  : [-60,20], // otherwise Delete tt overruns browser win
+        autoWidth    : true,
+        dismissDelay : 0
     });
 
     var rowRecord = Ext.data.Record.create([
         { name: 'mimosa_sequence_set_id' },
-        { name: 'shortname' },
-        { name: 'title' },
+        { name: 'name' },
         { name: 'description' },
         { name: 'alphabet' },
-        { name: 'source_spec' },
-        { name: 'lookup_spec' },
-        { name: 'info_url' },
-        { name: 'update_interval' },
-        { name: 'is_public' }
     ]);
 
     var writer = new Ext.data.JsonWriter({
@@ -28,13 +22,14 @@ Ext.onReady(function(){
     });
     // create the Data Store
     var store = new Ext.data.JsonStore({
-        url        : '/autocrud/site/default/schema/bcs/source/mimosa_sequence_set/list',
+        url        : '/api/grid/json.json',
         root       : 'rows',
         fields     : rowRecord,
         autoSave   : false,
         autoDestroy: true,
         remoteSort : true,
-//        autoLoad   : true,
+        restful    : true,
+        autoLoad   : true,
         writer     : writer,
     });
 
@@ -43,7 +38,6 @@ Ext.onReady(function(){
     store.load({
         callback: function() {
             store.removeAt(0);
-            store.filter('is_public', 1);
         }
     });
 
@@ -69,10 +63,10 @@ Ext.onReady(function(){
         columns: [
             sm,
             {
-                id       :'title',
-                header   : 'Title',
+                id       :'name',
+                header   : 'Name',
                 sortable : true,
-                dataIndex: 'title'
+                dataIndex: 'name'
             },
             {
                 id       :'description',
@@ -86,17 +80,9 @@ Ext.onReady(function(){
                 sortable : true,
                 dataIndex: 'alphabet'
             }
-            // This should only be shown if the current user is logged in
-            // and can view private sets
-            //{
-            //    id       :'is_public',
-            //    header   : 'Public?',
-            //    sortable : true,
-            //    dataIndex: 'is_public'
-            //},
         ],
         animCollapse: true,
-        // autoExpandColumn: 'shortname',
+        autoExpandColumn: 'description',
         collapsible: true,
         columnLines: true,
         frame: true,
@@ -104,7 +90,7 @@ Ext.onReady(function(){
         sm: sm,
         store: store,
         stripeRows: true,
-        title: 'Available Sequence Sets',
+        title: 'Available Sequence Sets to BLAST against',
         autoWidth: true,
         autoHeight: true,
         stripeRows : true,
@@ -130,7 +116,7 @@ Ext.onReady(function(){
             // only protein databases
             store.filter('alphabet', 'protein');
         } else {
-            store.filter('is_public', 1);
+            store.filter();
         }
     });
 
