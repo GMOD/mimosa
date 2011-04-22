@@ -25,7 +25,7 @@ return {
         'basic_organism' => {
              'Organism' => [
                 [qw/organism_id genus species common_name/],
-                [qw/1 blargopod foobarium blargwart/],
+                [1, "Blargopod", "Blargopod foobarium", "blargwart"],
              ],
         },
         # basic job test data

@@ -1,4 +1,4 @@
-use Test::Most tests => 12;
+use Test::Most tests => 10;
 use strict;
 use warnings;
 
@@ -6,7 +6,6 @@ use lib 't/lib';
 use App::Mimosa::Test;
 use Test::DBIx::Class;
 use Test::JSON;
-use JSON::Any;
 
 fixtures_ok 'basic_ss';
 fixtures_ok 'basic_ss_organism';
@@ -16,15 +15,20 @@ action_ok '/api/grid/json.json';
 
 my $r    = request('/api/grid/json.json');
 my $json = $r->content;
-my $j    = JSON::Any->new;
 
 is_valid_json( $json, 'it returns valid JSON') or diag $json;
+
+# 3 = length("{ }")
 cmp_ok(length $json,'>', 3, 'got non-empty-looking json');
 
 like($json, qr/mimosa_sequence_set_id/, 'mimosa_sequence_set_id appears in JSON');
 like($json, qr/description/, 'description appears in JSON');
 like($json, qr/blargwart/, 'blargwart common_name appears');
 
-my $obj = $j->from_json($json);
+# This test depends on the data in t/etc/schema.pl
+is_json($json, <<JSON, 'got the JSON we expected');
+[{"mimosa_sequence_set_id":1,"name":"NA","description":"test db"},{"mimosa_sequence_set_id":2,"name":"NA","description":"DNA sequences for S. foobarium"},{"mimosa_sequence_set_id":3,"name":"Blargopod foobarium (blargwart)","description":"Protein sequences for B. foobarium"}]
+JSON
 
-map { like($_->{common_name},qr/(NA|blargwart)/, "common name " . $_->{common_name} . " looks reasonable") } @$obj;
+#diag $json;
+

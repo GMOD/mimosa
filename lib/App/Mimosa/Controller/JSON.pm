@@ -21,13 +21,23 @@ sub grid_json_GET {
 
     # Chado resultsets
     my $org_rs = $bcs->resultset('Organism');
+    my ($common_name, $binomial, $name);
 
     my $data = [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
-                        my $common_name = $rs->count ? $org_rs->find( { organism_id => $rs->single->organism_id })->common_name : 'NA';
+                        if ($rs->count) {
+                            my $org = $org_rs->find( { organism_id => $rs->single->organism_id });
+                            $common_name = $org->common_name;
+                            $binomial    = $org->species;
+                            $name        = "$binomial ($common_name)";
+
+                        } else {
+                            $name = 'NA';
+                        }
+
                         +{
                             mimosa_sequence_set_id => $_->mimosa_sequence_set_id,
                             description            => $_->description,
-                            common_name            => $common_name,
+                            name                   => $name,
                         };
                       } @sets ];
 
