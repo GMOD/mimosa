@@ -60,12 +60,4 @@ sub _grid_json_data {
 
 }
 
-# Just treat a POST as a GET
-sub grid_json_POST {
-    my ( $self, $c ) = @_;
-    my $data = _grid_json_data($c);
-    # Return a 200 OK, with the data in entity serialized in the body
-    $self->status_ok( $c, entity => $data );
-}
-
 1;
