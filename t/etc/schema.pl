@@ -4,13 +4,7 @@ use strict;
 return {
   'schema_class' => 'App::Mimosa::Schema::BCS',
   'connect_info' => App::Mimosa::Test::app->model('BCS')->connect_info,
-
-  'resultsets' => [],
-  # 'resultsets' => [
-  #       'Person',
-  #       'Job',
-  #       'Person' => { '-as' => 'NotTeenager', search => {age=>{'>'=>18}}},
-  # ],
+  'resultsets'   => [],
 
   'fixture_sets' => {
         # basic sequence set test data
