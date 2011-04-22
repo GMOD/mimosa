@@ -25,7 +25,7 @@ sub grid_json_GET {
 
     my $data = [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
                         if ($rs->count) {
-                            my $org = $org_rs->find( { organism_id => $rs->single->organism_id });
+                            my $org      = $org_rs->find( { organism_id => $rs->single->organism_id });
                             $common_name = $org->common_name;
                             $binomial    = $org->species;
                             $name        = "$binomial ($common_name)";
@@ -38,6 +38,7 @@ sub grid_json_GET {
                             mimosa_sequence_set_id => $_->mimosa_sequence_set_id,
                             description            => $_->description,
                             name                   => $name,
+                            alphabet               => $_->alphabet,
                         };
                       } @sets ];
 
