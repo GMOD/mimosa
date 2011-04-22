@@ -22,16 +22,18 @@ return {
                 [ 3, 'Blargopod_foobarium_protein', 'Blargopod foobarium protein sequences', 'Protein sequences for B. foobarium', 'protein', '', '', ,'', 60, 1    ],
               ],
         },
-        'basic_ss_organism' => [
+        'basic_ss_organism' => {
+            'Mimosa::SequenceSetOrganism' => [
                 [qw/ mimosa_sequence_set_id organism_id /],
                 [ 3, 1, ],
-        ],
-        'basic_organism' => [
+            ],
+        },
+        'basic_organism' => {
              'Organism' => [
-                [qw/organism_id genus species commonname/],
+                [qw/organism_id genus species common_name/],
                 [qw/1 blargopod foobarium blargwart/],
              ],
-        ],
+        },
         # basic job test data
         'basic_job' => {
             'Mimosa::Job' => [

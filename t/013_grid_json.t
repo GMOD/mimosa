@@ -1,4 +1,4 @@
-use Test::Most tests => 6;
+use Test::Most tests => 8;
 use strict;
 use warnings;
 
@@ -8,6 +8,8 @@ use Test::DBIx::Class;
 use Test::JSON;
 
 fixtures_ok 'basic_ss';
+fixtures_ok 'basic_ss_organism';
+fixtures_ok 'basic_organism';
 
 action_ok '/api/grid/json.json';
 

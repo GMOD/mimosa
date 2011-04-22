@@ -11,14 +11,18 @@ sub grid_json :Path("/api/grid/json.json") :ActionClass('REST') :Local { }
 # Answer GET requests to "thing"
 sub grid_json_GET {
     my ( $self, $c ) = @_;
+    my $bcs = $c->model('BCS');
 
-    my @sets = $c->model('BCS')->resultset('Mimosa::SequenceSet')->all;
+    my @sets   = $bcs->resultset('Mimosa::SequenceSet')->all;
+    my $sso_rs = $bcs->resultset('Mimosa::SequenceSetOrganism');
 
-    my $data = [ map { +{
+    my $data = [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
+                        my $organism_name = $rs->count ? $rs->single->organism_id : 'NA';
+                        +{
                             mimosa_sequence_set_id => $_->mimosa_sequence_set_id,
                             description            => $_->description,
-                            organism_name          => 'fixme',
-                        }
+                            organism_name          => $organism_name,
+                        };
                       } @sets ];
 
     # Return a 200 OK, with the data in entity serialized in the body
