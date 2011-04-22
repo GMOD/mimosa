@@ -44,8 +44,8 @@ sub _grid_json_data {
                             my $org      = $org_rs->find( { organism_id => $rs->single->organism_id });
                             $common_name = $org->common_name;
                             $binomial    = $org->species;
-                            $name        = "$binomial ($common_name)";
-
+                            $name        = $binomial;
+                            $name       .= " ($common_name)" if $common_name;
                         } else {
                             $name = 'NA';
                         }

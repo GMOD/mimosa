@@ -21,3 +21,19 @@ $schema->populate('Mimosa::SequenceSet', [
     ['solanum_peruvianum_mRNA', 'Solanum peruvianum SGN mRNA sequences', 'mRNA sequences for S. peruvianum', 'nucleotide', '', '', ,'', 30, 1    ],
     ['prunus_necrotus_genomic_rna', 'Prunus necrotic ringspot virus coat', 'Necrotic ringspot virus CP gene for coat protein, isolate SK25, genomic RNA', 'nucleotide', 'http://www.ncbi.nlm.nih.gov/nuccore/FR773524.2?report=fasta&log$=seqview&format=text', '', ,'', 30, 1    ],
 ]);
+
+$schema->populate('Mimosa::SequenceSetOrganism', [
+    [qw/organism_id mimosa_sequence_set_id/],
+    [1, 1],
+    [2, 2],
+    [3, 3],
+    [4, 4],
+]);
+
+$schema->populate('Organism', [
+    [qw/organism_id genus species common_name/],
+    [1, "Acidiphilium", "Acidiphilium cryptum", ""],
+    [2, "Acaryochloris", "Acaryochloris marina", ""],
+    [3, "Solanum", "Solanum peruvianum", "Wild tomato"],
+    [4, "Prunus", "Prunus necrotus", "Necrotic ringspot virus"],
+]);
