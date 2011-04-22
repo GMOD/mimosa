@@ -36,12 +36,6 @@ Ext.onReady(function(){
 
     // sort sequence sets by title
     store.setDefaultSort('title', 'ASC');
-    store.load({
-        callback: function() {
-            store.removeAt(0);
-        }
-    });
-
 
     // create the Grid
     var xg = Ext.grid;
