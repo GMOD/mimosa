@@ -6,13 +6,29 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller::REST' }
 
-__PACKAGE__->config(default => 'application/json');
+__PACKAGE__->config(
+    default   => 'application/json',
+    stash_key => 'rest',
+    'map' => {
+        # Work around an ExtJS bug that sends the wrong content-type
+        'text/html'        => 'JSON',
+    }
+
+);
 
 sub grid_json :Path("/api/grid/json.json") :ActionClass('REST') :Local { }
 
 # Answer GET requests to the above Path
 sub grid_json_GET {
     my ( $self, $c ) = @_;
+
+    my $data = _grid_json_data($c);
+    # Return a 200 OK, with the data in entity serialized in the body
+    $self->status_ok( $c, entity => $data );
+}
+
+sub _grid_json_data {
+    my ($c) = @_;
     my $bcs = $c->model('BCS');
 
     # Mimosa resultsets
@@ -23,13 +39,13 @@ sub grid_json_GET {
     my $org_rs = $bcs->resultset('Organism');
     my ($common_name, $binomial, $name);
 
-    my $data = [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
+    return { total => $#sets, rows => [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
                         if ($rs->count) {
                             my $org      = $org_rs->find( { organism_id => $rs->single->organism_id });
                             $common_name = $org->common_name;
                             $binomial    = $org->species;
-                            $name        = "$binomial ($common_name)";
-
+                            $name        = $binomial;
+                            $name       .= " ($common_name)" if $common_name;
                         } else {
                             $name = 'NA';
                         }
@@ -40,11 +56,8 @@ sub grid_json_GET {
                             name                   => $name,
                             alphabet               => $_->alphabet,
                         };
-                      } @sets ];
+    } @sets ] };
 
-    # Return a 200 OK, with the data in entity serialized in the body
-    $self->status_ok( $c, entity => $data );
 }
-
 
 1;
