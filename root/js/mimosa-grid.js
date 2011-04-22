@@ -28,6 +28,7 @@ Ext.onReady(function(){
         autoSave   : false,
         autoDestroy: true,
         remoteSort : true,
+        // Without this, ExtJS will be dumb and do a POST
         restful    : true,
         autoLoad   : true,
         writer     : writer,

@@ -6,7 +6,15 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller::REST' }
 
-__PACKAGE__->config(default => 'application/json');
+__PACKAGE__->config(
+    default   => 'application/json',
+    stash_key => 'rest',
+    'map' => {
+        # Work around an ExtJS bug that sends the wrong content-type
+        'text/html'        => 'JSON',
+    }
+
+);
 
 sub grid_json :Path("/api/grid/json.json") :ActionClass('REST') :Local { }
 
