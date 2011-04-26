@@ -19,16 +19,18 @@
   <input type="hidden" id="mimosa_sequence_set_id" name="mimosa_sequence_set_id" value="0">
   <input type="hidden" name="interface_type" value="simple" />
   <input type="hidden" name="outformat" value="0" />
-</td></tr>
-    <tr><td><b>Program</b></td></tr>
-    <tr><td> <select id="program_selector"   name="program">
+  <br>
+  Program: <select id="program_selector"   name="program">
 <option value="none">Choose a BLAST program</a>
 <option value="blastn">BLASTN (nucleotide to nucleotide)</option>
 <option value="tblastx">TBLASTX (protein to protein; both database and query are translated)</option>
 <option value="tblastn">TBLASTN (protein to nucleotide; database translated to protein)</option>
 </select>
 </td></tr>
-
+<tr><td>
+    Name: <input type="text" name="search_name" size="20" id="search_name"><br>
+    Description: <input type="text" name="search_description" size="20" id="search_description">
+</td></tr>
 <tr><td>
 
 
