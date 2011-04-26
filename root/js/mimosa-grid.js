@@ -121,12 +121,23 @@ Ext.onReady(function(){
         }
     });
 
-    // make the search box filter the store
-    var search = jQuery("#search");
-    search.keyup(function(){
-        var term   = search.val();
+    // TODO: unify this code
+    var search_name = jQuery("#search_name");
+    search_name.keyup(function(){
+        var term   = search_name.val();
         if (term.length >= 3) {
-            store.filter('description', term);
+            store.filter('name', new RegExp(term));
+        } else {
+            // reset grid
+            store.filter();
+        }
+    });
+
+    var search_description = jQuery("#search_description");
+    search_description.keyup(function(){
+        var term   = search_description.val();
+        if (term.length >= 3) {
+            store.filter('description', new RegExp(term));
         } else {
             // reset grid
             store.filter();
