@@ -121,4 +121,16 @@ Ext.onReady(function(){
         }
     });
 
+    // make the search box filter the store
+    var search = jQuery("#search");
+    search.keyup(function(){
+        var term   = search.val();
+        if (term.length >= 3) {
+            store.filter('description', term);
+        } else {
+            // reset grid
+            store.filter();
+        }
+    });
+
 });

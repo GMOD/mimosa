@@ -28,7 +28,7 @@
 </select>
 </td></tr>
 <tr><td>
-    Search: <input type="text" name="search" width="20" id="search">
+    Search: <input type="text" name="search" size="20" id="search">
 </td></tr>
 <tr><td>
 
