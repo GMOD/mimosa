@@ -106,42 +106,38 @@ Ext.onReady(function(){
 
     // Make the program selector filter the grid
 
-    jQuery("#program_selector").change(function() {
+
+    var filter = function(){
         var program = jQuery("#program_selector").val();
+        var alphabet = '';
 
         // Which databases should we filter?
         if( program == "blastn" || program == "tblastn") {
-            // only nucleotide databases should be show
-            store.filter('alphabet', 'nucleotide');
+            alphabet = 'nucleotide';
         } else if (program == "tblastx") {
-            // only protein databases
-            store.filter('alphabet', 'protein');
+            alphabet = 'protein';
         } else {
-            store.filter();
         }
-    });
+        store.filter([
+        {
+            property : 'name',
+            value    : new RegExp(jQuery("#search_name").val()),
+        },
+        {
+            property : 'description',
+            value    : new RegExp(jQuery("#search_description").val()),
+        },
+        {
+            property : 'alphabet',
+            value    : new RegExp(alphabet),
+        }
+        ]);
+    };
 
-    // TODO: unify this code
-    var search_name = jQuery("#search_name");
-    search_name.keyup(function(){
-        var term   = search_name.val();
-        if (term.length >= 3) {
-            store.filter('name', new RegExp(term));
-        } else {
-            // reset grid
-            store.filter();
-        }
-    });
+    jQuery("#program_selector").change(filter);
 
-    var search_description = jQuery("#search_description");
-    search_description.keyup(function(){
-        var term   = search_description.val();
-        if (term.length >= 3) {
-            store.filter('description', new RegExp(term));
-        } else {
-            // reset grid
-            store.filter();
-        }
-    });
+    jQuery("#search_name").keyup(filter);
+
+    jQuery("#search_description").keyup(filter);
 
 });
