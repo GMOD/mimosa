@@ -145,89 +145,87 @@ sub submit :Path('/submit') :Args(0) {
     my $seq_root    = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
     my $db_basename = catfile($seq_root,$ss_name);
 
-    my $j;
-    try {
-        $j = App::Mimosa::Job->new(
-            job_id                 => $c->stash->{job_id},
-            config                 => $self->_app->config,
-            db_basename            => $db_basename,
-            mimosa_sequence_set_id => $ss_id,
-            alphabet               => $ss[0]->alphabet,
-            output_file            => "$output_file",
-            input_file             => "$input_file",
-                map { $_ => $c->req->param($_) || '' }
-                qw/
-                program maxhits output_graphs
-                evalue matrix
-                /,
+    my $j = App::Mimosa::Job->new(
+        job_id                 => $c->stash->{job_id},
+        config                 => $self->_app->config,
+        db_basename            => $db_basename,
+        mimosa_sequence_set_id => $ss_id,
+        alphabet               => $ss[0]->alphabet,
+        output_file            => "$output_file",
+        input_file             => "$input_file",
+            map { $_ => $c->req->param($_) || '' }
+            qw/
+            program maxhits output_graphs
+            evalue matrix
+            /,
+    );
+
+    # Regardless of it working, the job is now complete
+    my $rs   = $c->model('BCS')->resultset('Mimosa::Job');
+    $rs->search( { mimosa_job_id => $j->job_id } )->update( { end_time => DateTime->now } );
+
+    my $error = $j->run;
+    if ($error) {
+        ( $c->stash->{error} = $error ) =~ s!\n!<br />!g;
+        $c->detach( $error =~ /Could not calculate ungapped/i ? '/input_error' : '/error' );
+    } else {
+
+        # stat the output file before opening it in hopes of avoiding
+        # some kind of bizarre race condition i've been seeing in
+        # which the file doesn't appear to be visible yet to the web
+        # process after blast exits.
+        $output_file->stat;
+
+        my $in = Bio::SearchIO->new(
+                -format => 'blast',
+                -file   => "$output_file",
         );
+        my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
+        $writer->start_report(sub {''});
+        $writer->end_report(sub {''});
+        my $report = '';
+        my $out = Bio::SearchIO->new(
+            -writer => $writer,
+            -fh     => IO::String->new( \$report ),
+        );
+        $out->write_result($in->next_result);
 
-        # Regardless of it working, the job is now complete
-        my $rs   = $c->model('BCS')->resultset('Mimosa::Job');
-        $rs->search( { mimosa_job_id => $j->job_id } )->update( { end_time => DateTime->now } );
+        # TODO: Fix this stuff upstream
+        $report =~ s!\Q<CENTER><H1><a href="http://bioperl.org">Bioperl</a> Reformatted HTML of BLASTN Search Report<br> for </H1></CENTER>\E!!g;
+        $report =~ s!<p><p><hr><h5>Produced by Bioperl .*\$</h5>!!gs;
 
-        my $error = $j->run;
-        if ($error) {
-            ( $c->stash->{error} = $error ) =~ s!\n!<br />!g;
-            $c->detach( $error =~ /Could not calculate ungapped/i ? '/input_error' : '/error' );
+        my $cached_report_file = $self->_temp_file( $c->stash->{job_id}.'.html' );
+        my $report_html;
+
+        if( $report =~ m/Sbjct: / ){
+            my $graph_html = '';
+            my $graph = Bio::GMOD::Blast::Graph->new(
+                                            -outputfile => $output_file,
+                                            -format     => 'blast',
+                                            -fh         => IO::String->new( \$graph_html ),
+                                            -dstDir     => $self->_app->config->{tmp_dir} || "/tmp/mimosa",
+                                            -dstURL     => "/graphics/",
+                                            -imgName    => $c->stash->{job_id} . '.png',
+                                            );
+            $graph->showGraph;
+
+            $report_html        = $graph_html . $report;
+            $c->stash->{report} = $report_html;
         } else {
+            # Don't show a report if there were no hits.
+            # The user can always download the raw report if they want.
+            # This is why we don't assign to $c->stash->{report}
 
-            # stat the output file before opening it in hopes of avoiding
-            # some kind of bizarre race condition i've been seeing in
-            # which the file doesn't appear to be visible yet to the web
-            # process after blast exits.
-            $output_file->stat;
-
-            my $in = Bio::SearchIO->new(
-                    -format => 'blast',
-                    -file   => "$output_file",
-            );
-            my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
-            $writer->start_report(sub {''});
-            $writer->end_report(sub {''});
-            my $report = '';
-            my $out = Bio::SearchIO->new(
-                -writer => $writer,
-                -fh     => IO::String->new( \$report ),
-            );
-            $out->write_result($in->next_result);
-
-            # TODO: Fix this stuff upstream
-            $report =~ s!\Q<CENTER><H1><a href="http://bioperl.org">Bioperl</a> Reformatted HTML of BLASTN Search Report<br> for </H1></CENTER>\E!!g;
-            $report =~ s!<p><p><hr><h5>Produced by Bioperl .*\$</h5>!!gs;
-
-            my $cached_report_file = $self->_temp_file( $c->stash->{job_id}.'.html' );
-            my $report_html;
-
-            if( $report =~ m/Sbjct: / ){
-                my $graph_html = '';
-                my $graph = Bio::GMOD::Blast::Graph->new(
-                                                -outputfile => $output_file,
-                                                -format     => 'blast',
-                                                -fh         => IO::String->new( \$graph_html ),
-                                                -dstDir     => $self->_app->config->{tmp_dir} || "/tmp/mimosa",
-                                                -dstURL     => "/graphics/",
-                                                -imgName    => $c->stash->{job_id} . '.png',
-                                                );
-                $graph->showGraph;
-
-                $report_html        = $graph_html . $report;
-                $c->stash->{report} = $report_html;
-            } else {
-                # Don't show a report if there were no hits.
-                # The user can always download the raw report if they want.
-                # This is why we don't assign to $c->stash->{report}
-
-                $report_html  = $report;
-            }
-            $c->stash->{template} = 'report.mason';
-
-            write_file( $cached_report_file, $report_html );
+            $report_html  = $report;
         }
-    } catch {
-        $c->stash->{error} = "Invalid input: $_",
-        $c->forward('input_error');
-    };
+        $c->stash->{template} = 'report.mason';
+
+        write_file( $cached_report_file, $report_html );
+    }
+    #} catch {
+    #    $c->stash->{error} = "Invalid input: $_",
+    #    $c->forward('input_error');
+    #};
 
 
 }

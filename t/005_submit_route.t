@@ -1,4 +1,4 @@
-use Test::Most tests => 8;
+use Test::Most tests => 9;
 use strict;
 use warnings;
 
@@ -73,7 +73,8 @@ SEQ
        ];
     };
     my $res = $f->();
-    is($res->code,200,'/submit works');
+    is($res->code,400,'/submit gives an ungapped error') or diag $res->content;
+    like($res->content,qr/Could not calculate ungapped Karlin-Altschul parameters/);
     unlike($res->content,qr/catalyst_detach/, "We don't get the error Invalid input: catalyst_detach");
 }
 
