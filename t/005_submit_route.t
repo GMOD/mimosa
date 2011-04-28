@@ -1,4 +1,4 @@
-use Test::Most tests => 6;
+use Test::Most tests => 9;
 use strict;
 use warnings;
 
@@ -56,4 +56,25 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
     is($res->code, 400, '/submit returns 400 without a mimosa_sequence_set_id');
 }
 
+{
+    my $seq = <<SEQ;
+>foo
+ATATATATATAT
+SEQ
+    my $f = sub {
+        return request POST '/submit', [
+                    program                => 'blastn',
+                    sequence               => $seq,
+                    maxhits                => 100,
+                    alphabet               => 'nucleotide',
+                    matrix                 => 'BLOSUM62',
+                    evalue                 => 0.1,
+                    mimosa_sequence_set_id => 1,
+       ];
+    };
+    my $res = $f->();
+    is($res->code,400,'/submit gives an ungapped error') or diag $res->content;
+    like($res->content,qr/Could not calculate ungapped Karlin-Altschul parameters/);
+    unlike($res->content,qr/catalyst_detach/, "We don't get the error Invalid input: catalyst_detach");
+}
 
