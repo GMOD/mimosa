@@ -98,6 +98,31 @@ The temporary directory that Mimosa can use.
 
 The directory where sequence data can be found.
 
+### <Model::BCS>
+
+This Config key is a container for Bio::Chado::Schema-related
+configuration. It has:
+
+### schema_class App::Mimosa::Schema::BCS
+
+The schema class.
+
+### traits undef
+
+A trait, such as "Caching", which is good for production, but
+not testing.
+
+The <Model::BCS> container has a <connect_info> container,
+which contains the "dsn" config key.
+
+### dsn dbi:SQLite:./mimosa.db
+
+The default is to deploy to a SQLite database in the current
+directory, but if you want to use this with a
+currently-existing Chado installation, you should but the
+connection information in this config key.
+
+
 ## What is Mimosa written in?
 
 Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it
