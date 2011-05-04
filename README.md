@@ -86,6 +86,17 @@ is submitted, an exception is thrown and an error page is shown to the user.
 Whether to allow anonymous people (those that have not authenticated) to submit
 jobs for reports.
 
+### disable_qsub 1
+
+Disable qsub job queueing support, which means jobs will be run on the local machine.
+
+### tmp_dir /tmp/mimosa
+
+The temporary directory that Mimosa can use.
+
+### sequence_data_dir examples/data
+
+The directory where sequence data can be found.
 
 ## What is Mimosa written in?
 
