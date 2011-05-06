@@ -32,11 +32,12 @@ __PACKAGE__->config(namespace => '');
 
 =head1 NAME
 
-App::Mimosa::Controller::Root - Root Controller for App::Mimosa
+App::Mimosa::Controller::Root - Mimosa Root Controller
 
 =head1 DESCRIPTION
 
-Stuff.
+This is the root controller of Mimosa. It defines all the URL's which
+Mimosa responds to.
 
 =head1 METHODS
 
@@ -104,6 +105,16 @@ sub _temp_file {
     return $tmp_base->file( @_ );
 }
 
+sub validate_sequence : Private {
+    my ( $self, $c ) = @_;
+    # validate input
+    my $min_length = $self->_app->config->{min_sequence_input_length};
+    unless( length( $c->req->param('sequence') || '' ) >= $min_length ) {
+        $c->stash->{error} = "Sequence input too short. Must have a length of at least $min_length";
+        $c->detach('/input_error');
+    }
+}
+
 sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
 
@@ -111,14 +122,12 @@ sub submit :Path('/submit') :Args(0) {
         $c->stash->{error} = 'Anonymous users are not allowed to submit BLAST jobs. Please log in.';
         $c->detach('/input_error');
     }
+
+    $c->forward('validate_sequence');
+
     $c->forward('make_job_id');
 
     my $min_length = $self->_app->config->{min_sequence_input_length};
-    # validate input
-    unless( length( $c->req->param('sequence') || '' ) >= $min_length ) {
-        $c->stash->{error} = "Sequence input too short. Must have a length of at least $min_length";
-        $c->detach('/input_error');
-    }
 
     if( $c->req->param('program') eq 'none' ) {
         $c->stash->{error} = "You must select a BLAST program to generate your report with.";
