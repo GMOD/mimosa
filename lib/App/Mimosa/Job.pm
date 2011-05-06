@@ -18,7 +18,7 @@ use IPC::Run;
 subtype 'Program'
              => as Str
              => where {
-                    /^blast(n|p|all)$/;
+                    /^(blastn|tblastx|tblastn)$/;
                 };
 subtype 'SubstitutionMatrix'
              => as Str
