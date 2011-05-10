@@ -115,6 +115,29 @@ sub validate_sequence : Private {
     }
 }
 
+sub compose_sequence_sets : Private {
+    my ( $self, $c, @ss_ids ) = @_;
+    # TODO: error if any one of the ids is not valid
+
+    my $seq_root = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
+    my $composite_name = $seq_root;
+    my $alphabet;
+
+    for my $ss_id (@ss_ids) {
+        my @ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
+                        ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
+        unless (@ss) {
+            $c->stash->{error} = "Invalid mimosa_sequence_set_id";
+            $c->detach('/input_error');
+        }
+        my $ss_name     = $ss[0]->shortname();
+        $alphabet       = $ss[0]->alphabet();
+        $composite_name = catfile($composite_name,$ss_name);
+    }
+    $c->stash->{composite_db_name} = $composite_name;
+    $c->stash->{alphabet}          = $alphabet;
+}
+
 sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
 
@@ -141,25 +164,22 @@ sub submit :Path('/submit') :Args(0) {
     # If we accepted a POSTed sequence as input, it will be HTML encoded
     $input_file->openw->print( decode_entities($c->req->param('sequence')) );
 
-    my $ss_id = $c->req->param('mimosa_sequence_set_id');
+    my $ids = $c->req->param('mimosa_sequence_set_ids') || '';
+    my @ss_ids;
 
-    my @ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
-                    ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
-    unless (@ss) {
-        $c->stash->{error} = "Invalid mimosa_sequence_set_id";
-        $c->detach('/input_error');
+    if ($ids =~ m/,/){
+        (@ss_ids) = split /,/, $ids;
+    } else {
+        @ss_ids = ($ids);
     }
-    # TODO: support multiple sequence sets in the future
-    my $ss_name     = $ss[0]->shortname();
-    my $seq_root    = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
-    my $db_basename = catfile($seq_root,$ss_name);
+
+    $c->forward('compose_sequence_sets', @ss_ids);
 
     my $j = App::Mimosa::Job->new(
         job_id                 => $c->stash->{job_id},
         config                 => $self->_app->config,
-        db_basename            => $db_basename,
-        mimosa_sequence_set_id => $ss_id,
-        alphabet               => $ss[0]->alphabet,
+        db_basename            => $c->stash->{composite_db_name},
+        alphabet               => $c->stash->{alphabet},
         output_file            => "$output_file",
         input_file             => "$input_file",
             map { $_ => $c->req->param($_) || '' }

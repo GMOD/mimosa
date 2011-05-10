@@ -21,7 +21,7 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
                     maxhits                => 100,
                     matrix                 => 'BLOSUM62',
                     evalue                 => 0.1,
-                    mimosa_sequence_set_id => 1,
+                    mimosa_sequence_set_ids=> 1,
                     alphabet               => 'nucleotide',
     ];
     is($response->code, 200, '/submit returns 200');
@@ -35,7 +35,8 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
                     maxhits                => 100,
                     matrix                 => 'BLOSUM62',
                     evalue                 => 0.1,
-                    mimosa_sequence_set_id => 42,
+                    mimosa_sequence_set_ids => 42,
+                    alphabet               => 'nucleotide',
     ];
     is($response->code, 400, "/submit with too small input sequence returns 400");
     like($response->content,qr/Sequence input too short\. Must have a length of at least 6/, "error explains the min length");
@@ -53,7 +54,7 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
        ];
     };
     my $res = $f->();
-    is($res->code, 400, '/submit returns 400 without a mimosa_sequence_set_id');
+    is($res->code, 400, '/submit returns 400 without a mimosa_sequence_set_ids');
 }
 
 {
@@ -69,7 +70,7 @@ SEQ
                     alphabet               => 'nucleotide',
                     matrix                 => 'BLOSUM62',
                     evalue                 => 0.1,
-                    mimosa_sequence_set_id => 1,
+                    mimosa_sequence_set_ids => 1,
        ];
     };
     my $res = $f->();
