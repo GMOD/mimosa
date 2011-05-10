@@ -11,7 +11,7 @@ use File::Spec::Functions;
 use File::Slurp qw/slurp/;
 use File::Temp qw/tempfile/;
 
-use IPC::Run;
+use IPC::Run qw/timeout/;
 
 # Good breakdown of commandline flags
 # http://www.molbiol.ox.ac.uk/analysis_tools/BLAST/BLAST_blastall.shtml
@@ -97,6 +97,12 @@ has job_id => (
     required => 1,
 );
 
+has timeout => (
+    is      => 'rw',
+    isa     => 'Int',
+    default => 30,
+);
+
 sub run {
     my ($self) = @_;
 
@@ -126,7 +132,7 @@ sub run {
         );
 
         my $console_output = File::Temp->new;
-        my $success = IPC::Run::run \@blast_cmd, \*STDIN, $console_output, $console_output;
+        my $success = IPC::Run::run \@blast_cmd, \*STDIN, $console_output, $console_output, timeout( $self->timeout );
         $console_output->close;
         unless( $success ) {
             return $self->_error_output( $console_output );

@@ -94,6 +94,11 @@ Disable qsub job queueing support, which means jobs will be run on the local mac
 
 The temporary directory that Mimosa can use.
 
+### job_runtime_max		30
+
+The default maximum time that a job can take, if it is happening during a
+request cycle. Defaults to thirty seconds.
+
 ### sequence_data_dir examples/data
 
 The directory where sequence data can be found.

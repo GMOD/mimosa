@@ -155,6 +155,7 @@ sub submit :Path('/submit') :Args(0) {
     my $db_basename = catfile($seq_root,$ss_name);
 
     my $j = App::Mimosa::Job->new(
+        timeout                => $self->_app->config->{job_runtime_max},
         job_id                 => $c->stash->{job_id},
         config                 => $self->_app->config,
         db_basename            => $db_basename,
