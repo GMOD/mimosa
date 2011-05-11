@@ -20,6 +20,7 @@ use App::Mimosa::Job;
 use Try::Tiny;
 use DateTime;
 use HTML::Entities;
+use Digest::SHA1 qw/sha1_hex/;
 
 BEGIN { extends 'Catalyst::Controller' }
 with 'Catalyst::Component::ApplicationAttribute';
@@ -120,11 +121,12 @@ sub compose_sequence_sets : Private {
     my @ss_ids = @{ $c->stash->{sequence_set_ids} };
 
     my $seq_root = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
-    my $composite_name = $seq_root;
+    my $composite_name = "";
     my $alphabet;
 
     # TODO: error if any one of the ids is not valid
-    for my $ss_id (@ss_ids) {
+    for my $ss_id (sort @ss_ids) {
+        warn "ss_id = $ss_id";
         my @ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
                         ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
         unless (@ss) {
@@ -133,7 +135,14 @@ sub compose_sequence_sets : Private {
         }
         my $ss_name     = $ss[0]->shortname();
         $alphabet       = $ss[0]->alphabet();
-        $composite_name = catfile($composite_name,$ss_name);
+        $composite_name .= "$ss_name-";
+    }
+    $composite_name =~ s/-$//;
+    $composite_name = sha1_hex($composite_name);
+    $composite_name = catfile($seq_root,$composite_name);
+
+    unless (-e "$composite_name.seq" ) {
+        warn "Cached database of multi sequence set $composite_name not found, creating";
     }
     $c->stash->{composite_db_name} = $composite_name;
     $c->stash->{alphabet}          = $alphabet;
