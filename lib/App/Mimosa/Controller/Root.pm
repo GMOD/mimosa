@@ -116,13 +116,14 @@ sub validate_sequence : Private {
 }
 
 sub compose_sequence_sets : Private {
-    my ( $self, $c, @ss_ids ) = @_;
-    # TODO: error if any one of the ids is not valid
+    my ( $self, $c) = @_;
+    my @ss_ids = @{ $c->stash->{sequence_set_ids} };
 
     my $seq_root = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
     my $composite_name = $seq_root;
     my $alphabet;
 
+    # TODO: error if any one of the ids is not valid
     for my $ss_id (@ss_ids) {
         my @ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
                         ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
@@ -172,8 +173,8 @@ sub submit :Path('/submit') :Args(0) {
     } else {
         @ss_ids = ($ids);
     }
-
-    $c->forward('compose_sequence_sets', @ss_ids);
+    $c->stash->{sequence_set_ids} = [ @ss_ids ];
+    $c->forward('compose_sequence_sets');
 
     my $j = App::Mimosa::Job->new(
         job_id                 => $c->stash->{job_id},
@@ -183,10 +184,7 @@ sub submit :Path('/submit') :Args(0) {
         output_file            => "$output_file",
         input_file             => "$input_file",
             map { $_ => $c->req->param($_) || '' }
-            qw/
-            program maxhits output_graphs
-            evalue matrix
-            /,
+            qw/ program maxhits output_graphs evalue matrix /,
     );
 
     # Regardless of it working, the job is now complete
