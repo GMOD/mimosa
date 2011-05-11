@@ -26,6 +26,10 @@ C<ITAG2.2_cdnas>.
 
 Not null, varchar(255).
 
+=head2 sha1
+
+SHA1 of the full FASTA of this sequence set. Nullable.
+
 =head2 title
 
 User-visible title of the sequence set.
@@ -120,6 +124,9 @@ __PACKAGE__->add_columns(
 
   'is_public',
   { data_type => "boolean", is_nullable => 0, default_value => 0 },
+
+  'sha1',
+  { data_type => 'varchar', is_nullable => 1, size => 40, default_value => 0, },
 
 );
 
