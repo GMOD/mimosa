@@ -11,4 +11,7 @@ t/logs
 .#*
 #*
 MYMETA.json
-t/data
+t/data/blastdb_test.protein/seq.fasta.psi
+t/data/blastdb_test.protein/seq.fasta.psd
+t/data/blastdb_test.nucleotide/seq.fasta.nsd
+t/data/blastdb_test.nucleotide/seq.fasta.nsi
