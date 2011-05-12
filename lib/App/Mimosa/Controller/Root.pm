@@ -118,25 +118,40 @@ sub validate_sequence : Private {
 
 sub compose_sequence_sets : Private {
     my ( $self, $c) = @_;
-    my @ss_ids = @{ $c->stash->{sequence_set_ids} };
-
-    my $seq_root = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
+    my (@ss_ids)       = sort @{ $c->stash->{sequence_set_ids} };
+    my $rs             = $c->model('BCS')->resultset('Mimosa::SequenceSet');
+    my $seq_root       = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
     my $composite_name = "";
     my $alphabet;
 
     # TODO: error if any one of the ids is not valid
-    for my $ss_id (sort @ss_ids) {
+    for my $ss_id (@ss_ids) {
         warn "ss_id = $ss_id";
-        my @ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
-                        ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
-        unless (@ss) {
+        my $search = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_id });
+
+        # we are guaranteed by unique constraints to only get one
+        my $ss = $search->single;
+        unless ($ss) {
             $c->stash->{error} = "Invalid mimosa_sequence_set_id";
             $c->detach('/input_error');
         }
-        my $ss_name     = $ss[0]->shortname();
-        $alphabet       = $ss[0]->alphabet();
+        my $ss_name     = $ss->shortname();
+        $alphabet       = $ss->alphabet();
         $composite_name .= "$ss_name-";
+
+        # SHA1's are null until the first time we are asked to align against
+        # the sequence set. If files on disk are changed without names changing,
+        # we will need to refresh sha1's
+        unless ($ss->sha1) {
+            my $fasta = slurp("$seq_root/$ss_name.seq");
+            my $sha1  = sha1_hex($fasta);
+            warn "updating $ss_id to $sha1";
+            $search->update({ sha1 => $sha1 });
+        } else {
+            warn "found $ss_id with sha1 $sha1";
+        }
     }
+
     $composite_name =~ s/-$//;
     $composite_name = sha1_hex($composite_name);
     $composite_name = catfile($seq_root,$composite_name);
