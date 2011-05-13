@@ -25,6 +25,5 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
                     alphabet               => 'nucleotide',
     ];
     is($response->code, 200, '/submit returns 200');
-    diag($response->content) if $response->code != 200;
-    like($response->content,qr!Download Raw Report.*/api/report/raw/\d+!, 'download raw report link')
+    content_like($response->content,qr!Download Raw Report.*/api/report/raw/\d+!, 'download raw report link')
 }

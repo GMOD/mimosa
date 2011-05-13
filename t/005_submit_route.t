@@ -9,9 +9,6 @@ use Test::DBIx::Class;
 use File::Slurp qw/slurp/;
 use HTTP::Request::Common;
 use File::Spec::Functions;
-use Test::WWW::Mechanize::Catalyst;
-
-my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'App::Mimosa');
 
 fixtures_ok 'basic_ss';
 
@@ -27,7 +24,7 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
                     alphabet               => 'nucleotide',
     ];
     is($response->code, 200, '/submit returns 200');
-    like($response->content,qr!Download Raw Report.*/api/report/raw/\d+!, 'download raw report link')
+    content_like($response->content,qr!Download Raw Report.*/api/report/raw/\d+!, 'download raw report link');
 }
 {
     my $response = request POST '/submit', [
@@ -40,7 +37,7 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
                     alphabet               => 'nucleotide',
     ];
     is($response->code, 400, "/submit with too small input sequence returns 400");
-    like($response->content,qr/Sequence input too short\. Must have a length of at least 6/, "error explains the min length");
+    content_like($response->content,qr/Sequence input too short\. Must have a length of at least 6/, "error explains the min length");
 }
 
 {
@@ -76,7 +73,7 @@ SEQ
     };
     my $res = $f->();
     is($res->code,400,'/submit gives an ungapped error');
-    like($res->content,qr/Could not calculate ungapped Karlin-Altschul parameters/);
-    unlike($res->content,qr/catalyst_detach/, "We don't get the error Invalid input: catalyst_detach");
+    content_like($res->content,qr/Could not calculate ungapped Karlin-Altschul parameters/);
+    content_unlike($res->content,qr/catalyst_detach/, "We don't get the error Invalid input: catalyst_detach");
 }
 

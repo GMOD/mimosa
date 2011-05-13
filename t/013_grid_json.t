@@ -21,9 +21,9 @@ is_valid_json( $json, 'it returns valid JSON') or diag $json;
 # 3 = length("{ }")
 cmp_ok(length $json,'>', 3, 'got non-empty-looking json');
 
-like($json, qr/mimosa_sequence_set_id/, 'mimosa_sequence_set_id appears in JSON');
-like($json, qr/description/, 'description appears in JSON');
-like($json, qr/blargwart/, 'blargwart common_name appears');
+content_like($json, qr/mimosa_sequence_set_id/, 'mimosa_sequence_set_id appears in JSON');
+content_like($json, qr/description/, 'description appears in JSON');
+content_like($json, qr/blargwart/, 'blargwart common_name appears');
 
 # This test depends on the data in t/etc/schema.pl and which data the JSON controller returns
 is_json($json, <<JSON, 'got the JSON we expected');

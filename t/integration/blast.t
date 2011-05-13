@@ -23,9 +23,8 @@ $mech->submit_form_ok({
 },
 'submit single sequence with defaults',
 );
-diag($mech->content) if $mech->status != 200;
 
-$mech->content_contains('No hits found') or diag $mech->content;
+$mech->content_contains('No hits found');
 
 # now try a spammy submission
 $mech->get_ok('/');
@@ -37,8 +36,7 @@ $mech->submit_form_ok({
         program                => 'blastn',
     },
 });
-$mech->content_like( qr!No hits found!i )
-  or diag $mech->content;
+$mech->content_like( qr!No hits found!i );
 
 # now try a spammy submission
 $mech->get_ok('/');
@@ -98,7 +96,6 @@ sub test_blast_hits() {
             program                => "blastn",
         },
     });
-    diag($mech->content) if $mech->status != 200;
     $mech->content_like( qr/Sbjct: /, 'got a blast hit');
     $mech->content_like( qr/OMGBBQWTF/, 'fasta defline found in report');
 

@@ -21,6 +21,5 @@ my $eseq = encode_entities($seq);
                     sequence_input         => $seq,
     ];
     is($response->code, 200, '/submit returns 200');
-    diag($response->content) if $response->code != 200;
-    like($response->content, qr/\Q$eseq\E/ms, 'the sequence appears on the index page when POSTed');
+    content_like($response->content, qr/\Q$eseq\E/ms, 'the sequence appears on the index page when POSTed');
 }
