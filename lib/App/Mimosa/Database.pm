@@ -2,8 +2,10 @@ package App::Mimosa::Database;
 use Moose;
 use namespace::autoclean;
 use Moose::Util::TypeConstraints;
+use Cwd;
 
 use File::Spec::Functions;
+use File::Basename;
 use autodie ':all';
 
 use Bio::BLAST::Database;
@@ -32,6 +34,9 @@ has db => (
 
 sub index {
     my ($self, %opts) = @_;
+    my $dir = dirname($self->db_basename);
+    my $cwd = getcwd;
+    chdir $dir;
 
     $self->db( Bio::BLAST::Database->open(
         full_file_basename => $self->db_basename,
@@ -41,6 +46,8 @@ sub index {
     ));
 
     $self->db->format_from_file( seqfile => catfile($self->db_basename . '.seq') );
+
+    chdir $cwd;
     return $self;
 }
 

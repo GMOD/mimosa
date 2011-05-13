@@ -160,12 +160,11 @@ sub compose_sequence_sets : Private {
 
     $composite_sha1 = sha1_hex($composite_sha1);
 
-    unless (-e "$composite_sha1.seq" ) {
+    unless (-e "$seq_root/$composite_sha1.seq" ) {
         warn "Cached database of multi sequence set $composite_sha1 not found, creating";
-        write_file "$composite_sha1.seq", $composite_fasta;
+        write_file "$seq_root/$composite_sha1.seq", $composite_fasta;
 
         my $db_basename = catfile($seq_root, $composite_sha1);
-        die $db_basename;
         App::Mimosa::Database->new(
             alphabet    => $alphabet,
             db_basename => $db_basename,
