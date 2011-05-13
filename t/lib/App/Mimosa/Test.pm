@@ -11,7 +11,6 @@ our @EXPORT = (
           action_ok
           action_redirect
           content_like
-          content_unlike
           contenttype_is
           ctx_request
           get

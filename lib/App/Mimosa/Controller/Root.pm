@@ -17,6 +17,7 @@ use File::Spec::Functions;
 use Bio::GMOD::Blast::Graph;
 
 use App::Mimosa::Job;
+use App::Mimosa::Database;
 use Try::Tiny;
 use DateTime;
 use HTML::Entities;
@@ -121,7 +122,8 @@ sub compose_sequence_sets : Private {
     my (@ss_ids)       = sort @{ $c->stash->{sequence_set_ids} };
     my $rs             = $c->model('BCS')->resultset('Mimosa::SequenceSet');
     my $seq_root       = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
-    my $composite_name = "";
+    my $composite_sha1 = "";
+    my $composite_fasta= '';
     my $alphabet;
 
     # TODO: error if any one of the ids is not valid
@@ -137,30 +139,39 @@ sub compose_sequence_sets : Private {
         }
         my $ss_name     = $ss->shortname();
         $alphabet       = $ss->alphabet();
-        $composite_name .= "$ss_name-";
+        warn "ss_id $ss_id alphabet = $alphabet";
 
         # SHA1's are null until the first time we are asked to align against
         # the sequence set. If files on disk are changed without names changing,
         # we will need to refresh sha1's
-        my $sha1;
-        unless ($ss->sha1) {
+        my $sha1 = $ss->sha1;
+        unless ($sha1) {
             die "Can't read sequence set FASTA: $!" unless -e "$seq_root/$ss_name.seq";
-            my $fasta = slurp("$seq_root/$ss_name.seq");
-            $sha1  = sha1_hex($fasta);
-            warn "updating $ss_id to $sha1";
+            my $fasta          = slurp("$seq_root/$ss_name.seq");
+            $composite_fasta  .= $fasta;
+            $sha1              = sha1_hex($fasta);
+            $composite_sha1   .= $sha1;
+
+            #warn "updating $ss_id to $sha1";
             $search->update({ sha1 => $sha1 });
         }
         warn "found $ss_id with sha1 $sha1";
     }
 
-    $composite_name =~ s/-$//;
-    $composite_name = sha1_hex($composite_name);
-    $composite_name = catfile($seq_root,$composite_name);
+    $composite_sha1 = sha1_hex($composite_sha1);
 
-    unless (-e "$composite_name.seq" ) {
-        warn "Cached database of multi sequence set $composite_name not found, creating";
+    unless (-e "$composite_sha1.seq" ) {
+        warn "Cached database of multi sequence set $composite_sha1 not found, creating";
+        write_file "$composite_sha1.seq", $composite_fasta;
+
+        my $db_basename = catfile($seq_root, $composite_sha1);
+        die $db_basename;
+        App::Mimosa::Database->new(
+            alphabet    => $alphabet,
+            db_basename => $db_basename,
+        )->index;
     }
-    $c->stash->{composite_db_name} = $composite_name;
+    $c->stash->{composite_db_sha1} = $composite_sha1;
     $c->stash->{alphabet}          = $alphabet;
 }
 
@@ -205,8 +216,9 @@ sub submit :Path('/submit') :Args(0) {
         timeout                => $self->_app->config->{job_runtime_max},
         job_id                 => $c->stash->{job_id},
         config                 => $self->_app->config,
-        db_basename            => $c->stash->{composite_db_name},
-        alphabet               => $c->stash->{alphabet},
+        db_basename            => $c->stash->{composite_db_sha1},
+        # TODO: fix this properly
+        alphabet               => $c->stash->{alphabet} || 'nucleotide',
         output_file            => "$output_file",
         input_file             => "$input_file",
             map { $_ => $c->req->param($_) || '' }

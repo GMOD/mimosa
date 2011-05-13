@@ -101,14 +101,10 @@ has timeout => (
 sub run {
     my ($self) = @_;
 
-    my $db = Bio::BLAST::Database->open(
-        full_file_basename => $self->db_basename,
-        type               => $self->alphabet,
-        write              => 1,
-        create_dirs        => 1,
-    );
-
-    $db->format_from_file( seqfile => catfile($self->db_basename . '.seq') );
+    App::Mimosa::Database->new(
+        alphabet    => $self->alphabet,
+        db_basename => $self->db_basename,
+    )->index;
 
     # Consult our configuration to see if qsub should be used
 
