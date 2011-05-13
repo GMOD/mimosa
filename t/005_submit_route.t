@@ -25,7 +25,6 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
                     alphabet               => 'nucleotide',
     ];
     is($response->code, 200, '/submit returns 200');
-    diag($response->content) if $response->code != 200;
     like($response->content,qr!Download Raw Report.*/api/report/raw/\d+!, 'download raw report link')
 }
 {
@@ -73,7 +72,7 @@ SEQ
        ];
     };
     my $res = $f->();
-    is($res->code,400,'/submit gives an ungapped error') or diag $res->content;
+    is($res->code,400,'/submit gives an ungapped error');
     like($res->content,qr/Could not calculate ungapped Karlin-Altschul parameters/);
     unlike($res->content,qr/catalyst_detach/, "We don't get the error Invalid input: catalyst_detach");
 }
