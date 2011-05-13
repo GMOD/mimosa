@@ -202,6 +202,7 @@ sub submit :Path('/submit') :Args(0) {
     $c->forward('compose_sequence_sets');
 
     my $j = App::Mimosa::Job->new(
+        timeout                => $self->_app->config->{job_runtime_max},
         job_id                 => $c->stash->{job_id},
         config                 => $self->_app->config,
         db_basename            => $c->stash->{composite_db_name},
