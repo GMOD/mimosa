@@ -125,7 +125,7 @@ sub compose_sequence_sets : Private {
     my $alphabet;
 
     # TODO: error if any one of the ids is not valid
-    for my $ss_id (@ss_ids) {
+    for my $ss_id (grep { $_ } @ss_ids) {
         warn "ss_id = $ss_id";
         my $search = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_id });
 
@@ -142,14 +142,15 @@ sub compose_sequence_sets : Private {
         # SHA1's are null until the first time we are asked to align against
         # the sequence set. If files on disk are changed without names changing,
         # we will need to refresh sha1's
+        my $sha1;
         unless ($ss->sha1) {
+            die "Can't read sequence set FASTA: $!" unless -e "$seq_root/$ss_name.seq";
             my $fasta = slurp("$seq_root/$ss_name.seq");
-            my $sha1  = sha1_hex($fasta);
+            $sha1  = sha1_hex($fasta);
             warn "updating $ss_id to $sha1";
             $search->update({ sha1 => $sha1 });
-        } else {
-            warn "found $ss_id with sha1 $sha1";
         }
+        warn "found $ss_id with sha1 $sha1";
     }
 
     $composite_name =~ s/-$//;
