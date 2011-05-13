@@ -6,10 +6,12 @@ use lib 't/lib';
 use App::Mimosa::Test;
 use Test::DBIx::Class;
 
-use Catalyst::Test 'App::Mimosa';
 use File::Slurp qw/slurp/;
 use HTTP::Request::Common;
 use File::Spec::Functions;
+use Test::WWW::Mechanize::Catalyst;
+
+my $mech = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 'App::Mimosa');
 
 fixtures_ok 'basic_ss';
 
