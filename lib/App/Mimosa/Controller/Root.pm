@@ -126,6 +126,7 @@ sub compose_sequence_sets : Private {
     my $composite_fasta= '';
     my $alphabet;
 
+
     # TODO: error if any one of the ids is not valid
     for my $ss_id (grep { $_ } @ss_ids) {
         warn "ss_id = $ss_id";
@@ -165,12 +166,13 @@ sub compose_sequence_sets : Private {
         write_file "$seq_root/$composite_sha1.seq", $composite_fasta;
 
         my $db_basename = catfile($seq_root, $composite_sha1);
+        warn "creating mimosa db with db_basename=$db_basename";
         App::Mimosa::Database->new(
             alphabet    => $alphabet,
             db_basename => $db_basename,
         )->index;
     }
-    $c->stash->{composite_db_sha1} = $composite_sha1;
+    $c->stash->{composite_db_name} = $composite_sha1;
     $c->stash->{alphabet}          = $alphabet;
 }
 
@@ -181,6 +183,9 @@ sub submit :Path('/submit') :Args(0) {
         $c->stash->{error} = 'Anonymous users are not allowed to submit BLAST jobs. Please log in.';
         $c->detach('/input_error');
     }
+
+    my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
+    $c->stash->{seq_root} = $seq_root;
 
     $c->forward('validate_sequence');
 
@@ -201,6 +206,13 @@ sub submit :Path('/submit') :Args(0) {
     $input_file->openw->print( decode_entities($c->req->param('sequence')) );
 
     my $ids = $c->req->param('mimosa_sequence_set_ids') || '';
+
+    unless( $ids ) {
+        $c->stash->{error} = "You must select at least one Mimosa sequence set.";
+        $c->detach('/input_error');
+    }
+
+
     my @ss_ids;
 
     if ($ids =~ m/,/){
@@ -209,13 +221,22 @@ sub submit :Path('/submit') :Args(0) {
         @ss_ids = ($ids);
     }
     $c->stash->{sequence_set_ids} = [ @ss_ids ];
-    $c->forward('compose_sequence_sets');
+    my $db_basename;
+
+    if( @ss_ids > 1 ) {
+        $c->forward('compose_sequence_sets');
+        $db_basename = $c->stash->{composite_db_name};
+    } else {
+        my $rs       = $c->model('BCS')->resultset('Mimosa::SequenceSet');
+        my ($ss)     = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_ids[0] })->single;
+        $db_basename = catfile($c->stash->{seq_root}, $ss->shortname);
+    }
 
     my $j = App::Mimosa::Job->new(
         timeout                => $self->_app->config->{job_runtime_max},
         job_id                 => $c->stash->{job_id},
         config                 => $self->_app->config,
-        db_basename            => $c->stash->{composite_db_sha1},
+        db_basename            => $db_basename,
         # TODO: fix this properly
         alphabet               => $c->stash->{alphabet} || 'nucleotide',
         output_file            => "$output_file",
