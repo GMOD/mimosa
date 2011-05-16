@@ -225,7 +225,7 @@ sub submit :Path('/submit') :Args(0) {
 
     if( @ss_ids > 1 ) {
         $c->forward('compose_sequence_sets');
-        $db_basename = $c->stash->{composite_db_name};
+        $db_basename = catfile($c->stash->{seq_root}, $c->stash->{composite_db_name});
     } else {
         my $rs       = $c->model('BCS')->resultset('Mimosa::SequenceSet');
         my ($ss)     = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_ids[0] })->single;

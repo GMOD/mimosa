@@ -46,7 +46,9 @@ sub index {
     );
     $self->db($db);
 
-    $self->db->format_from_file( seqfile => catfile($self->db_basename . '.seq') );
+    my $seqfile = catfile($self->db_basename . '.seq');
+    #warn "seqfile = $seqfile";
+    $self->db->format_from_file( seqfile =>  $seqfile );
 
     chdir $cwd;
     return $self;
