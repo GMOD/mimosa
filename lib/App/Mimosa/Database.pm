@@ -30,8 +30,6 @@ has db => (
     is  => 'rw',
 );
 
-
-
 sub index {
     my ($self, %opts) = @_;
     my $dir = dirname($self->db_basename);
@@ -47,7 +45,6 @@ sub index {
     $self->db($db);
 
     my $seqfile = catfile($self->db_basename . '.seq');
-    #warn "seqfile = $seqfile";
     $self->db->format_from_file( seqfile =>  $seqfile );
 
     chdir $cwd;

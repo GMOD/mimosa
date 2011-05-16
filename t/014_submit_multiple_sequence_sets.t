@@ -1,4 +1,4 @@
-use Test::Most tests => 2;
+use Test::Most tests => 5;
 use strict;
 use warnings;
 
@@ -10,6 +10,8 @@ use Catalyst::Test 'App::Mimosa';
 use File::Slurp qw/slurp/;
 use HTTP::Request::Common;
 use File::Spec::Functions;
+#use Carp::Always;
+use Data::Dumper;
 
 fixtures_ok 'basic_ss';
 
@@ -25,5 +27,8 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
                     alphabet               => 'nucleotide',
     ];
     is($response->code, 200, '/submit returns 200');
-    content_like($response->content,qr!Download Raw Report.*/api/report/raw/\d+!, 'download raw report link')
+    like($response->content, qr!Download Raw Report.*/api/report/raw/\d+!, 'got a download raw report link');
+    like($response->content, qr!Database:.*ebe9f24f7c4bd899d31a058a703045ed4d9678c8-blast-db-new!, 'got the correct database file');
+    like($response->content, qr!5 sequences; 2,796 total letters!, 'got the correct number of sequences and letters');
+
 }

@@ -22,6 +22,7 @@ use Try::Tiny;
 use DateTime;
 use HTML::Entities;
 use Digest::SHA1 qw/sha1_hex/;
+use Cwd;
 
 BEGIN { extends 'Catalyst::Controller' }
 with 'Catalyst::Component::ApplicationAttribute';
@@ -129,7 +130,6 @@ sub compose_sequence_sets : Private {
 
     # TODO: error if any one of the ids is not valid
     for my $ss_id (grep { $_ } @ss_ids) {
-        warn "ss_id = $ss_id";
         my $search = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_id });
 
         # we are guaranteed by unique constraints to only get one
@@ -140,7 +140,7 @@ sub compose_sequence_sets : Private {
         }
         my $ss_name     = $ss->shortname();
         $alphabet       = $ss->alphabet();
-        warn "ss_id $ss_id alphabet = $alphabet";
+        # warn "ss_id $ss_id alphabet = $alphabet";
 
         # SHA1's are null until the first time we are asked to align against
         # the sequence set. If files on disk are changed without names changing,
@@ -156,17 +156,17 @@ sub compose_sequence_sets : Private {
             #warn "updating $ss_id to $sha1";
             $search->update({ sha1 => $sha1 });
         }
-        warn "found $ss_id with sha1 $sha1";
+        #warn "found $ss_id with sha1 $sha1";
     }
 
     $composite_sha1 = sha1_hex($composite_sha1);
 
     unless (-e "$seq_root/$composite_sha1.seq" ) {
-        warn "Cached database of multi sequence set $composite_sha1 not found, creating";
+        #warn "Cached database of multi sequence set $composite_sha1 not found, creating";
         write_file "$seq_root/$composite_sha1.seq", $composite_fasta;
 
         my $db_basename = catfile($seq_root, $composite_sha1);
-        warn "creating mimosa db with db_basename=$db_basename";
+        #warn "creating mimosa db with db_basename=$db_basename";
         App::Mimosa::Database->new(
             alphabet    => $alphabet,
             db_basename => $db_basename,
@@ -222,14 +222,14 @@ sub submit :Path('/submit') :Args(0) {
     }
     $c->stash->{sequence_set_ids} = [ @ss_ids ];
     my $db_basename;
-
+    my $cwd = getcwd;
     if( @ss_ids > 1 ) {
         $c->forward('compose_sequence_sets');
-        $db_basename = catfile($c->stash->{seq_root}, $c->stash->{composite_db_name});
+        $db_basename = catfile($cwd, $c->stash->{seq_root}, $c->stash->{composite_db_name});
     } else {
         my $rs       = $c->model('BCS')->resultset('Mimosa::SequenceSet');
         my ($ss)     = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_ids[0] })->single;
-        $db_basename = catfile($c->stash->{seq_root}, $ss->shortname);
+        $db_basename = catfile($cwd, $c->stash->{seq_root}, $ss->shortname);
     }
 
     my $j = App::Mimosa::Job->new(
@@ -307,11 +307,6 @@ sub submit :Path('/submit') :Args(0) {
 
         write_file( $cached_report_file, $report_html );
     }
-    #} catch {
-    #    $c->stash->{error} = "Invalid input: $_",
-    #    $c->forward('input_error');
-    #};
-
 
 }
 
