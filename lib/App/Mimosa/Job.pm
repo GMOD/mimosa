@@ -100,6 +100,7 @@ has timeout => (
 
 sub run {
     my ($self) = @_;
+    my ($error, $output);
 
     App::Mimosa::Database->new(
         alphabet    => $self->alphabet,
@@ -122,35 +123,16 @@ sub run {
             -o => $self->output_file,
         );
 
-        my $console_output = File::Temp->new;
-        my $console_error  = File::Temp->new;
-        my $harness = IPC::Run::harness \@blast_cmd, \*STDIN, $console_output, $console_error, timeout( $self->timeout );
-        $harness->start;
+        my $harness        = IPC::Run::harness \@blast_cmd, \*STDIN, \$output, \$error, timeout( $self->timeout );
 
+        $harness->start;
         $harness->finish;
 
-        $_->close for ($console_error, $console_output);
-
-        unless( -s $self->output_file ) {
-            # improve this
-            return $self->_error_output( $console_output . $console_error );
-        }
-
-        return;
     } else { # invoke qsub, if it was detected
 
     }
-}
 
-sub _error_output {
-    my ( $self, $tempfile ) = @_;
-    my $max_lines    = 50;
-    my $error_output = '';
-    open my $f, "$tempfile";
-    while( $max_lines-- and my $line = <$f> ) {
-        $error_output .= $line;
-    }
-    return $error_output;
+    return $error;
 }
 
 1;

@@ -75,6 +75,6 @@ SEQ
     my $res = $f->();
     is($res->code,400,'/submit gives an ungapped error');
     like($res->content,qr/Could not calculate ungapped Karlin-Altschul parameters/);
-    cmp_ok($res->content,'=~', qr/catalyst_detach/, "We don't get the error Invalid input: catalyst_detach");
+    ok($res->content !~ qr/catalyst_detach/, "We don't get the error Invalid input: catalyst_detach");
 }
 
