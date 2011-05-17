@@ -27,4 +27,4 @@ my $response = request POST '/submit', [
                 mimosa_sequence_set_id => 42,
 ];
 is($response->code, 400, "/submit with too small input sequence returns 400");
-content_like($response->content,qr/Sequence input too short\. Must have a length of at least 17/, "error explains the min length");
+like($response->content,qr/Sequence input too short\. Must have a length of at least 17/, "error explains the min length");
