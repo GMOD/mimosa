@@ -21,5 +21,5 @@ my $eseq = encode_entities($seq);
                     sequence_input         => $seq,
     ];
     is($response->code, 200, '/submit returns 200');
-    content_like($response->content, qr/\Q$eseq\E/ms, 'the sequence appears on the index page when POSTed');
+    like($response->content, qr/\Q$eseq\E/ms, 'the sequence appears on the index page when POSTed');
 }

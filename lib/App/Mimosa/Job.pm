@@ -123,11 +123,19 @@ sub run {
         );
 
         my $console_output = File::Temp->new;
-        my $success = IPC::Run::run \@blast_cmd, \*STDIN, $console_output, $console_output, timeout( $self->timeout );
-        $console_output->close;
-        unless( $success ) {
-            return $self->_error_output( $console_output );
+        my $console_error  = File::Temp->new;
+        my $harness = IPC::Run::harness \@blast_cmd, \*STDIN, $console_output, $console_error, timeout( $self->timeout );
+        $harness->start;
+
+        $harness->finish;
+
+        $_->close for ($console_error, $console_output);
+
+        unless( -s $self->output_file ) {
+            # improve this
+            return $self->_error_output( $console_output . $console_error );
         }
+
         return;
     } else { # invoke qsub, if it was detected
 
