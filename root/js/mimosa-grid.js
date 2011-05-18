@@ -42,15 +42,18 @@ Ext.onReady(function(){
     var sm = new xg.CheckboxSelectionModel({
         listeners: {
             selectionchange: function(sm) {
+                var ids;
                 if (sm.getCount()) { // clicking an unselected checkbox
-                    // This only gets the first selection
-                    var selected_data = sm.getSelected().data;
-                    jQuery("#mimosa_sequence_set_id").val( selected_data['mimosa_sequence_set_id'] );
+                    sm.getSelections.forEach(function(e){
+                        ids = ids + e['mimosa_sequence_set_id'] + ",";
+                    });
+                    jQuery("#mimosa_sequence_set_ids").val( ids );
                 } else { // clicking an already selected checkbox
                     // Replace the default of 0, which means "no sequence sets are selected"
-                    jQuery("#mimosa_sequence_set_id").val( 0 );
+                    // TODO: fix
+                    jQuery("#mimosa_sequence_set_ids").val( 0 );
                 }
-                //alert( jQuery("#mimosa_sequence_set_id").html() );
+                alert( jQuery("#mimosa_sequence_set_ids").val() );
             }
         }
     });
