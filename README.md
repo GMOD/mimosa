@@ -3,15 +3,14 @@
 ## What is Mimosa?
 
 Mimosa is a application which provides an web interface to various sequence
-alignment programs and sequence databases. At first, only BLAST will be
-supported, but the Mimosa framework will eventually support multiple sequence
-alignment programs.
+alignment programs and sequence databases. Currently BLAST is supported, and
+support for other alignment programs, such as BLASTP and BWA are planned.
 
-## What will Mimosa do?
+## What does Mimosa do?
 
-Mimosa will allow researchers to run sequence alignment programs on nucleotides
-or proteins, and request sequences from various sequence databases, all from
-a friendly web interface.
+Mimosa allows evolutionary researchers to run sequence alignment programs on
+nucleotides or proteins, and request sequences from various sequence databases,
+all from a friendly web interface.
 
 ## Why does Mimosa exist? Aren't there a lot of things that already do this?
 
@@ -133,7 +132,6 @@ connection information in this config key.
 Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it
 uses Moose, BioPerl and the Catalyst web framework.  On the client side, it uses
 JQuery, JQuery UI.
-
 
 ## How do I get involved?
 
