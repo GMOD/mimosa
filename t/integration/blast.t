@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More;
+use Test::Most;
 
 use lib 't/lib';
 use aliased 'App::Mimosa::Test::Mech';
@@ -17,15 +17,14 @@ $mech->submit_form_ok({
     form_name => 'main_input_form',
     fields => {
         sequence               => 'ATGCTAGTCGTCGATAGTCGTAGTAGCTGA',
-        mimosa_sequence_set_id => 1,
+        mimosa_sequence_set_ids => 1,
         program                => "blastn",
       },
 },
 'submit single sequence with defaults',
 );
-diag($mech->content) if $mech->status != 200;
 
-$mech->content_contains('No hits found') or diag $mech->content;
+$mech->content_contains('No hits found');
 
 # now try a spammy submission
 $mech->get_ok('/');
@@ -33,12 +32,11 @@ $mech->submit_form_ok({
     form_name => 'main_input_form',
     fields => {
         sequence               => '<a href="spammy.html">Spammy McSpammerson!</a>',
-        mimosa_sequence_set_id => 1,
+        mimosa_sequence_set_ids => 1,
         program                => 'blastn',
     },
 });
-$mech->content_like( qr!No hits found!i )
-  or diag $mech->content;
+$mech->content_like( qr!No hits found!i );
 
 # now try a spammy submission
 $mech->get_ok('/');
@@ -46,7 +44,7 @@ $mech->submit_form(
     form_name => 'main_input_form',
     fields => {
         sequence               => '',
-        mimosa_sequence_set_id => 1,
+        mimosa_sequence_set_ids => 1,
     },
 );
 $mech->content_like( qr/error/i );
@@ -59,7 +57,7 @@ $mech->submit_form(
     fields => {
         filtered               => 'T',
         sequence               => 'A'x40,
-        mimosa_sequence_set_id => 1,
+        mimosa_sequence_set_ids => 1,
         program                => "blastn",
     },
 );
@@ -71,7 +69,7 @@ $mech->submit_form(
     form_name => 'main_input_form',
     fields => {
         filtered               => 'T',
-        mimosa_sequence_set_id => 1,
+        mimosa_sequence_set_ids => 1,
         sequence               => 'ATGCTAGTCGTCGATAGTCGTAGTAGCTGA',
     },
 );
@@ -92,13 +90,12 @@ sub test_blast_hits() {
     $mech->submit_form_ok({
         form_name => 'main_input_form',
         fields => {
-            mimosa_sequence_set_id => 1,
+            mimosa_sequence_set_ids => 1,
             filtered               => 'T',
             sequence               => $fasta,
             program                => "blastn",
         },
     });
-    diag($mech->content) if $mech->status != 200;
     $mech->content_like( qr/Sbjct: /, 'got a blast hit');
     $mech->content_like( qr/OMGBBQWTF/, 'fasta defline found in report');
 

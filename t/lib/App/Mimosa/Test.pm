@@ -7,14 +7,14 @@ use base 'Exporter';
 our @EXPORT = (
     # re-export subs from Catalyst::Test
     qw(
-          get
-          request
-          ctx_request
+          action_notfound
           action_ok
           action_redirect
-          action_notfound
           content_like
           contenttype_is
+          ctx_request
+          get
+          request
     ),
   );
 

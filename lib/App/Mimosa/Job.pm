@@ -32,11 +32,6 @@ has program => (
     default => 'blastn',
 );
 
-has mimosa_sequence_set_id => (
-    is      => 'ro',
-    isa     => 'Int',
-);
-
 has input_file => (
     isa => 'Str',
     is  => 'rw',
@@ -105,15 +100,12 @@ has timeout => (
 
 sub run {
     my ($self) = @_;
+    my ($error, $output);
 
-    my $db = Bio::BLAST::Database->open(
-        full_file_basename => $self->db_basename,
-        type               => $self->alphabet,
-        write              => 1,
-        create_dirs        => 1,
-    );
-
-    $db->format_from_file( seqfile => catfile($self->db_basename . '.seq') );
+    App::Mimosa::Database->new(
+        alphabet    => $self->alphabet,
+        db_basename => $self->db_basename,
+    )->index;
 
     # Consult our configuration to see if qsub should be used
 
@@ -131,27 +123,16 @@ sub run {
             -o => $self->output_file,
         );
 
-        my $console_output = File::Temp->new;
-        my $success = IPC::Run::run \@blast_cmd, \*STDIN, $console_output, $console_output, timeout( $self->timeout );
-        $console_output->close;
-        unless( $success ) {
-            return $self->_error_output( $console_output );
-        }
-        return;
+        my $harness        = IPC::Run::harness \@blast_cmd, \*STDIN, \$output, \$error, timeout( $self->timeout );
+
+        $harness->start;
+        $harness->finish;
+
     } else { # invoke qsub, if it was detected
 
     }
-}
 
-sub _error_output {
-    my ( $self, $tempfile ) = @_;
-    my $max_lines    = 50;
-    my $error_output = '';
-    open my $f, "$tempfile";
-    while( $max_lines-- and my $line = <$f> ) {
-        $error_output .= $line;
-    }
-    return $error_output;
+    return $error;
 }
 
 1;

@@ -18,7 +18,6 @@ fixtures_ok 'basic_job';
     ];
     is($response->code, 400, 'Downloading the raw report of an invalid Job id should fail');
     like($response->content,qr/does not exist/);
-    diag($response->content) if $response->code != 400;
 }
 {
     my $response = request GET '/api/report/raw/1', [

@@ -16,7 +16,7 @@
 </td></tr>
 <tr><td>
 <form method="post" action="/submit" name="main_input_form">
-  <input type="hidden" id="mimosa_sequence_set_id" name="mimosa_sequence_set_id" value="0">
+  <input type="hidden" id="mimosa_sequence_set_ids" name="mimosa_sequence_set_ids" value="0">
   <input type="hidden" name="interface_type" value="simple" />
   <input type="hidden" name="outformat" value="0" />
   <br>

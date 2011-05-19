@@ -25,7 +25,6 @@ my $builder = Module::Build->new(
         'Bio::GMOD::Blast::Graph'                      => '0.04',
         'Bio::Root::Version'                           => '1.006009',
         'Catalyst::Action::RenderView'                 => 0,
-        'Catalyst::Action::RenderView::ErrorHandler'   => '0.100161',
         'Catalyst::Authentication::Store::DBIx::Class' => 0,
         'Catalyst::Controller::REST'                   => 0,
         'Catalyst::Model::DBIC::Schema'                => '0.48',
