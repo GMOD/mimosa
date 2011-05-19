@@ -53,13 +53,25 @@
 or proteins, and request sequences from various sequence databases, all from
 a friendly web interface.
 </p><h2>Dependencies</h2>
-<p><a href="http://perl.org">Perl 5</a>, <a href="http://moose.perl.org">Moose</a>, <a href="http://catalyst.perl.org">Catalyst</a></p>
+<p><a href="http://perl.org">Perl 5</a>, <a href="http://moose.perl.org">Moose</a>, <a href="http://catalyst.perl.org">Catalyst</a>, <a href="http://bioperl.org">BioPerl</a>,
+<a href="http://search.cpan.org/dist/Bio-GMOD-Blast-Graph/">Bio::GMOD::Blast::Graph</a>, <a href="http://search.cpan.org/dist/Bio-BLAST/">Bio::BLAST</a> and many more
+awesome <a href="http://cpan.org">CPAN</a> modules.
+
+</p>
 <h2>Install</h2>
 <pre>
     git clone git://github.com/GMOD/mimosa.git
     cd mimosa
     perl Build.PL
     ./Build --installdeps # install necessary dependencies
+    ./Build
+</pre>
+If you have <a href="http://search.cpan.org/dist/App-cpanminus/">cpanminus</a> installed (it is highly recommended), you can use that to install dependencies as well:
+<pre>
+    git clone git://github.com/GMOD/mimosa.git
+    cd mimosa
+    cpanm --installdeps . # install necessary dependencies
+    perl Build.PL
     ./Build
 </pre>
 <h2>License</h2>
