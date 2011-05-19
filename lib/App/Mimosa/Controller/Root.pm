@@ -1,6 +1,4 @@
 package App::Mimosa::Controller::Root;
-BEGIN {use Carp::Always; }
-
 use Moose;
 use namespace::autoclean;
 
@@ -164,11 +162,11 @@ sub compose_sequence_sets : Private {
 
     $composite_sha1 = sha1_hex($composite_sha1);
     unless (-e "$seq_root/$composite_sha1.seq" ) {
-        warn "Cached database of multi sequence set $composite_sha1 not found, creating";
+        #warn "Cached database of multi sequence set $composite_sha1 not found, creating";
         write_file "$seq_root/$composite_sha1.seq", $composite_fasta;
 
         my $db_basename = catfile($seq_root, $composite_sha1);
-        warn "creating mimosa db with db_basename=$db_basename";
+        #warn "creating mimosa db with db_basename=$db_basename";
         App::Mimosa::Database->new(
             alphabet    => $alphabet,
             db_basename => $db_basename,
@@ -216,7 +214,6 @@ sub submit :Path('/submit') :Args(0) {
 
 
     my @ss_ids;
-    use Data::Dumper;
 
     if ($ids =~ m/,/){
         (@ss_ids) = split /,/, $ids;
@@ -234,7 +231,6 @@ sub submit :Path('/submit') :Args(0) {
         my ($ss)     = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_ids[0] })->single;
         $db_basename = catfile($c->stash->{seq_root}, $ss->shortname);
     }
-    warn "db_basename = $db_basename";
 
     my $j = App::Mimosa::Job->new(
         timeout                => $self->_app->config->{job_runtime_max} || 5,
@@ -290,7 +286,7 @@ sub submit :Path('/submit') :Args(0) {
         if( $report =~ m/Sbjct: / ){
             my $graph_html = '';
             my $graph = Bio::GMOD::Blast::Graph->new(
-                                            -outputfile => $output_file,
+                                            -outputfile => "$output_file",
                                             -format     => 'blast',
                                             -fh         => IO::String->new( \$graph_html ),
                                             -dstDir     => $self->_app->config->{tmp_dir} || "/tmp/mimosa",
