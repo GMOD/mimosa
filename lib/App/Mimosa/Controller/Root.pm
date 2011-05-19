@@ -1,6 +1,9 @@
 package App::Mimosa::Controller::Root;
+BEGIN {use Carp::Always; }
+
 use Moose;
 use namespace::autoclean;
+
 
 use File::Temp qw/tempfile/;
 use IO::String;
@@ -122,7 +125,7 @@ sub compose_sequence_sets : Private {
     my ( $self, $c) = @_;
     my (@ss_ids)       = sort @{ $c->stash->{sequence_set_ids} };
     my $rs             = $c->model('BCS')->resultset('Mimosa::SequenceSet');
-    my $seq_root       = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
+    my $seq_root       = $c->stash->{seq_root};
     my $composite_sha1 = "";
     my $composite_fasta= '';
     my $alphabet;
@@ -140,7 +143,7 @@ sub compose_sequence_sets : Private {
         }
         my $ss_name     = $ss->shortname();
         $alphabet       = $ss->alphabet();
-        # warn "ss_id $ss_id alphabet = $alphabet";
+        #warn "ss_id $ss_id alphabet = $alphabet";
 
         # SHA1's are null until the first time we are asked to align against
         # the sequence set. If files on disk are changed without names changing,
@@ -160,13 +163,12 @@ sub compose_sequence_sets : Private {
     }
 
     $composite_sha1 = sha1_hex($composite_sha1);
-
     unless (-e "$seq_root/$composite_sha1.seq" ) {
-        #warn "Cached database of multi sequence set $composite_sha1 not found, creating";
+        warn "Cached database of multi sequence set $composite_sha1 not found, creating";
         write_file "$seq_root/$composite_sha1.seq", $composite_fasta;
 
         my $db_basename = catfile($seq_root, $composite_sha1);
-        #warn "creating mimosa db with db_basename=$db_basename";
+        warn "creating mimosa db with db_basename=$db_basename";
         App::Mimosa::Database->new(
             alphabet    => $alphabet,
             db_basename => $db_basename,
@@ -183,9 +185,9 @@ sub submit :Path('/submit') :Args(0) {
         $c->stash->{error} = 'Anonymous users are not allowed to submit BLAST jobs. Please log in.';
         $c->detach('/input_error');
     }
-
+    my $cwd = getcwd;
     my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
-    $c->stash->{seq_root} = $seq_root;
+    $c->stash->{seq_root} = catfile($cwd, $seq_root);
 
     $c->forward('validate_sequence');
 
@@ -214,6 +216,7 @@ sub submit :Path('/submit') :Args(0) {
 
 
     my @ss_ids;
+    use Data::Dumper;
 
     if ($ids =~ m/,/){
         (@ss_ids) = split /,/, $ids;
@@ -222,21 +225,23 @@ sub submit :Path('/submit') :Args(0) {
     }
     $c->stash->{sequence_set_ids} = [ @ss_ids ];
     my $db_basename;
-    my $cwd = getcwd;
+
     if( @ss_ids > 1 ) {
         $c->forward('compose_sequence_sets');
-        $db_basename = catfile($cwd, $c->stash->{seq_root}, $c->stash->{composite_db_name});
+        $db_basename = catfile($c->stash->{seq_root}, $c->stash->{composite_db_name});
     } else {
         my $rs       = $c->model('BCS')->resultset('Mimosa::SequenceSet');
         my ($ss)     = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_ids[0] })->single;
-        $db_basename = catfile($cwd, $c->stash->{seq_root}, $ss->shortname);
+        $db_basename = catfile($c->stash->{seq_root}, $ss->shortname);
     }
+    warn "db_basename = $db_basename";
 
     my $j = App::Mimosa::Job->new(
-        timeout                => $self->_app->config->{job_runtime_max},
+        timeout                => $self->_app->config->{job_runtime_max} || 5,
         job_id                 => $c->stash->{job_id},
         config                 => $self->_app->config,
-        db_basename            => $db_basename,
+        # force stringification to avoid arcane broken magic at a distance
+        db_basename            => "$db_basename",
         # TODO: fix this properly
         alphabet               => $c->stash->{alphabet} || 'nucleotide',
         output_file            => "$output_file",

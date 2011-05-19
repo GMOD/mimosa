@@ -9,6 +9,7 @@ use File::Basename;
 use autodie ':all';
 
 use Bio::BLAST::Database;
+#use Carp::Always;
 
 # TODO: store this in a shared place, because App::Mimosa::Job has it too
 enum 'Alphabet' => qw(protein nucleotide);
@@ -36,9 +37,12 @@ sub index {
     my $cwd = getcwd;
     chdir $dir;
 
+    my $basename = $self->db_basename;
+    my $alphabet = $self->alphabet;
     my $db = Bio::BLAST::Database->open(
-        full_file_basename => $self->db_basename,
-        type               => $self->alphabet,
+        # force stringification to avoid arcane broken magic at a distance
+        full_file_basename => "$basename",
+        type               => "$alphabet",
         write              => 1,
         create_dirs        => 1,
     );
