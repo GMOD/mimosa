@@ -37,12 +37,9 @@ sub index {
     my $cwd = getcwd;
     chdir $dir;
 
-    my $basename = $self->db_basename;
-    my $alphabet = $self->alphabet;
     my $db = Bio::BLAST::Database->open(
-        # force stringification to avoid arcane broken magic at a distance
-        full_file_basename => "$basename",
-        type               => "$alphabet",
+        full_file_basename => $self->db_basename,
+        type               => $self->alphabet,
         write              => 1,
         create_dirs        => 1,
     );
