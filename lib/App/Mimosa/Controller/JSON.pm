@@ -27,8 +27,21 @@ sub grid_json_GET {
     $self->status_ok( $c, entity => $data );
 }
 
+sub autodetect :Private {
+    my ($self, $c) = @_;
+    my $config    = $self->_app->config;
+    my $seq_dir   = $config->{sequence_data_dir};
+    my @seq_files = glob($seq_dir. '/*');
+
+    for my $f (@seq_files) {
+    }
+}
+
 sub _grid_json_data {
     my ($c) = @_;
+
+    $c->forward('autodetect');
+
     my $bcs = $c->model('BCS');
 
     # Mimosa resultsets
