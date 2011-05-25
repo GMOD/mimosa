@@ -34,10 +34,10 @@ sub autodetect :Private {
     my $config     = $self->_app->config;
     my $seq_dir    = $config->{sequence_data_dir};
     my @seq_files  = glob($seq_dir. '/*');
-    my @shortnames = map { $_->shortname } @{ $bcs->resultset('Mimosa::SequenceSet')->all };
+    my @shortnames = map { $_->shortname } ($bcs->resultset('Mimosa::SequenceSet')->all);
 
     # set difference
-    my @new_sets = (Scalar::Set->new(@seq_files) - Scalar::Set->new(@shortnames))->elements;
+    my @new_sets = (Set::Scalar->new(@seq_files) - Set::Scalar->new(@shortnames))->elements;
 
     # nonzero difference means we have new sequence files, so we grab metadata about them
     if (@new_sets) {
