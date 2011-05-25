@@ -1,6 +1,7 @@
 package App::Mimosa::Controller::JSON;
 use Moose;
 use Bio::Chado::Schema;
+use Set::Scalar;
 
 use namespace::autoclean;
 
@@ -29,11 +30,20 @@ sub grid_json_GET {
 
 sub autodetect :Private {
     my ($self, $c) = @_;
-    my $config    = $self->_app->config;
-    my $seq_dir   = $config->{sequence_data_dir};
-    my @seq_files = glob($seq_dir. '/*');
+    my $bcs        = $c->model('BCS');
+    my $config     = $self->_app->config;
+    my $seq_dir    = $config->{sequence_data_dir};
+    my @seq_files  = glob($seq_dir. '/*');
+    my @shortnames = map { $_->shortname } @{ $bcs->resultset('Mimosa::SequenceSet')->all };
 
-    for my $f (@seq_files) {
+    # set difference
+    my @new_sets = (Scalar::Set->new(@seq_files) - Scalar::Set->new(@shortnames))->elements;
+
+    # nonzero difference means we have new sequence files, so we grab metadata about them
+    if (@new_sets) {
+        for my $seq_set (@new_sets) {
+            # insert data about new sequences
+        }
     }
 }
 

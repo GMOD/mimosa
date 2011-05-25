@@ -53,6 +53,7 @@ my $builder = Module::Build->new(
         'IO::String'                                   => 0,
         'JSON::Any'                                    => '1.25',
         'Moose'                                        => '1.19',
+        'Set::Scalar'                                  => 0,
         'SQL::Translator'                              => '0.11007',
         'namespace::autoclean'                         => 0,
         'Path::Class'                                  => 0,
