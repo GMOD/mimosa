@@ -1,4 +1,4 @@
-use Test::Most tests => 11;
+use Test::Most tests => 12;
 use strict;
 use warnings;
 
@@ -56,5 +56,5 @@ like($json2, qr/"extraomgbbq"/, 'autodetection: the correct shortname appears in
 }
 
 END {
-    unlink( catfile($seq_data_dir, $extraseq) );
+    unlink( catfile($seq_data_dir, 'extraomgbbq.seq') );
 }
