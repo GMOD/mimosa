@@ -2,6 +2,8 @@ package App::Mimosa::Test;
 use strict;
 use warnings;
 use autodie qw/:all/;
+use IPC::Cmd qw/can_run/;
+use Test::More;
 
 use base 'Exporter';
 our @EXPORT = (
@@ -27,6 +29,12 @@ BEGIN {
     # so we only set this if it is undefined
     $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} ||= 'testing';
 
+}
+
+BEGIN {
+    unless (can_run('fastacmd')) {
+        plan skip_all => 'fastacmd not available';
+    }
 }
 
 # load the app, grab the context object so we can use it for configuration
