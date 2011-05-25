@@ -33,7 +33,7 @@ BEGIN {
 
 BEGIN {
     unless (can_run('fastacmd')) {
-        plan skip_all => 'fastacmd not available';
+        BAIL_OUT('fastacmd not available');
     }
 }
 
