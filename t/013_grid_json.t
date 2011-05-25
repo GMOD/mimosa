@@ -15,7 +15,7 @@ fixtures_ok 'basic_organism';
 action_ok   '/api/grid/json.json';
 
 my $seq_data_dir = app->config->{sequence_data_dir};
-my $extraseq     = catfile($seq_data_dir, 'extra', 'extra.seq');
+my $extraseq     = catfile($seq_data_dir, 'extra', 'extraomgbbq.seq');
 
 {
 my $r    = request('/api/grid/json.json');
@@ -51,6 +51,7 @@ copy($extraseq, $seq_data_dir);
 my $r2    = request('/api/grid/json.json');
 my $json2 = $r->content;
 cmp_ok (length($json2),'>', length($json), 'autodetection: new json is bigger than original');
+like($json2, qr/"extraomgbbq"/, 'autodetection: the correct shortname appears in the new json');
 
 }
 
