@@ -3,6 +3,8 @@ use Moose;
 use Bio::Chado::Schema;
 use File::Spec::Functions;
 use Set::Scalar;
+use File::Slurp qw/slurp/;
+use Digest::SHA1 'sha1_hex';
 
 use namespace::autoclean;
 
@@ -44,8 +46,9 @@ sub autodetect :Private {
     # nonzero difference means we have new sequence files, so we grab metadata about them
     if (@new_sets) {
         for my $seq_set (@new_sets) {
-            warn "adding $seq_set to the db";
-            my $sha1;
+            my $fasta = slurp("$seq_dir/$seq_set.seq");
+            my $sha1 = sha1_hex($fasta);
+            warn "adding $seq_set ($sha1) to the db";
             # insert data about new sequences
             $rs->create({
                 title     => "stuff and thangs",
