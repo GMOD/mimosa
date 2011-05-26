@@ -1,4 +1,4 @@
-use strict;
+
 use warnings;
 use Module::Build;
 
@@ -48,6 +48,7 @@ my $builder = Module::Build->new(
         'File::Temp'                                   => 0,
         'File::Slurp'                                  => '9999.15',
         'HTML::Entities'                               => 0,
+        'IPC::Cmd'                                     => '0.70',
         'IPC::Run'                                     => 0,
         'IPC::System::Simple'                          => 0,
         'IO::String'                                   => 0,
