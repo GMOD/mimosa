@@ -1,6 +1,6 @@
-
 use warnings;
 use Module::Build;
+use File::Spec::Functions;
 
 my $builder = Module::Build->new(
     module_name         => 'App::Mimosa',
@@ -59,7 +59,7 @@ my $builder = Module::Build->new(
         'Path::Class'                                  => 0,
         'YAML'                                         => 0,
     },
-    add_to_cleanup      => [ 'mimosa.db' ],
+    add_to_cleanup      => [ 'mimosa.db', catfile(qw/examples data .mimosa_cache*/)  ],
     create_makefile_pl  => 'traditional',
     meta_merge     => {
         resources => {
