@@ -148,7 +148,7 @@ sub compose_sequence_sets : Private {
         # we will need to refresh sha1's
         my $sha1 = $ss->sha1;
         unless ($sha1) {
-            die "Can't read sequence set FASTA: $!" unless -e "$seq_root/$ss_name.seq";
+            die "Can't read sequence set FASTA $seq_root/$ss_name.seq : $!" unless -e "$seq_root/$ss_name.seq";
             my $fasta          = slurp("$seq_root/$ss_name.seq");
             $composite_fasta  .= $fasta;
             $sha1              = sha1_hex($fasta);
@@ -164,7 +164,7 @@ sub compose_sequence_sets : Private {
     my $db_basename = catfile($seq_root, '.mimosa_cache_' . $composite_sha1);
 
     unless (-e "$db_basename.seq" ) {
-        warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq";
+        warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length =" . length($composite_fasta);
         write_file "$db_basename.seq", $composite_fasta;
 
         #warn "creating mimosa db with db_basename=$db_basename";
