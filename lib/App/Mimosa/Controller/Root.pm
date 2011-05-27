@@ -152,11 +152,10 @@ sub compose_sequence_sets : Private {
             my $fasta          = slurp("$seq_root/$ss_name.seq");
             $composite_fasta  .= $fasta;
             $sha1              = sha1_hex($fasta);
-            $composite_sha1   .= $sha1;
-
-            #warn "updating $ss_id to $sha1";
-            $search->update({ sha1 => $sha1 });
         }
+        $composite_sha1   .= $sha1;
+        #warn "updating $ss_id to $sha1";
+        $search->update({ sha1 => $sha1 });
         #warn "found $ss_id with sha1 $sha1";
     }
 
