@@ -15,6 +15,13 @@ use Data::Dumper;
 
 fixtures_ok 'basic_ss';
 
+BEGIN {
+    # This is the SHA1 of the composition of the FASTA for mimosa_sequence_set_id's 1 and 2
+    # We unconditionally remove it so that we always test the creation of it
+    unlink catfile( app->config->{sequence_data_dir}, ".mimosa_cache_ebe9f24f7c4bd899d31a058a703045ed4d9678c8.seq" );
+
+}
+
 my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
 {
     my $response = request POST '/submit', [
@@ -42,5 +49,5 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
                     mimosa_sequence_set_ids=> "1,2",
                     alphabet               => 'nucleotide',
     ];
-    is($response->code, 200, '/submit returns 200');
+    is($response->code, 200, '/submit returns 200 on the same sets with a different input sequence');
 }
