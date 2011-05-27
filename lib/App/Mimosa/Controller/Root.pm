@@ -315,8 +315,17 @@ sub submit :Path('/submit') :Args(0) {
 sub show_cached_report :Private {
     my ( $self, $c ) = @_;
 
-    $c->stash->{report}   = slurp( $self->_temp_file( $c->stash->{job_id} . '.html' ) );
-    $c->stash->{template} = 'report.mason';
+    my $cached_report_file = $self->_temp_file( $c->stash->{job_id} . '.html' );
+    if (-e $cached_report_file) {
+        my $cached_report     = slurp($cached_report_file);
+        $c->stash->{report}   = $cached_report;
+        $c->stash->{template} = 'report.mason';
+    } else {
+            $c->stash->{error} = <<ERROR;
+Could not find cached report file $cached_report_file !
+ERROR
+        $c->detach('/error');
+    }
 
 }
 
