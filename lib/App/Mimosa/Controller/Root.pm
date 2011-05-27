@@ -164,7 +164,12 @@ sub compose_sequence_sets : Private {
     my $db_basename = catfile($seq_root, '.mimosa_cache_' . $composite_sha1);
 
     unless (-e "$db_basename.seq" ) {
-        warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length =" . length($composite_fasta);
+        my $len = length($composite_fasta);
+        warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length = $len";
+        unless( $len ) {
+            $c->stash->{error} = "Mimosa attempted to write a zero-size cache file. Some file permissions are probably incorrect.";
+            $c->detach('/error');
+        }
         write_file "$db_basename.seq", $composite_fasta;
 
         #warn "creating mimosa db with db_basename=$db_basename";
