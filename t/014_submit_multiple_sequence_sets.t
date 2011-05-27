@@ -1,4 +1,4 @@
-use Test::Most tests => 5;
+use Test::Most tests => 6;
 use strict;
 use warnings;
 
@@ -31,4 +31,16 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
     like($response->content, qr!Database:.*ebe9f24f7c4bd899d31a058a703045ed4d9678c8-blast-db-new!, 'got the correct database file');
     like($response->content, qr!5 sequences; 2,796 total letters!, 'got the correct number of sequences and letters');
 
+    # Now submit against the same sequence sets, but with a different sequence
+    # Even if we do not get any hits, this shouldn't blow up
+    $response = request POST '/submit', [
+                    program                => 'blastn',
+                    sequence               => $seq . "A",
+                    maxhits                => 100,
+                    matrix                 => 'BLOSUM62',
+                    evalue                 => 0.1,
+                    mimosa_sequence_set_ids=> "1,2",
+                    alphabet               => 'nucleotide',
+    ];
+    is($response->code, 200, '/submit returns 200');
 }
