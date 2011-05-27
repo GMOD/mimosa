@@ -77,7 +77,8 @@ sub _grid_json_data {
     my $org_rs = $bcs->resultset('Organism');
     my ($common_name, $binomial, $name);
 
-    return { total => $#sets, rows => [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
+    return { total => $#sets, rows =>
+        [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
                         if ($rs->count) {
                             my $org      = $org_rs->find( { organism_id => $rs->single->organism_id });
                             $common_name = $org->common_name;
@@ -85,7 +86,7 @@ sub _grid_json_data {
                             $name        = $binomial;
                             $name       .= " ($common_name)" if $common_name;
                         } else {
-                            $name = 'NA';
+                            $name = $_->shortname;
                         }
 
                         +{
@@ -94,7 +95,9 @@ sub _grid_json_data {
                             name                   => $name,
                             alphabet               => $_->alphabet,
                         };
-    } @sets ] };
+            } @sets
+        ]
+    };
 
 }
 

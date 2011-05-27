@@ -32,7 +32,7 @@ like($json, qr/blargwart/, 'blargwart common_name appears');
 
 # This test depends on the data in t/etc/schema.pl and which data the JSON controller returns
 is_json($json, <<JSON, 'got the JSON we expected');
-{"rows":[{"mimosa_sequence_set_id":1,"name":"NA","description":"test db","alphabet":"nucleotide"},{"mimosa_sequence_set_id":2,"name":"NA","description":"DNA sequences for S. foobarium","alphabet":"nucleotide"},{"mimosa_sequence_set_id":3,"name":"Blargopod foobarium (blargwart)","description":"Protein sequences for B. foobarium","alphabet":"protein"}],"total":2}
+{"rows":[{"mimosa_sequence_set_id":1,"name":"blastdb_test.nucleotide","description":"test db","alphabet":"nucleotide"},{"mimosa_sequence_set_id":2,"name":"solanum_foobarium_dna","description":"DNA sequences for S. foobarium","alphabet":"nucleotide"},{"mimosa_sequence_set_id":3,"name":"Blargopod foobarium (blargwart)","description":"Protein sequences for B. foobarium","alphabet":"protein"}],"total":2}
 JSON
 #diag $json;
 }
