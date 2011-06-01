@@ -1,6 +1,10 @@
 package App::Mimosa::Controller::JSON;
 use Moose;
 use Bio::Chado::Schema;
+use File::Spec::Functions;
+use Set::Scalar;
+use File::Slurp qw/slurp/;
+use Digest::SHA1 'sha1_hex';
 
 use namespace::autoclean;
 
@@ -27,8 +31,42 @@ sub grid_json_GET {
     $self->status_ok( $c, entity => $data );
 }
 
+sub autodetect :Private {
+    my ($self, $c) = @_;
+    my $bcs        = $c->model('BCS');
+    my $config     = $self->_app->config;
+    my $seq_dir    = $config->{sequence_data_dir};
+    my @seq_files  = map { $_ =~ s!$seq_dir/(.*)\.seq!$1!g; $_ } grep { !-d } glob(catfile($seq_dir, '*.seq'));
+    my $rs         = $bcs->resultset('Mimosa::SequenceSet');
+    my @shortnames = map { $_->shortname } ($rs->all);
+
+    # set difference
+    my @new_sets = (Set::Scalar->new(@seq_files) - Set::Scalar->new(@shortnames))->elements;
+
+    # nonzero difference means we have new sequence files, so we grab metadata about them
+    if (@new_sets) {
+        for my $seq_set (@new_sets) {
+            my $fasta = slurp("$seq_dir/$seq_set.seq");
+            my $sha1 = sha1_hex($fasta);
+            warn "adding $seq_set ($sha1) to the db";
+            # insert data about new sequences
+            $rs->create({
+                title     => "stuff and thangs",
+                sha1      => $sha1,
+                shortname => $seq_set,
+                # do we have to guess this?
+                alphabet  => 'nucleotide',
+                info_url  => 'http://localhost',
+            });
+        }
+    }
+}
+
 sub _grid_json_data {
     my ($c) = @_;
+
+    $c->forward('autodetect');
+
     my $bcs = $c->model('BCS');
 
     # Mimosa resultsets
@@ -39,7 +77,8 @@ sub _grid_json_data {
     my $org_rs = $bcs->resultset('Organism');
     my ($common_name, $binomial, $name);
 
-    return { total => $#sets, rows => [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
+    return { total => $#sets, rows =>
+        [ map {         my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
                         if ($rs->count) {
                             my $org      = $org_rs->find( { organism_id => $rs->single->organism_id });
                             $common_name = $org->common_name;
@@ -47,7 +86,7 @@ sub _grid_json_data {
                             $name        = $binomial;
                             $name       .= " ($common_name)" if $common_name;
                         } else {
-                            $name = 'NA';
+                            $name = $_->shortname;
                         }
 
                         +{
@@ -56,7 +95,9 @@ sub _grid_json_data {
                             name                   => $name,
                             alphabet               => $_->alphabet,
                         };
-    } @sets ] };
+            } @sets
+        ]
+    };
 
 }
 
