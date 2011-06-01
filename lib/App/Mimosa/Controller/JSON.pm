@@ -78,7 +78,7 @@ sub _grid_json_data {
     my ($common_name, $binomial, $name);
 
     return { total => $#sets, rows =>
-        [ map {  my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
+        [ map {         my $rs = $sso_rs->search( { mimosa_sequence_set_id => $_->mimosa_sequence_set_id });
                         if ($rs->count) {
                             my $org      = $org_rs->find( { organism_id => $rs->single->organism_id });
                             $common_name = $org->common_name;

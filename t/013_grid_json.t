@@ -50,7 +50,7 @@ copy($extraseq, $seq_data_dir);
 # ask for the grid json again
 # foo=bar is to defeat caching, if it exists
 my $r2    = request('/api/grid/json.json?foo=bar');
-my $json2 = $r->content;
+my $json2 = $r2->content;
 cmp_ok (length($json2),'>', length($json), 'autodetection: new json is bigger than original');
 like($json2, qr/"extraomgbbq"/, 'autodetection: the correct shortname appears in the new json');
 
