@@ -11,6 +11,7 @@ my $builder = Module::Build->new(
     include_dirs        => '',
     build_requires => {
         'Catalyst::Test'                 => 0,
+        'HTML::Lint'                     => 0,
         'Test::DBIx::Class'              => 0,
         'Test::Most'                     => 0,
         'Test::WWW::Mechanize::Catalyst' => 0,
