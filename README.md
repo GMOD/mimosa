@@ -12,6 +12,18 @@ Mimosa allows evolutionary researchers to run sequence alignment programs on
 nucleotides or proteins, and request sequences from various sequence databases,
 all from a friendly web interface.
 
+## Who is Mimosa for?
+
+Mimosa is intended to be used by evolutionary biology researchers who do
+sequence alignment against sets of nucleotide or protein data. These sets could
+all be for different organisms, or all the same organism. Mimosa doesn't care.
+
+If the data is public, Mimosa can be installed on a publicly-availabe website,
+and allow sequence aligment by collaborators. If the data is pre-publication
+and still actively changing, Mimosa can also be setup to only be accessed by
+certain persons, either people on the local intranet, or those logging in with
+a username and password.
+
 ## Why does Mimosa exist? Aren't there a lot of things that already do this?
 
 Mimosa exists to solve the problem of making a standalone sequence alignment
@@ -133,10 +145,12 @@ Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it
 uses Moose, BioPerl and the Catalyst web framework.  On the client side, it uses
 JQuery, JQuery UI.
 
-## How do I get involved?
+## How can I help hack on Mimosa or otherwise get involved?
 
 Please join our mailing list at <http://groups.google.com/group/gmod-mimosa> and
 take a look at our Github issues for ideas about what we need help with:
-<https://github.com/GMOD/mimosa/issues> . You are also welcome to join the #gmod
-IRC channel on irc.freenode.net, where many GMOD developers hang out and talk
-about various GMOD projects.
+<https://github.com/GMOD/mimosa/issues> . Please use Mimosa and tell us how we
+can improve it and help it meet your sequence alignment needs.
+
+You are also welcome to join the #gmod IRC channel on irc.freenode.net, where
+many GMOD developers hang out and talk about various GMOD projects.
