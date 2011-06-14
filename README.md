@@ -55,7 +55,7 @@ you can either type:
 
 or use prove:
 
-    prove -Ilib -rv t/
+    prove -lrv t/
 
 to run the Mimosa test suite.
 
