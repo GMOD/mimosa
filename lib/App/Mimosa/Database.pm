@@ -46,10 +46,28 @@ sub index {
     $self->db($db);
 
     my $seqfile = catfile($self->db_basename . '.seq');
-    $self->db->format_from_file( seqfile =>  $seqfile );
+
+    unless ($self->already_indexed) {
+        $self->db->format_from_file( seqfile =>  $seqfile );
+    }
 
     chdir $cwd;
     return $self;
+}
+
+sub already_indexed {
+    my ($self, %opts) = @_;
+
+    my $basename        = $self->db_basename;
+    my @nucleotide_exts = qw/nhr nin nsq/;
+    my @protein_exts    = qw/phr pin psq/;
+
+    if($self->alphabet eq 'nucleotide') {
+        map { return 0 unless -s "$basename.$_" } @nucleotide_exts;
+    } elsif ($self->alphabet eq 'protein') {
+        map { return 0 unless -s "$basename.$_" } @protein_exts;
+    }
+    return 1;
 }
 
 1;
