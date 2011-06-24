@@ -7,8 +7,12 @@ use lib 't/lib';
 use App::Mimosa::Test;
 use aliased 'App::Mimosa::Test::Mech';
 
-my $mech = Mech->new;
-$mech->get('/');
-$mech->html_lint_ok('/ is valid HTML');
+my $mech = Mech->new( autolint => 1 );
+
+my @urls = qw{/ /submit};
+
+for my $url (@urls) {
+    $mech->get_ok($url);
+}
 
 done_testing();
