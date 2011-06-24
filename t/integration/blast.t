@@ -4,6 +4,7 @@ use warnings;
 use Test::Most;
 
 use lib 't/lib';
+use App::Mimosa::Test;
 use aliased 'App::Mimosa::Test::Mech';
 use Test::DBIx::Class;
 
