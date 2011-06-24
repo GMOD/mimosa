@@ -48,7 +48,10 @@ sub index {
     my $seqfile = catfile($self->db_basename . '.seq');
 
     unless ($self->already_indexed) {
-        $self->db->format_from_file( seqfile =>  $seqfile );
+        $self->db->format_from_file( 
+            seqfile => $seqfile,
+            title   => basename($self->db_basename),
+        );
     }
 
     chdir $cwd;
