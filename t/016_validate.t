@@ -6,10 +6,13 @@ use Test::Most;
 use lib 't/lib';
 use App::Mimosa::Test;
 use aliased 'App::Mimosa::Test::Mech';
+use Test::DBIx::Class;
+
+fixtures_ok 'basic_ss';
 
 my $mech = Mech->new( autolint => 1 );
 
-my @urls = qw{/ /submit};
+my @urls = qw{/};
 
 for my $url (@urls) {
     $mech->get_ok($url);
