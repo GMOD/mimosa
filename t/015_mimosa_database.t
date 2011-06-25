@@ -1,6 +1,7 @@
 use Test::Most tests => 6;
 use strict;
 use warnings;
+use Cwd;
 
 use lib 't/lib';
 use App::Mimosa::Test;
@@ -10,6 +11,9 @@ use File::Spec::Functions;
 fixtures_ok 'basic_ss';
 
 BEGIN{ use_ok 'App::Mimosa::Database' }
+
+
+my $cwd = getcwd;
 
 chdir catdir(qw/t data/);
 
@@ -25,3 +29,4 @@ is( $db->db->title, 'blastdb_test.nucleotide', 'title is correct');
 
 can_ok $db, qw/db_basename alphabet index/;
 
+chdir $cwd;
