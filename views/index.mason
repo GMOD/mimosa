@@ -11,66 +11,37 @@
 <div id="mimosa-grid">
 </div>
 
-  <table id="main_input_form" align="center" summary="" cellpadding="0" cellspacing="15" border="0" width="80%">
-  <tr><td>
-
 <a href="/autocrud/bcs/mimosa_sequence_set">Edit Sequence Sets</a>
 
-</td></tr>
-<tr><td>
 <form method="post" action="/submit" name="main_input_form">
   <input type="hidden" id="mimosa_sequence_set_ids" name="mimosa_sequence_set_ids" value="0">
   <input type="hidden" name="interface_type" value="simple" />
   <input type="hidden" name="outformat" value="0" />
   <br>
   Program: <select id="program_selector"   name="program">
-<option value="none">Choose a BLAST program</a></option>
+<option value="none">Choose a BLAST program</option>
 <option value="blastn">BLASTN (nucleotide to nucleotide)</option>
 <option value="tblastx">TBLASTX (protein to protein; both database and query are translated)</option>
 <option value="tblastn">TBLASTN (protein to nucleotide; database translated to protein)</option>
 </select>
-</td></tr>
-<tr><td>
     Name: <input type="text" name="search_name" size="20" id="search_name"><br>
     Description: <input type="text" name="search_description" size="20" id="search_description">
-</td></tr>
-<tr><td>
 
-
-</td></tr>
-</td></tr>
-    <tr><td colspan="2" align="center"><b>Query sequence</b></td></tr>
-    <tr><td colspan="2"><textarea name="sequence" id="sequence_input" rows="8" cols="80"><% $sequence_input %></textarea></td></tr>
-<tr>
-    <td>
+    <b>Query sequence</b>
+    <textarea name="sequence" id="sequence_input" rows="8" cols="80"><% $sequence_input %></textarea>
         <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')"><label for="advanced_control">Advanced Options</label>
-    </td>
-    <td>
     <div class="info_table_fieldval">
       <div style="text-align: right"><input type="reset" value="Clear" onclick="clearField(); "/> <input type="submit" name="search" value="Align" /></div>
     </div>
-</td></tr>
-    <tr><td colspan="2">
-      <table width="100%"><tr>
-         <td>
+
          <div id="advanced" style="display:none; width: 700px;">
-<table summary="" class="info_table_noborder"  width="100%">
-<tr>
   Filter Query?: <input type="checkbox" checked="checked" name="filtered" value="T" />
 
-  <td class="info_table_field">
     <span class="info_table_fieldname">Expect (e-value) Threshold</span>
     <div class="info_table_fieldval">
       <input type="text" size="6" value="1e-10" name="evalue" />
     </div>
 
-  </td>
-  <td class="info_table_field">
-    <span class="info_table_fieldname"> </span>
-  </td>
-</tr>
-
-<tr>  <td class="info_table_field">
     <span class="info_table_fieldname">Substitution Matrix</span>
     <div class="info_table_fieldval">
       <select id="simple_selectbox_2"   name="matrix">
@@ -82,8 +53,6 @@
 </select>
 
     </div>
-  </td>
-  <td class="info_table_field">
     <span class="info_table_fieldname">Show Graphics</span>
     <div class="info_table_fieldval">
       <select id="simple_selectbox_3"   name="output_graphs">
@@ -91,38 +60,15 @@
 <option value="bioperl_histogram">all</option>
 <option value="none">none</option>
 <option value="bioperl_only">alignment summary only</option>
-<!-- <option value="histogram_only">conservedness histogram only</option> -->
 </select>
 
     </div>
-  </td>
-</tr>
-<tr>  <td class="info_table_field">
-
-    <span class="info_table_fieldname">Max. hits to show</span>
-    <div class="info_table_fieldval">
-      <input type="text" name="maxhits" size="6" value="100" />
-    </div>
-  </td>
-<td>&nbsp;</td><td>&nbsp;</td></tr>
-</table>         </td>
-      </tr>
-      </table>
-
-    </td></tr>
-  </table>
+    <span class="info_table_fieldname">Max hits to show</span>
+      <input type="text" name="maxhits" size="6" value="100" >
 </form>
-  </td></tr>
-</table>
+
 <a href="/poweredby/">Powered By Open Source</a>
 </div> <!-- advanced -->
-</div>
 
-<div id="t2_content" style="">
-Choose your user preferences here and stuff
-</div>
-<div id="t3_content" style="">
-Adminy stuff
-</div>
 </div>
 </center>
