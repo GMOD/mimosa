@@ -24,10 +24,11 @@
 <option value="tblastx">TBLASTX (protein to protein; both database and query are translated)</option>
 <option value="tblastn">TBLASTN (protein to nucleotide; database translated to protein)</option>
 </select>
-    Name: <input type="text" name="search_name" size="20" id="search_name"><br>
-    Description: <input type="text" name="search_description" size="20" id="search_description">
+    <br/>
+    Name: <input type="text" name="search_name" size="20" id="search_name"><br/>
+    Description: <input type="text" name="search_description" size="20" id="search_description"><br/>
 
-    <b>Query sequence</b>
+    <b>Query sequence</b><br/>
     <textarea name="sequence" id="sequence_input" rows="8" cols="80"><% $sequence_input %></textarea>
         <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')"><label for="advanced_control">Advanced Options</label>
     <div class="info_table_fieldval">
