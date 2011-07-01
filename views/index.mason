@@ -3,7 +3,6 @@
     $organism_html    => undef
     $sequence_input   => undef
 </%args>
-<center>
 <div id="tabs1">
  <div id="t1_content">
 <div id="pagetitle"><h2>Mimosa - Miniature Model Organism Sequence Aligner</h2></div>
@@ -30,7 +29,9 @@
 
     <b>Query sequence</b><br/>
     <textarea name="sequence" id="sequence_input" rows="8" cols="80"><% $sequence_input %></textarea>
-        <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')"><label for="advanced_control">Advanced Options</label>
+       <br/> 
+        <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')">
+        <label for="advanced_control">Advanced Options</label>
     <div class="info_table_fieldval">
       <div style="text-align: right"><input type="reset" value="Clear" onclick="clearField(); "/> <input type="submit" name="search" value="Align" /></div>
     </div>
@@ -68,8 +69,9 @@
       <input type="text" name="maxhits" size="6" value="100" >
 </form>
 
+<br/>
+
 <a href="/poweredby/">Powered By Open Source</a>
 </div> <!-- advanced -->
 
 </div>
-</center>
