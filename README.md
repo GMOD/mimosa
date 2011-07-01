@@ -81,6 +81,20 @@ If you want to run it on a specific port, then pass the -p param :
 
     perl script/mimosa_server.pl -p 8080
 
+## How do I hack on Mimosa ?
+
+If you are developing a new feature in Mimosa, and you want start a new Mimosa
+instance with the default database, there is a convenient script:
+
+    ./scripts/debug_freshly_deployed_server.sh
+
+That will remove mimosa.db, deploy a new mimosa_db, and start a new Mimosa
+instance on port 8080 with DBIC_TRACE=1 set so every SQL statement run will be
+shown.
+
+Each new Mimosa feature should have a new test file in t/ of the form
+t/NNN_feature_name.t .
+
 ## How do I configure Mimosa ?
 
 The file called "app_mimosa.conf" contaings your configuration. In it, you can
