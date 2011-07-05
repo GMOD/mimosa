@@ -5,15 +5,17 @@
 </%args>
 <div id="tabs1">
  <div id="t1_content">
-<div id="pagetitle"><h2>Mimosa - Miniature Model Organism Sequence Aligner</h2></div>
+    <div id="pagetitle">
+        <h2>Mimosa - Miniature Model Organism Sequence Aligner</h2>
+    </div>
 
-<div id="mimosa-grid">
-</div>
+    <div id="mimosa-grid">
+    </div>
 
 <a href="/autocrud/bcs/mimosa_sequence_set">Edit Sequence Sets</a>
 
 <form method="post" action="/submit" name="main_input_form">
-  <input type="hidden" id="mimosa_sequence_set_ids" name="mimosa_sequence_set_ids" value="0">
+  <input type="hidden" id="mimosa_sequence_set_ids" name="mimosa_sequence_set_ids" value="0" />
   <input type="hidden" name="interface_type" value="simple" />
   <input type="hidden" name="outformat" value="0" />
   <br>
@@ -29,49 +31,53 @@
 
     <b>Query sequence</b><br/>
     <textarea name="sequence" id="sequence_input" rows="8" cols="80"><% $sequence_input %></textarea>
-       <br/> 
+       <br/>
         <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')">
         <label for="advanced_control">Advanced Options</label>
     <div class="info_table_fieldval">
-      <div style="text-align: right"><input type="reset" value="Clear" onclick="clearField(); "/> <input type="submit" name="search" value="Align" /></div>
+      <div style="text-align: right"><input type="reset" value="Clear" onclick="clearField(); "> <input type="submit" name="search" value="Align" ></div>
     </div>
 
          <div id="advanced" style="display:none; width: 700px;">
-  Filter Query?: <input type="checkbox" checked="checked" name="filtered" value="T" />
+  Filter Query?: <input type="checkbox" checked="checked" name="filtered" value="T" /><br/>
 
     <span class="info_table_fieldname">Expect (e-value) Threshold</span>
     <div class="info_table_fieldval">
       <input type="text" size="6" value="1e-10" name="evalue" />
+    <br/>
     </div>
 
     <span class="info_table_fieldname">Substitution Matrix</span>
     <div class="info_table_fieldval">
       <select id="simple_selectbox_2"   name="matrix">
-<option value="BLOSUM62">BLOSUM62 (default)</option>
-<option value="BLOSUM80">BLOSUM80 (recent divergence)</option>
-<option value="BLOSUM45">BLOSUM80 (ancient divergence)</option>
-<option value="PAM30">PAM30</option>
-<option value="PAM70">PAM70</option>
-</select>
-
+            <option value="BLOSUM62">BLOSUM62 (default)</option>
+            <option value="BLOSUM80">BLOSUM80 (recent divergence)</option>
+            <option value="BLOSUM45">BLOSUM80 (ancient divergence)</option>
+            <option value="PAM30">PAM30</option>
+            <option value="PAM70">PAM70</option>
+    </select>
+    <br/>
     </div>
+
     <span class="info_table_fieldname">Show Graphics</span>
     <div class="info_table_fieldval">
       <select id="simple_selectbox_3"   name="output_graphs">
-
-<option value="bioperl_histogram">all</option>
-<option value="none">none</option>
-<option value="bioperl_only">alignment summary only</option>
-</select>
-
+        <option value="bioperl_histogram">all</option>
+        <option value="none">none</option>
+        <option value="bioperl_only">alignment summary only</option>
+    </select>
     </div>
-    <span class="info_table_fieldname">Max hits to show</span>
-      <input type="text" name="maxhits" size="6" value="100" >
+    <div class="info_table_fieldval">
+    Max hits to show: <input type="text" name="maxhits" size="6" value="100" />
+    </div>
+    </div> <!-- advanced -->
 </form>
 
-<br/>
+</div>
 
+<center>
 <a href="/poweredby/">Powered By Open Source</a>
-</div> <!-- advanced -->
+</center>
 
 </div>
+
