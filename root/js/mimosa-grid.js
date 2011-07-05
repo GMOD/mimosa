@@ -98,8 +98,10 @@ Ext.onReady(function(){
         stateId: 'grid'
     });
 
-    // render the grid to the specified div in the page
-    grid.render('mimosa-grid');
+    // render the grid to the specified div in the page, if it exists
+    if( jQuery('#mimosa-grid') ) {
+        grid.render('mimosa-grid');
+    }
 
     // Make the program selector filter the grid
 

@@ -2,11 +2,21 @@
     $report => 'No hits found! Please try changing some of the advanced options, such as the e-value'
     $job_id
 </%args>
-
-<div id="report">
-<div id="raw_download">
-Download Raw Report <a href="/api/report/raw/<% $job_id %>">Report #<% $job_id %></a>
-</div>
-  <% $report %>
-</div>
-
+<div id="tabs1">
+    <div id="t1_content">
+    <div id="report">
+    <div id="raw_download">
+    Download Raw Report <a href="/api/report/raw/<% $job_id %>">Report #<% $job_id %></a>
+    </div>
+    <% $report %>
+    </div>
+    </div> <!-- t1_content -->
+    <div id="t2_content">
+        <div id="t2_content">
+         </div>
+    </div>
+    <div id="t3_content">
+        <div id="t3_content">
+         </div>
+    </div>
+</div> <!-- tabs1 -->

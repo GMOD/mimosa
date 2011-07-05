@@ -3,6 +3,8 @@
     $organism_html    => undef
     $sequence_input   => undef
 </%args>
+<script type="text/javascript" src="/js/mimosa-grid.js"></script>
+
 <div id="tabs1">
  <div id="t1_content">
     <div id="pagetitle">
@@ -79,6 +81,12 @@
     <center>
     <a href="/poweredby/">Powered By Open Source</a>
     </center>
+</div>
+
+<div id="t2_content">
+</div>
+
+<div id="t3_content">
 </div>
 
 
