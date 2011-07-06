@@ -63,13 +63,15 @@ Ext.onReady(function(){
                 });
                 jQuery("#mimosa_sequence_set_ids").val( ids );
             },
-            load: function(sm) {
-            }
         }
     });
     var grid = new xg.GridPanel({
         listeners: {
-            viewready: function(grid) {
+            viewready: function() {
+               grid.getSelectionModel().selectRow( jQuery("#default_id").val() );
+            },
+            afterrender: function() {
+               grid.getSelectionModel().selectRow( jQuery("#default_id").val() );
             },
         },
         columns: [
@@ -123,6 +125,9 @@ Ext.onReady(function(){
     if( jQuery('#mimosa-grid') ) {
         grid.render('mimosa-grid');
     }
+
+    grid.getSelectionModel().selectRow( jQuery("#default_id").val() );
+
 
     // Make the program selector filter the grid
 
