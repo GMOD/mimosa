@@ -32,6 +32,21 @@ Ext.onReady(function(){
         restful    : true,
         autoLoad   : true,
         writer     : writer,
+        listeners  : {
+            load : function(store) {
+                    var default_id    = jQuery("#default_id").val();
+                    var default_index = store.find('mimosa_sequence_set_id', default_id );
+
+                    console.log( default_index );
+                    store.each(function (record){
+                        // auto-select the row record that should be the default
+                        if( record['mimosa_sequence_set_id'] == default_id ){
+                            console.log( record );
+                        }
+                    });
+
+                },
+        }
     });
 
     // sort sequence sets by title
@@ -47,10 +62,16 @@ Ext.onReady(function(){
                     ids = ids + e.data['mimosa_sequence_set_id'] + ",";
                 });
                 jQuery("#mimosa_sequence_set_ids").val( ids );
+            },
+            load: function(sm) {
             }
         }
     });
     var grid = new xg.GridPanel({
+        listeners: {
+            viewready: function(grid) {
+            },
+        },
         columns: [
             sm,
             {
