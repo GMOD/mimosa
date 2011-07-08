@@ -35,7 +35,15 @@ isa_ok($bcs_schema, 'Bio::Chado::Schema');
 my $mimosa_schema = App::Mimosa::Schema::BCS->connect("dbi:SQLite:dbname=$bcs_db");
 
 isa_ok($mimosa_schema, 'App::Mimosa::Schema::BCS');
-lives_ok { $mimosa_schema->deploy } 'deploying mimosa schema to a BCS schema works';
+lives_ok { $mimosa_schema->deploy({
+    sources => [
+        'Mimosa::Job',
+        'Mimosa::SequenceSet',
+        'Mimosa::SequenceSetOrganism',
+    ]
+    }
+)
+} 'deploying mimosa schema to a BCS schema works';
 
 lives_ok { $mimosa_schema->populate('Mimosa::SequenceSet', [
     [qw/shortname title description alphabet source_spec lookup_spec info_url update_interval is_public/],
