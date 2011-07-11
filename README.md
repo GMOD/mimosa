@@ -71,6 +71,23 @@ or use prove:
 
 to run the Mimosa test suite.
 
+## How do I deploy a Mimosa schema?
+
+If you want to use Mimosa with SQLite, that is the default:
+
+    perl script/mimosa_deploy.pl
+
+If you want to deploy Mimosa to an already installed Chado schema, pass the --chado flag
+
+    perl script/mimosa_deploy.pl --chado 1
+
+This will also require you to give the proper DSN to your Chado instance in app_mimosa.conf.
+
+If you want to use a different config file:
+
+    perl script/mimosa_deploy.pl --chado 1 --conf my_other.conf
+
+
 ## How do I start Mimosa ?
 
 To start Mimosa on the default port of 3000 :

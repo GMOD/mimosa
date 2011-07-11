@@ -3,14 +3,34 @@ use warnings;
 use Config::JFDI;
 use Test::More;
 use Data::Dumper;
+use Getopt::Long;
 use App::Mimosa::Schema::BCS;
 
-my $config_file = Config::JFDI->new(file => shift || "app_mimosa.conf");
+# default to app_mimosa.conf and not deploying to chado
+my $conf  = '';
+my $chado = 0;
+my $result = GetOptions(
+                "conf=s", \$conf,
+                "chado=i", \$chado,
+            );
+my $config_file = Config::JFDI->new(file => $conf || "app_mimosa.conf");
 my $config = $config_file->get;
 
 my $schema = App::Mimosa::Schema::BCS->connect( $config->{'Model::BCS'}{connect_info}->{dsn} );
-diag "Deploying Mimosa Schema";
-$schema->deploy;
+
+
+if ($chado) {
+    diag "Deploying Mimosa Schema into a Chado schema";
+    $schema->deploy({
+             sources => [
+                'Mimosa::Job',
+                'Mimosa::SequenceSet',
+                'Mimosa::SequenceSetOrganism',
+                ]})
+} else {
+    diag "Deploying fresh Mimosa Schema";
+    $schema->deploy;
+}
 
 diag "Populating default Mimosa Schema";
 $schema->populate('Mimosa::SequenceSet', [
