@@ -61,7 +61,7 @@ my $builder = Module::Build->new(
         'Path::Class'                                  => 0,
         'YAML'                                         => 0,
     },
-    add_to_cleanup      => [ 'mimosa.db', catfile(qw/examples data .mimosa_cache*/)  ],
+    add_to_cleanup      => [ 'mimosa.db', catfile(qw/examples data .mimosa_cache*/), catfile(qw/t var BCS.db/)  ],
     create_makefile_pl  => 'traditional',
     meta_merge     => {
         resources => {
