@@ -1,6 +1,6 @@
-use strict;
 use warnings;
 use Module::Build;
+use File::Spec::Functions;
 
 my $builder = Module::Build->new(
     module_name         => 'App::Mimosa',
@@ -11,6 +11,7 @@ my $builder = Module::Build->new(
     include_dirs        => '',
     build_requires => {
         'Catalyst::Test'                 => 0,
+        'HTML::Lint'                     => 0,
         'Test::DBIx::Class'              => 0,
         'Test::Most'                     => 0,
         'Test::WWW::Mechanize::Catalyst' => 0,
@@ -48,17 +49,19 @@ my $builder = Module::Build->new(
         'File::Temp'                                   => 0,
         'File::Slurp'                                  => '9999.15',
         'HTML::Entities'                               => 0,
+        'IPC::Cmd'                                     => '0.70',
         'IPC::Run'                                     => 0,
         'IPC::System::Simple'                          => 0,
         'IO::String'                                   => 0,
         'JSON::Any'                                    => '1.25',
         'Moose'                                        => '1.19',
+        'Set::Scalar'                                  => 0,
         'SQL::Translator'                              => '0.11007',
         'namespace::autoclean'                         => 0,
         'Path::Class'                                  => 0,
         'YAML'                                         => 0,
     },
-    add_to_cleanup      => [ 'mimosa.db' ],
+    add_to_cleanup      => [ 'mimosa.db', catfile(qw/examples data .mimosa_cache*/), catfile(qw/t var BCS.db/)  ],
     create_makefile_pl  => 'traditional',
     meta_merge     => {
         resources => {

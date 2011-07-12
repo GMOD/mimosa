@@ -2,19 +2,22 @@ package App::Mimosa::Test;
 use strict;
 use warnings;
 use autodie qw/:all/;
+use IPC::Cmd qw/can_run/;
+use Test::More;
 
 use base 'Exporter';
 our @EXPORT = (
     # re-export subs from Catalyst::Test
     qw(
-          get
-          request
-          ctx_request
+          action_notfound
           action_ok
           action_redirect
-          action_notfound
           content_like
           contenttype_is
+          ctx_request
+          get
+          request
+          app
     ),
   );
 
@@ -27,6 +30,12 @@ BEGIN {
     # so we only set this if it is undefined
     $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} ||= 'testing';
 
+}
+
+BEGIN {
+    unless (can_run('fastacmd')) {
+        BAIL_OUT('fastacmd not available');
+    }
 }
 
 # load the app, grab the context object so we can use it for configuration

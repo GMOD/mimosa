@@ -3,15 +3,26 @@
 ## What is Mimosa?
 
 Mimosa is a application which provides an web interface to various sequence
-alignment programs and sequence databases. At first, only BLAST will be
-supported, but the Mimosa framework will eventually support multiple sequence
-alignment programs.
+alignment programs and sequence databases. Currently BLAST is supported, and
+support for other alignment programs, such as BLASTP and BWA are planned.
 
-## What will Mimosa do?
+## What does Mimosa do?
 
-Mimosa will allow researchers to run sequence alignment programs on nucleotides
-or proteins, and request sequences from various sequence databases, all from
-a friendly web interface.
+Mimosa allows evolutionary researchers to run sequence alignment programs on
+nucleotides or proteins, and request sequences from various sequence databases,
+all from a friendly web interface.
+
+## Who is Mimosa for?
+
+Mimosa is intended to be used by evolutionary biology researchers who do
+sequence alignment against sets of nucleotide or protein data. These sets could
+all be for different organisms, or all the same organism. Mimosa doesn't care.
+
+If the data is public, Mimosa can be installed on a publicly-availabe website,
+and allow sequence aligment by collaborators. If the data is pre-publication
+and still actively changing, Mimosa can also be setup to only be accessed by
+certain persons, either people on the local intranet, or those logging in with
+a username and password.
 
 ## Why does Mimosa exist? Aren't there a lot of things that already do this?
 
@@ -56,9 +67,26 @@ you can either type:
 
 or use prove:
 
-    prove -Ilib -rv t/
+    prove -lrv t/
 
 to run the Mimosa test suite.
+
+## How do I deploy a Mimosa schema?
+
+If you want to use Mimosa with SQLite, that is the default:
+
+    perl script/mimosa_deploy.pl
+
+If you want to deploy Mimosa to an already installed Chado schema, pass the --chado flag
+
+    perl script/mimosa_deploy.pl --chado 1
+
+This will also require you to give the proper DSN to your Chado instance in app_mimosa.conf.
+
+If you want to use a different config file:
+
+    perl script/mimosa_deploy.pl --chado 1 --conf my_other.conf
+
 
 ## How do I start Mimosa ?
 
@@ -69,6 +97,20 @@ To start Mimosa on the default port of 3000 :
 If you want to run it on a specific port, then pass the -p param :
 
     perl script/mimosa_server.pl -p 8080
+
+## How do I hack on Mimosa ?
+
+If you are developing a new feature in Mimosa, and you want start a new Mimosa
+instance with the default database, there is a convenient script:
+
+    ./scripts/debug_freshly_deployed_server.sh
+
+That will remove mimosa.db, deploy a new mimosa_db, and start a new Mimosa
+instance on port 8080 with DBIC_TRACE=1 set so every SQL statement run will be
+shown.
+
+Each new Mimosa feature should have a new test file in t/ of the form
+t/NNN_feature_name.t .
 
 ## How do I configure Mimosa ?
 
@@ -93,6 +135,11 @@ Disable qsub job queueing support, which means jobs will be run on the local mac
 ### tmp_dir /tmp/mimosa
 
 The temporary directory that Mimosa can use.
+
+### job_runtime_max		30
+
+The default maximum time that a job can take, if it is happening during a
+request cycle. Defaults to thirty seconds.
 
 ### sequence_data_dir examples/data
 
@@ -129,11 +176,12 @@ Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it
 uses Moose, BioPerl and the Catalyst web framework.  On the client side, it uses
 JQuery, JQuery UI.
 
-
-## How do I get involved?
+## How can I help hack on Mimosa or otherwise get involved?
 
 Please join our mailing list at <http://groups.google.com/group/gmod-mimosa> and
 take a look at our Github issues for ideas about what we need help with:
-<https://github.com/GMOD/mimosa/issues> . You are also welcome to join the #gmod
-IRC channel on irc.freenode.net, where many GMOD developers hang out and talk
-about various GMOD projects.
+<https://github.com/GMOD/mimosa/issues> . Please use Mimosa and tell us how we
+can improve it and help it meet your sequence alignment needs.
+
+You are also welcome to join the #gmod IRC channel on irc.freenode.net, where
+many GMOD developers hang out and talk about various GMOD projects.

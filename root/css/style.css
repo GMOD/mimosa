@@ -3,7 +3,6 @@ body {
     margin-bottom: 25px;
     padding: 0;
     background-color: #ddd;
-    background-image: url("/images/perldancer-bg.jpg");
     background-repeat: no-repeat;
     background-position: top left;
     font-size: 13px;
@@ -53,7 +52,6 @@ padding-right: 30px;
 }
 
 #header {
-background-image: url("/images/perldancer.jpg"); 
 background-repeat: no-repeat;
 background-position: top left;
 height: 64px;

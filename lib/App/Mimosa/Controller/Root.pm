@@ -2,6 +2,7 @@ package App::Mimosa::Controller::Root;
 use Moose;
 use namespace::autoclean;
 
+
 use File::Temp qw/tempfile/;
 use IO::String;
 use File::Spec::Functions;
@@ -17,9 +18,12 @@ use File::Spec::Functions;
 use Bio::GMOD::Blast::Graph;
 
 use App::Mimosa::Job;
+use App::Mimosa::Database;
 use Try::Tiny;
 use DateTime;
 use HTML::Entities;
+use Digest::SHA1 qw/sha1_hex/;
+use Cwd;
 
 BEGIN { extends 'Catalyst::Controller' }
 with 'Catalyst::Component::ApplicationAttribute';
@@ -126,6 +130,9 @@ sub validate : Private {
         $c->stash->{error} = "Sequence input too short. Must have a length of at least $min_length";
         $c->detach('/input_error');
     }
+    my $cwd = getcwd;
+    my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
+    $c->stash->{seq_root} = catfile($cwd, $seq_root);
 
 
     my $i = Bio::SeqIO->new(
@@ -159,6 +166,69 @@ sub _validate_sequence {
 
 }
 
+sub compose_sequence_sets : Private {
+    my ( $self, $c) = @_;
+    my (@ss_ids)       = sort @{ $c->stash->{sequence_set_ids} };
+    my $rs             = $c->model('BCS')->resultset('Mimosa::SequenceSet');
+    my $seq_root       = $c->stash->{seq_root};
+    my $composite_sha1 = "";
+    my $composite_fasta= '';
+    my $alphabet;
+
+
+    # TODO: error if any one of the ids is not valid
+    for my $ss_id (grep { $_ } @ss_ids) {
+        my $search = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_id });
+
+        # we are guaranteed by unique constraints to only get one
+        my $ss = $search->single;
+        unless ($ss) {
+            $c->stash->{error} = "Invalid mimosa_sequence_set_id";
+            $c->detach('/input_error');
+        }
+        my $ss_name     = $ss->shortname();
+        $alphabet       = $ss->alphabet();
+        #warn "ss_id $ss_id alphabet = $alphabet";
+
+        # SHA1's are null until the first time we are asked to align against
+        # the sequence set. If files on disk are changed without names changing,
+        # we will need to refresh sha1's
+        my $sha1 = $ss->sha1;
+        if ($sha1) {
+        } else {
+            die "Can't read sequence set FASTA $seq_root/$ss_name.seq : $!" unless -e "$seq_root/$ss_name.seq";
+            my $fasta          = slurp("$seq_root/$ss_name.seq");
+            $composite_fasta  .= $fasta;
+            $sha1              = sha1_hex($fasta);
+        }
+        $composite_sha1   .= $sha1;
+        #warn "updating $ss_id to $sha1";
+        $search->update({ sha1 => $sha1 });
+        #warn "found $ss_id with sha1 $sha1";
+    }
+
+    $composite_sha1 = sha1_hex($composite_sha1);
+    my $db_basename = catfile($seq_root, '.mimosa_cache_' . $composite_sha1);
+
+    unless (-e "$db_basename.seq" ) {
+        my $len = length($composite_fasta);
+        warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length = $len";
+        unless( $len ) {
+            $c->stash->{error} = "Mimosa attempted to write a zero-size cache file. Some file permissions are probably incorrect.";
+            $c->detach('/error');
+        }
+        write_file "$db_basename.seq", $composite_fasta;
+
+        #warn "creating mimosa db with db_basename=$db_basename";
+        App::Mimosa::Database->new(
+            alphabet    => $alphabet,
+            db_basename => $db_basename,
+        )->index;
+    }
+    $c->stash->{composite_db_name} = ".mimosa_cache_$composite_sha1";
+    $c->stash->{alphabet}          = $alphabet;
+}
+
 sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
 
@@ -181,32 +251,45 @@ sub submit :Path('/submit') :Args(0) {
 
     $input_file->openw->print( $sequence );
 
-    my $ss_id = $c->req->param('mimosa_sequence_set_id');
+    my $ids = $c->req->param('mimosa_sequence_set_ids') || '';
 
-    my @ss = $c->model('BCS')->resultset('Mimosa::SequenceSet')
-                    ->search({ 'mimosa_sequence_set_id' =>  $ss_id });
-    unless (@ss) {
-        $c->stash->{error} = "Invalid mimosa_sequence_set_id";
+    unless( $ids ) {
+        $c->stash->{error} = "You must select at least one Mimosa sequence set.";
         $c->detach('/input_error');
     }
-    # TODO: support multiple sequence sets in the future
-    my $ss_name     = $ss[0]->shortname();
-    my $seq_root    = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
-    my $db_basename = catfile($seq_root,$ss_name);
+
+
+    my @ss_ids;
+
+    if ($ids =~ m/,/){
+        (@ss_ids) = split /,/, $ids;
+    } else {
+        @ss_ids = ($ids);
+    }
+    $c->stash->{sequence_set_ids} = [ @ss_ids ];
+    my $db_basename;
+
+    if( @ss_ids > 1 ) {
+        $c->forward('compose_sequence_sets');
+        $db_basename = catfile($c->stash->{seq_root}, $c->stash->{composite_db_name});
+    } else {
+        my $rs       = $c->model('BCS')->resultset('Mimosa::SequenceSet');
+        my ($ss)     = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_ids[0] })->single;
+        $db_basename = catfile($c->stash->{seq_root}, $ss->shortname);
+    }
 
     my $j = App::Mimosa::Job->new(
+        timeout                => $self->_app->config->{job_runtime_max} || 5,
         job_id                 => $c->stash->{job_id},
         config                 => $self->_app->config,
-        db_basename            => $db_basename,
-        mimosa_sequence_set_id => $ss_id,
-        alphabet               => $ss[0]->alphabet,
+        # force stringification to avoid arcane broken magic at a distance
+        db_basename            => "$db_basename",
+        # TODO: fix this properly
+        alphabet               => $c->stash->{alphabet} || 'nucleotide',
         output_file            => "$output_file",
         input_file             => "$input_file",
             map { $_ => $c->req->param($_) || '' }
-            qw/
-            program maxhits output_graphs
-            evalue matrix
-            /,
+            qw/ program maxhits output_graphs evalue matrix /,
     );
 
     # Regardless of it working, the job is now complete
@@ -249,7 +332,7 @@ sub submit :Path('/submit') :Args(0) {
         if( $report =~ m/Sbjct: / ){
             my $graph_html = '';
             my $graph = Bio::GMOD::Blast::Graph->new(
-                                            -outputfile => $output_file,
+                                            -outputfile => "$output_file",
                                             -format     => 'blast',
                                             -fh         => IO::String->new( \$graph_html ),
                                             -dstDir     => $self->_app->config->{tmp_dir} || "/tmp/mimosa",
@@ -271,19 +354,23 @@ sub submit :Path('/submit') :Args(0) {
 
         write_file( $cached_report_file, $report_html );
     }
-    #} catch {
-    #    $c->stash->{error} = "Invalid input: $_",
-    #    $c->forward('input_error');
-    #};
-
 
 }
 
 sub show_cached_report :Private {
     my ( $self, $c ) = @_;
 
-    $c->stash->{report}   = slurp( $self->_temp_file( $c->stash->{job_id} . '.html' ) );
-    $c->stash->{template} = 'report.mason';
+    my $cached_report_file = $self->_temp_file( $c->stash->{job_id} . '.html' );
+    if (-e $cached_report_file) {
+        my $cached_report     = slurp($cached_report_file);
+        $c->stash->{report}   = $cached_report;
+        $c->stash->{template} = 'report.mason';
+    } else {
+            $c->stash->{error} = <<ERROR;
+Could not find cached report file $cached_report_file !
+ERROR
+        $c->detach('/error');
+    }
 
 }
 
