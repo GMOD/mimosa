@@ -134,25 +134,29 @@ sub validate : Private {
     my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
     $c->stash->{seq_root} = catfile($cwd, $seq_root);
 
-
     my $i = Bio::SeqIO->new(
         -format   => 'fasta',
         -file     => $c->stash->{input_file},
     );
     while ( my $s = $i->next_seq ) {
-        # _validate_sequence( $c, $s, $program );
+        $c->stash->{sequence} = $sequence;
+        $c->stash->{program}  = $program;
+        $c->forward('validate_sequence');
     }
 }
 
-sub _validate_sequence {
-    my ($c, $sequence, $program) = @_;
+sub validate_sequence : Private {
+    my ($self, $c) = @_;
+    my $sequence = $c->stash->{sequence};
+    my $program  = $c->stash->{program};
 
     try {
         $sequence->validate_seq();
     } catch {
-        $c->stash->{error} = "Sequence is frowned upon by BioPerl";
+        $c->stash->{error} = "Sequence is not a valid BioPerl sequence";
         $c->detach('/input_error');
-    }
+    };
+
     my %validate   = (
         blastn  => qr/^([ACGTURYKMSWBDHVN]+)$/i,
         tblastx => qr/^([GAVLIPFYCMHKRWSTDENQBZ\.X\*]+)$/i,

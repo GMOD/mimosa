@@ -13,23 +13,22 @@ use File::Spec::Functions;
 fixtures_ok 'basic_ss';
 
 {
-    local $TODO = 'validation still in progress';
     my $seq = <<SEQ;
 > guano pie
 ATIUSADHJKSHDJHSDFKJSDHFKJSDHFKJSDHFKJSDHFKJSDH
 SEQ
     my $f = sub {
         return request POST '/submit', [
-                    program                => 'blastn',
-                    sequence               => $seq,
-                    maxhits                => 100,
-                    alphabet               => 'nucleotide',
-                    matrix                 => 'BLOSUM62',
-                    evalue                 => 0.1,
-                    mimosa_sequence_set_id => 1,
+                    program                 => 'blastn',
+                    sequence                => $seq,
+                    maxhits                 => 100,
+                    alphabet                => 'nucleotide',
+                    matrix                  => 'BLOSUM62',
+                    evalue                  => 0.1,
+                    mimosa_sequence_set_ids => 1,
        ];
     };
     my $res = $f->();
     is($res->code,400,'/submit with illegal chars') or diag $res->content;
-    like($res->content,qr/contains illegal characters for blastn/, 'illegal character error');
+    like($res->content,qr/Sequence is not a valid BioPerl sequence/, 'illegal character error');
 }
