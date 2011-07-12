@@ -124,6 +124,7 @@ sub validate : Private {
 
     my $min_length = $self->_app->config->{min_sequence_input_length};
     my $program    = $c->req->param('program')  || '';
+    my $sequence   = $c->req->param('sequence')  || '';
 
     my $cwd = getcwd;
     my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
@@ -163,7 +164,8 @@ sub validate_sequence : Private {
     );
     my $seq = $sequence->seq();
     unless ($seq =~ $validate{$program}){
-        $c->stash->{error} = "Sequence $seq contains illegal characters for $program";
+        my $encseq = encode_entities($seq);
+        $c->stash->{error} = "Sequence $encseq contains illegal characters for $program";
         $c->detach('/input_error');
     }
 
@@ -235,14 +237,19 @@ sub compose_sequence_sets : Private {
 sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
 
+    my $ids = $c->req->param('mimosa_sequence_set_ids') || '';
+
+    unless( $ids ) {
+        $c->stash->{error} = "You must select at least one Mimosa sequence set.";
+        $c->detach('/input_error');
+    }
+
     $c->forward('make_job_id');
 
     my $input_file  = $self->_temp_file( $c->stash->{job_id}.'.in.fasta'  );
     my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.blast' );
 
     $c->stash->{input_file} = $input_file;
-
-    $c->forward('validate');
 
     # If we accepted a POSTed sequence as input, it will be HTML encoded
     my $sequence = decode_entities($c->req->param('sequence'));
@@ -251,16 +258,11 @@ sub submit :Path('/submit') :Args(0) {
     unless ($sequence =~ m/^>/) {
         $sequence = ">web user sequence\n$sequence";
     }
+    $c->stash->{sequence} = $sequence;
 
     $input_file->openw->print( $sequence );
 
-    my $ids = $c->req->param('mimosa_sequence_set_ids') || '';
-
-    unless( $ids ) {
-        $c->stash->{error} = "You must select at least one Mimosa sequence set.";
-        $c->detach('/input_error');
-    }
-
+    $c->forward('validate');
 
     my @ss_ids;
 
