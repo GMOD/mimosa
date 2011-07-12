@@ -20,7 +20,7 @@ fixtures_ok 'basic_ss';
 
 my $response = request POST '/submit', [
                 program                => 'blastn',
-                sequence               => "abitsmall",
+                sequence               => ">fasta title\nabitsmall",
                 maxhits                => 100,
                 matrix                 => 'BLOSUM62',
                 evalue                 => 0.1,

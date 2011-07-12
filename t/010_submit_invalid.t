@@ -30,5 +30,5 @@ SEQ
     };
     my $res = $f->();
     is($res->code,400,'/submit with illegal chars') or diag $res->content;
-    like($res->content,qr/Sequence is not a valid BioPerl sequence/, 'illegal character error');
+    like($res->content,qr/Sequence ATI.* contains illegal characters/, 'illegal character error');
 }

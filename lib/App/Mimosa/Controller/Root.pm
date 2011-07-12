@@ -124,12 +124,7 @@ sub validate : Private {
 
     my $min_length = $self->_app->config->{min_sequence_input_length};
     my $program    = $c->req->param('program')  || '';
-    my $sequence   = $c->req->param('sequence') || '';
 
-    unless (length($sequence) >= $min_length) {
-        $c->stash->{error} = "Sequence input too short. Must have a length of at least $min_length";
-        $c->detach('/input_error');
-    }
     my $cwd = getcwd;
     my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
     $c->stash->{seq_root} = catfile($cwd, $seq_root);
@@ -139,7 +134,11 @@ sub validate : Private {
         -file     => $c->stash->{input_file},
     );
     while ( my $s = $i->next_seq ) {
-        $c->stash->{sequence} = $sequence;
+        unless (length($s->seq()) >= $min_length) {
+            $c->stash->{error} = "Sequence input too short. Must have a length of at least $min_length";
+            $c->detach('/input_error');
+        }
+        $c->stash->{sequence} = $s;
         $c->stash->{program}  = $program;
         $c->forward('validate_sequence');
     }
