@@ -13,8 +13,8 @@ use File::Spec::Functions;
 
 fixtures_ok 'basic_ss';
 
-my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
 {
+    my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
     my $response = request POST '/submit', [
                     program                => 'blastn',
                     sequence               => $seq,
@@ -42,6 +42,7 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
 }
 
 {
+    my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
     my $f = sub {
         return request POST '/submit', [
                     program  => 'blastn',
@@ -77,4 +78,5 @@ SEQ
     like($res->content,qr/Could not calculate ungapped Karlin-Altschul parameters/);
     ok($res->content !~ qr/catalyst_detach/, "We don't get the error Invalid input: catalyst_detach");
 }
+
 

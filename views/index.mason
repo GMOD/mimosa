@@ -75,19 +75,13 @@
     </div> <!-- advanced -->
 </form>
 
-</div>
+</div> <!-- t1_content -->
 
-<div>
-    <center>
-    <a href="/poweredby/">Powered By Open Source</a>
-    </center>
-</div>
-
-<div id="t2_content">
+<div id="t2_content" style="" class="x-hide-display">
 Prefs
 </div>
 
-<div id="t3_content">
+<div id="t3_content" style="" class="x-hide-display">
 Admin
 </div>
 
