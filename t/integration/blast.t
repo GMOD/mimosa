@@ -7,37 +7,44 @@ use lib 't/lib';
 use App::Mimosa::Test;
 use aliased 'App::Mimosa::Test::Mech';
 use Test::DBIx::Class;
+use File::Slurp qw/slurp/;
+use File::Spec::Functions;
 
 fixtures_ok('basic_ss');
 
 my $mech = Mech->new;
+my $seq  = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
 
 $mech->get_ok('/');
 
 $mech->submit_form_ok({
     form_name => 'main_input_form',
     fields => {
-        sequence               => 'ATGCTAGTCGTCGATAGTCGTAGTAGCTGA',
+        sequence                => $seq,
         mimosa_sequence_set_ids => 1,
-        program                => "blastn",
+        program                 => "blastn",
       },
 },
 'submit single sequence with defaults',
-);
+) or diag $mech->content;
 
-$mech->content_contains('No hits found');
+$mech->content_contains('All hits shown');
+
 
 # now try a spammy submission
 $mech->get_ok('/');
-$mech->submit_form_ok({
+$mech->submit_form(
     form_name => 'main_input_form',
     fields => {
         sequence               => '<a href="spammy.html">Spammy McSpammerson!</a>',
         mimosa_sequence_set_ids => 1,
         program                => 'blastn',
     },
-});
-$mech->content_like( qr!No hits found!i );
+);
+
+is $mech->status, 400, 'error for illegal characters in sequence';
+
+$mech->content_like( qr!contains illegal!i, 'spammy submission errors' );
 
 # now try a spammy submission
 $mech->get_ok('/');
@@ -48,7 +55,7 @@ $mech->submit_form(
         mimosa_sequence_set_ids => 1,
     },
 );
-$mech->content_like( qr/error/i );
+$mech->content_like( qr/error/i, 'Spammy submission errors' );
 is $mech->status, 400, 'input error for empty sequence';
 
 #try an submission that will be sure to get us an ungapped error

@@ -109,14 +109,66 @@ sub _temp_file {
     return $tmp_base->file( @_ );
 }
 
-sub validate_sequence : Private {
+sub validate : Private {
     my ( $self, $c ) = @_;
-    # validate input
-    my $min_length = $self->_app->config->{min_sequence_input_length};
-    unless( length( $c->req->param('sequence') || '' ) >= $min_length ) {
-        $c->stash->{error} = "Sequence input too short. Must have a length of at least $min_length";
+
+    unless ($self->_app->config->{allow_anonymous}) {
+        $c->stash->{error} = 'Anonymous users are not allowed to submit BLAST jobs. Please log in.';
         $c->detach('/input_error');
     }
+
+    if( $c->req->param('program') eq 'none' ) {
+        $c->stash->{error} = "You must select a BLAST program to generate your report with.";
+        $c->detach('/input_error');
+    }
+
+    my $min_length = $self->_app->config->{min_sequence_input_length};
+    my $program    = $c->req->param('program')  || '';
+    my $sequence   = $c->req->param('sequence')  || '';
+
+    my $cwd = getcwd;
+    my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
+    $c->stash->{seq_root} = catfile($cwd, $seq_root);
+
+    my $i = Bio::SeqIO->new(
+        -format   => 'fasta',
+        -file     => $c->stash->{input_file},
+    );
+    while ( my $s = $i->next_seq ) {
+        unless (length($s->seq()) >= $min_length) {
+            $c->stash->{error} = "Sequence input too short. Must have a length of at least $min_length";
+            $c->detach('/input_error');
+        }
+        $c->stash->{sequence} = $s;
+        $c->stash->{program}  = $program;
+        $c->forward('validate_sequence');
+    }
+}
+
+sub validate_sequence : Private {
+    my ($self, $c) = @_;
+    my $sequence = $c->stash->{sequence};
+    my $program  = $c->stash->{program};
+
+    try {
+        $sequence->validate_seq();
+    } catch {
+        $c->stash->{error} = "Sequence is not a valid BioPerl sequence";
+        $c->detach('/input_error');
+    };
+
+    my %validate   = (
+        blastn  => qr/^([ACGTURYKMSWBDHVN]+)$/i,
+        tblastx => qr/^([GAVLIPFYCMHKRWSTDENQBZ\.X\*]+)$/i,
+        tblastn => qr/^([GAVLIPFYCMHKRWSTDENQBZ\.X\*]+)$/i,
+    );
+    my $seq = $sequence->seq();
+    unless ($seq =~ $validate{$program}){
+        my $encseq = encode_entities($seq);
+        $c->stash->{error} = "Sequence $encseq contains illegal characters for $program";
+        $c->detach('/input_error');
+    }
+
 }
 
 sub compose_sequence_sets : Private {
@@ -185,32 +237,6 @@ sub compose_sequence_sets : Private {
 sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
 
-    unless ($self->_app->config->{allow_anonymous}) {
-        $c->stash->{error} = 'Anonymous users are not allowed to submit BLAST jobs. Please log in.';
-        $c->detach('/input_error');
-    }
-    my $cwd = getcwd;
-    my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
-    $c->stash->{seq_root} = catfile($cwd, $seq_root);
-
-    $c->forward('validate_sequence');
-
-    $c->forward('make_job_id');
-
-    my $min_length = $self->_app->config->{min_sequence_input_length};
-
-    if( $c->req->param('program') eq 'none' ) {
-        $c->stash->{error} = "You must select a BLAST program to generate your report with.";
-        $c->detach('/input_error');
-    }
-
-    # parse posted info
-    my $input_file  = $self->_temp_file( $c->stash->{job_id}.'.in.fasta'  );
-    my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.blast' );
-
-    # If we accepted a POSTed sequence as input, it will be HTML encoded
-    $input_file->openw->print( decode_entities($c->req->param('sequence')) );
-
     my $ids = $c->req->param('mimosa_sequence_set_ids') || '';
 
     unless( $ids ) {
@@ -218,6 +244,25 @@ sub submit :Path('/submit') :Args(0) {
         $c->detach('/input_error');
     }
 
+    $c->forward('make_job_id');
+
+    my $input_file  = $self->_temp_file( $c->stash->{job_id}.'.in.fasta'  );
+    my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.blast' );
+
+    $c->stash->{input_file} = $input_file;
+
+    # If we accepted a POSTed sequence as input, it will be HTML encoded
+    my $sequence = decode_entities($c->req->param('sequence'));
+
+    # if there is no defline, create one
+    unless ($sequence =~ m/^>/) {
+        $sequence = ">web user sequence\n$sequence";
+    }
+    $c->stash->{sequence} = $sequence;
+
+    $input_file->openw->print( $sequence );
+
+    $c->forward('validate');
 
     my @ss_ids;
 
