@@ -1,3 +1,8 @@
+<%once>
+    use Config::JFDI;
+    my $c = Config::JFDI->new( name => 'app_mimosa', path => '.');
+    my $conf = $c->get;
+</%once>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Mimosa : Genomic Sequence Alignment</title>
@@ -30,8 +35,11 @@
 Ext.BLANK_IMAGE_URL = '/js/ext-3.3.1/resources/images/default/s.gif';
 
 Ext.onReady(function(){
+    jQuery("#default_id").val( <% $conf->{default_mimosa_sequence_set_id} %> );
 
 });
 </script>
 </head>
 <body>
+    <div id="default_id">
+    </div>

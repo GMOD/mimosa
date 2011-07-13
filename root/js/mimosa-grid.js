@@ -32,6 +32,8 @@ Ext.onReady(function(){
         restful    : true,
         autoLoad   : true,
         writer     : writer,
+        listeners  : {
+        }
     });
 
     // sort sequence sets by title
@@ -47,10 +49,14 @@ Ext.onReady(function(){
                     ids = ids + e.data['mimosa_sequence_set_id'] + ",";
                 });
                 jQuery("#mimosa_sequence_set_ids").val( ids );
-            }
+            },
         }
     });
+
+
     var grid = new xg.GridPanel({
+        listeners: {
+        },
         columns: [
             sm,
             {
@@ -98,13 +104,21 @@ Ext.onReady(function(){
         stateId: 'grid'
     });
 
+    store.on('load', function() {
+        var default_id    = jQuery("#default_id").val();
+        var default_index = store.find('mimosa_sequence_set_id', default_id );
+
+        //console.log( 'default index ' + default_index );
+        grid.getSelectionModel().selectRow(default_index);
+    });
+
+
     // render the grid to the specified div in the page, if it exists
     if( jQuery('#mimosa-grid') ) {
         grid.render('mimosa-grid');
     }
 
     // Make the program selector filter the grid
-
 
     var filter = function(){
         var program = jQuery("#program_selector").val();
@@ -138,5 +152,4 @@ Ext.onReady(function(){
     jQuery("#search_name").keyup(filter);
 
     jQuery("#search_description").keyup(filter);
-
 });
