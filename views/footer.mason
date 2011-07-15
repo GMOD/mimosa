@@ -1,19 +1,2 @@
-
-<div id="powerdby">
-    <center>
-    <a href="/poweredby/">Powered By Free and Open Source Software</a>
-    </center>
-</div>
-
-<script src="/js/jquery.js" type="text/javascript"></script>
-
-<script type="text/javascript" src="js/jquery.backstretch.min.js"></script>
-
-<script type="text/javascript">
-  $(document).ready(function(){
-    $.backstretch("/images/mimosa_pudica.jpg", {speed: 150});
-    });
-</script>
-
 </body>
 </html>

@@ -10,6 +10,7 @@ Ext.onReady(function(){
             {contentEl:'t1_content', title: 'Align'},
             {contentEl:'t2_content', title: 'Preferences'},
             {contentEl:'t3_content', title: 'Admin'},
+            {contentEl:'t4_content', title: 'Powered By'},
         ]
     });
 

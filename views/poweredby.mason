@@ -1,8 +1,0 @@
-
-Mimosa is powered by many pieces of Open Source software. Here is a list of those that it relies on most:
-
-<ul>
-<li><a href="http://bioperl.org/">BioPerl</a></li>
-<li><a href="http://jquery.org">jQuery</a></li>
-<li><a href="http://iinteractive.com/moose/">Moose</a></li>
-</ul>

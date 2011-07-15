@@ -21,6 +21,11 @@
 <!-- ExtJS library: all widgets -->
 <script type="text/javascript" src="/js/ext-3.3.1/ext-all.js"></script>
 
+<!-- Bundled copy of Jquery -->
+<script src="/js/jquery.js" type="text/javascript"></script>
+
+<!-- Bundled copy of Jquery backstretch plugin -->
+<script type="text/javascript" src="js/jquery.backstretch.min.js"></script>
 
 <!-- overrides to library -->
 
@@ -36,6 +41,7 @@ Ext.BLANK_IMAGE_URL = '/js/ext-3.3.1/resources/images/default/s.gif';
 
 Ext.onReady(function(){
     jQuery("#default_id").val( <% $conf->{default_mimosa_sequence_set_id} %> );
+    jQuery.backstretch("/images/mimosa_pudica.jpg", {speed: 150});
 
 });
 </script>

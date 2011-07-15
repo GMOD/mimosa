@@ -85,5 +85,27 @@ Prefs
 Admin
 </div>
 
+<div id="t4_content" style="" class="x-hide-display">
+<p>
+Mimosa is powered by many pieces of Free and Open Source software.
+</p>
+
+<p>
+Here is a list of those that it relies on most:
+</p>
+
+<ul>
+<li><a href="http://perl.org/">Perl</a></li>
+<li><a href="http://bioperl.org/">BioPerl</a></li>
+<li><a href="http://jquery.org">jQuery 1.4.2 (bundled)</a></li>
+<li><a href="http://dev.sencha.com/deploy/ext-3.3.1/docs/">ExtJS 3.3.1 (bundled)</a></li>
+<li><a href="http://iinteractive.com/moose/">Moose</a></li>
+<li><a href="http://catalystframework.org">Catalyst</a></li>
+</ul>
+
+You can see a detailed list of our Perl dependencies in our <a href="https://github.com/GMOD/mimosa/blob/master/Build.PL">Build.PL</a>
+
+</div>
+
 
 </div>
