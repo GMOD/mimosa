@@ -100,9 +100,15 @@ Here is a list of those that it relies on most:
 <li><a href="http://catalystframework.org">Catalyst</a></li>
 </ul>
 
+<p>
 You can see a detailed list of our Perl dependencies in our <a href="https://github.com/GMOD/mimosa/blob/master/Build.PL">Build.PL</a>
+</p>
+<p>
+    Mimosa is also designed to interoperate with the <a href="http://www.gmod.org">Generic Model Organism Database (GMOD)</a> <a href="http://www.gmod.org/wiki/Chado">Chado</a> database schema.
+</p>
 
 </div>
+
 
 
 % if ($admin) {

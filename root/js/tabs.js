@@ -9,7 +9,7 @@ Ext.onReady(function(){
         items:[
             {contentEl:'t1_content', title: 'Align'},
             {contentEl:'t2_content', title: 'Preferences'},
-            {contentEl:'t3_content', title: 'Powered By'},
+            {contentEl:'t3_content', title: 'About'},
         ]
     });
 
