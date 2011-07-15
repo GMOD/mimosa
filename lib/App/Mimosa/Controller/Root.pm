@@ -63,6 +63,9 @@ sub index :Path :Args(0) {
     $c->stash->{template}       = 'index.mason';
     $c->stash->{schema}         = $c->model('Model::BCS');
 
+    # currently, any logged-in user has admin rights
+    $c->stash->{admin} = 1 if $c->user_exists;
+
     # Must encode HTML entities here to prevent XSS attack
     $c->stash->{sequence_input} = encode_entities($c->req->param('sequence_input')) || '';
 }

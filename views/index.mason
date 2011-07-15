@@ -2,6 +2,7 @@
     $sequenceset_html => undef
     $organism_html    => undef
     $sequence_input   => undef
+    $admin            => 0
 </%args>
 <script type="text/javascript" src="/js/mimosa-grid.js"></script>
 
@@ -82,10 +83,6 @@ Prefs
 </div>
 
 <div id="t3_content" style="" class="x-hide-display">
-Admin
-</div>
-
-<div id="t4_content" style="" class="x-hide-display">
 <p>
 Mimosa is powered by many pieces of Free and Open Source software.
 </p>
@@ -106,6 +103,13 @@ Here is a list of those that it relies on most:
 You can see a detailed list of our Perl dependencies in our <a href="https://github.com/GMOD/mimosa/blob/master/Build.PL">Build.PL</a>
 
 </div>
+
+
+% if ($admin) {
+<div id="t4_content" style="" class="x-hide-display">
+Admin
+</div>
+% }
 
 
 </div>
