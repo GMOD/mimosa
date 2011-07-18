@@ -15,7 +15,6 @@
     <div id="mimosa-grid">
     </div>
 
-<a href="/autocrud/bcs/mimosa_sequence_set">Edit Sequence Sets</a>
 
 <form method="post" action="/submit" name="main_input_form">
   <input type="hidden" id="mimosa_sequence_set_ids" name="mimosa_sequence_set_ids" value="0" />
@@ -113,7 +112,8 @@ You can see a detailed list of our Perl dependencies in our <a href="https://git
 
 % if ($admin) {
 <div id="t4_content" style="" class="x-hide-display">
-Admin
+<h1>Admin</h1>
+<a href="/autocrud/bcs/mimosa_sequence_set">Edit Sequence Sets</a>
 </div>
 % }
 
