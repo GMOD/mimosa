@@ -1,6 +1,29 @@
 Ext.onReady(function(){
     Ext.QuickTips.init();
 
+    var panel = new Ext.Panel({
+        title: 'Mimosa',
+        id: 'panel',
+        layout:'border',
+        width:600,
+        height:400,
+        renderTo:Ext.getBody(),
+        items:[{
+            region:'center',
+            layout:'fit',
+            frame:true,
+            border:false,
+               },{
+        region:'east',
+        layout:'fit',
+        frame:true,
+        border:false,
+        width:200,
+        split:true,
+        collapsible:true,
+        collapseMode:'mini'
+        }]
+    });
     // Apply a set of config properties to the singleton
     Ext.apply(Ext.QuickTips.getQuickTip(), {
         showDelay    : 0,
