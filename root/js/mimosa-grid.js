@@ -132,30 +132,38 @@ Ext.onReady(function(){
         items: [
             {
                 fieldLabel: 'Program',
-                name: 'username',
+                name: 'program',
+                id: 'program_selector',
+                fieldType: 'select',
                 allowBlank:false
             },
             {
                 fieldLabel: 'Name',
-                name: 'username',
+                name: 'search_name',
                 allowBlank:false
             },
             {
                 fieldLabel: 'Description',
-                name: 'username',
+                name: 'search_description',
                 allowBlank:false
             },
             {
                 fieldLabel: 'Query Sequence',
-                name: 'username',
+                name: 'sequence',
                 allowBlank:false,
                 type: 'textarea'
             },
             {
+                fieldLabel: 'Advanced',
+                type: 'checkbox',
+                name: 'advanced',
+                value: 0
+            },
+            {
                 inputType: 'hidden',
-                id: 'submitbutton',
-                name: 'myhiddenbutton',
-                value: 'hiddenvalue'
+                id: 'mimosa_sequence_set_ids',
+                name: 'mimosa_sequnce_set_ids',
+                value: '0'
             }
 
         ],
