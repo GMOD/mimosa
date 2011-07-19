@@ -93,7 +93,7 @@ Ext.onReady(function(){
         sm: sm,
         store: store,
         stripeRows: true,
-        title: 'Available Sequence Sets to BLAST against',
+        title: 'Search and select sequence sets to BLAST/Align',
         autoWidth: true,
         autoHeight: false,
         height: 200,
@@ -121,6 +121,54 @@ Ext.onReady(function(){
     if( jQuery('#mimosa-grid') ) {
         // grid.render('mimosa-grid');
     }
+    var formpanel = new Ext.form.FormPanel({
+        standardSubmit: true,
+        frame:true,
+        title: 'Align',
+        width: '350',
+        region: 'east',
+        defaults: {width: 350},
+        defaultType: 'textfield',
+        items: [
+            {
+                fieldLabel: 'Program',
+                name: 'username',
+                allowBlank:false
+            },
+            {
+                fieldLabel: 'Name',
+                name: 'username',
+                allowBlank:false
+            },
+            {
+                fieldLabel: 'Description',
+                name: 'username',
+                allowBlank:false
+            },
+            {
+                fieldLabel: 'Query Sequence',
+                name: 'username',
+                allowBlank:false,
+                type: 'textarea'
+            },
+            {
+                inputType: 'hidden',
+                id: 'submitbutton',
+                name: 'myhiddenbutton',
+                value: 'hiddenvalue'
+            }
+
+        ],
+        buttons: [{
+            text: 'Submit',
+            handler: function() {
+                formpanel.getForm().getEl().dom.action = 'test.php';
+                formpanel.getForm().getEl().dom.method = 'POST';
+                formpanel.getForm().submit();
+            }
+        }]
+    });
+
 
     var panel = new Ext.Panel({
         title: 'Mimosa - Miniature Model Organism Sequence Aligner',
@@ -131,13 +179,15 @@ Ext.onReady(function(){
         renderTo: 'mimosa-panel',
         items:[
             grid,
+            formpanel
+        ],
         /*{
             id: 'mimosa-panel-left',
             region:'center',
             layout:'fit',
             frame:true,
             border:false,
-        },*/
+        },
         {
             id: 'mimosa-panel-right',
             region:'east',
@@ -148,7 +198,7 @@ Ext.onReady(function(){
             split:true,
             collapsible:true,
             collapseMode:'mini'
-        }]
+        }] */
     });
 
     // Add the grid panel
