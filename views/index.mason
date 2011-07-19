@@ -15,6 +15,9 @@
     <div id="mimosa-grid">
     </div>
 
+    <div id="mimosa-panel">
+    </div>
+
 
 <form method="post" action="/submit" name="main_input_form">
   <input type="hidden" id="mimosa_sequence_set_ids" name="mimosa_sequence_set_ids" value="0" />

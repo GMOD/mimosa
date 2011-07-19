@@ -4,24 +4,26 @@ Ext.onReady(function(){
     var panel = new Ext.Panel({
         title: 'Mimosa',
         id: 'panel',
-        layout:'border',
-        width:600,
+        layout: 'border',
+        width: '100%',
         height:400,
-        renderTo:Ext.getBody(),
+        renderTo: 'mimosa-panel',
         items:[{
+            id: 'mimosa-panel-left',
             region:'center',
             layout:'fit',
             frame:true,
             border:false,
-               },{
-        region:'east',
-        layout:'fit',
-        frame:true,
-        border:false,
-        width:200,
-        split:true,
-        collapsible:true,
-        collapseMode:'mini'
+        },{
+            id: 'mimosa-panel-right',
+            region:'east',
+            layout:'fit',
+            frame:true,
+            border:false,
+            width:200,
+            split:true,
+            collapsible:true,
+            collapseMode:'mini'
         }]
     });
     // Apply a set of config properties to the singleton
@@ -140,6 +142,12 @@ Ext.onReady(function(){
     if( jQuery('#mimosa-grid') ) {
         grid.render('mimosa-grid');
     }
+
+    // Add the grid panel
+    panel.add(xg);
+
+    // render the panel again
+    panel.doLayout();
 
     // Make the program selector filter the grid
 
