@@ -8,9 +8,6 @@
 
 <div id="tabs1">
  <div id="t1_content">
-    <div id="pagetitle">
-        <h2>Mimosa - Miniature Model Organism Sequence Aligner</h2>
-    </div>
 
     <div id="mimosa-grid">
     </div>

@@ -1,31 +1,6 @@
 Ext.onReady(function(){
     Ext.QuickTips.init();
 
-    var panel = new Ext.Panel({
-        title: 'Mimosa',
-        id: 'panel',
-        layout: 'border',
-        width: '100%',
-        height:400,
-        renderTo: 'mimosa-panel',
-        items:[{
-            id: 'mimosa-panel-left',
-            region:'center',
-            layout:'fit',
-            frame:true,
-            border:false,
-        },{
-            id: 'mimosa-panel-right',
-            region:'east',
-            layout:'fit',
-            frame:true,
-            border:false,
-            width:200,
-            split:true,
-            collapsible:true,
-            collapseMode:'mini'
-        }]
-    });
     // Apply a set of config properties to the singleton
     Ext.apply(Ext.QuickTips.getQuickTip(), {
         showDelay    : 0,
@@ -124,6 +99,10 @@ Ext.onReady(function(){
         height: 200,
         stripeRows : true,
 
+        // UI layout options
+        region: 'center',
+        layout: 'fit',
+
         // config options for stateful behavior
         stateful: true,
         stateId: 'grid'
@@ -140,11 +119,40 @@ Ext.onReady(function(){
 
     // render the grid to the specified div in the page, if it exists
     if( jQuery('#mimosa-grid') ) {
-        grid.render('mimosa-grid');
+        // grid.render('mimosa-grid');
     }
 
+    var panel = new Ext.Panel({
+        title: 'Mimosa - Miniature Model Organism Sequence Aligner',
+        id: 'panel',
+        layout: 'border',
+        width: '100%',
+        height:400,
+        renderTo: 'mimosa-panel',
+        items:[
+            grid,
+        /*{
+            id: 'mimosa-panel-left',
+            region:'center',
+            layout:'fit',
+            frame:true,
+            border:false,
+        },*/
+        {
+            id: 'mimosa-panel-right',
+            region:'east',
+            layout:'fit',
+            frame:true,
+            border:false,
+            width:200,
+            split:true,
+            collapsible:true,
+            collapseMode:'mini'
+        }]
+    });
+
     // Add the grid panel
-    panel.add(xg);
+    panel.add(grid);
 
     // render the panel again
     panel.doLayout();
