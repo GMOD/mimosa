@@ -127,6 +127,7 @@ Ext.onReady(function(){
         title: 'Align',
         width: '350',
         region: 'east',
+        collapsible: true,
         defaults: {width: 350},
         defaultType: 'textfield',
         items: [
