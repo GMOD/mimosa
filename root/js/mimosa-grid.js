@@ -162,7 +162,7 @@ Ext.onReady(function(){
         buttons: [{
             text: 'Submit',
             handler: function() {
-                formpanel.getForm().getEl().dom.action = 'test.php';
+                formpanel.getForm().getEl().dom.action = '/submit';
                 formpanel.getForm().getEl().dom.method = 'POST';
                 formpanel.getForm().submit();
             }
