@@ -121,6 +121,11 @@ Ext.onReady(function(){
     if( jQuery('#mimosa-grid') ) {
         // grid.render('mimosa-grid');
     }
+    var textarea = new Ext.form.TextArea({
+                fieldLabel: 'Query Sequence',
+                name: 'sequence',
+                allowBlank: false
+    });
     var formpanel = new Ext.form.FormPanel({
         standardSubmit: true,
         frame:true,
@@ -148,12 +153,7 @@ Ext.onReady(function(){
                 name: 'search_description',
                 allowBlank:false
             },
-            {
-                fieldLabel: 'Query Sequence',
-                name: 'sequence',
-                allowBlank:false,
-                type: 'textarea'
-            },
+            textarea,
             {
                 fieldLabel: 'Advanced',
                 type: 'checkbox',
