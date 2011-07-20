@@ -124,7 +124,17 @@ Ext.onReady(function(){
     var textarea = new Ext.form.TextArea({
                 fieldLabel: 'Query Sequence',
                 name: 'sequence',
+                id: 'sequence_input',
                 allowBlank: false
+    });
+    var checkbox = new Ext.form.Checkbox({
+                fieldLabel: 'Advanced',
+                name: 'advanced',
+                listeners:  {
+                    check: function(checkbox,checked) {
+                        jQuery("#advanced").toggle('slow', 'swing');
+                    }
+                }
     });
     var formpanel = new Ext.form.FormPanel({
         standardSubmit: true,
@@ -146,20 +156,17 @@ Ext.onReady(function(){
             {
                 fieldLabel: 'Name',
                 name: 'search_name',
+                id: 'search_name',
                 allowBlank:false
             },
             {
                 fieldLabel: 'Description',
                 name: 'search_description',
+                id: 'search_description',
                 allowBlank:false
             },
             textarea,
-            {
-                fieldLabel: 'Advanced',
-                type: 'checkbox',
-                name: 'advanced',
-                value: 0
-            },
+            checkbox,
             {
                 inputType: 'hidden',
                 id: 'mimosa_sequence_set_ids',
@@ -169,7 +176,7 @@ Ext.onReady(function(){
 
         ],
         buttons: [{
-            text: 'Submit',
+            text: 'Align',
             handler: function() {
                 formpanel.getForm().getEl().dom.action = '/submit';
                 formpanel.getForm().getEl().dom.method = 'POST';
