@@ -14,6 +14,7 @@ my $builder = Module::Build->new(
         'HTML::Lint'                     => 0,
         'Test::DBIx::Class'              => 0,
         'Test::Most'                     => 0,
+        'HTML::Tagset'                   => '3.20',
         'Test::WWW::Mechanize::Catalyst' => 0,
         'Test::JSON'                     => '0.11',
     },
