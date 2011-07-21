@@ -9,15 +9,17 @@ use App::Mimosa::Schema::BCS;
 # default to app_mimosa.conf and not deploying to chado
 my $conf  = '';
 my $chado = 0;
+my $empty = 0;
+
 my $result = GetOptions(
                 "conf=s", \$conf,
                 "chado=i", \$chado,
+                "empty=i", \$empty,
             );
 my $config_file = Config::JFDI->new(file => $conf || "app_mimosa.conf");
 my $config = $config_file->get;
 
 my $schema = App::Mimosa::Schema::BCS->connect( $config->{'Model::BCS'}{connect_info}->{dsn} );
-
 
 if ($chado) {
     diag "Deploying Mimosa Schema into a Chado schema";
@@ -31,6 +33,8 @@ if ($chado) {
     diag "Deploying fresh Mimosa Schema";
     $schema->deploy;
 }
+
+exit 0 if $empty;
 
 diag "Populating default Mimosa Schema";
 $schema->populate('Mimosa::SequenceSet', [
