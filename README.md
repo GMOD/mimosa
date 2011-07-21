@@ -39,11 +39,20 @@ can be integrated into an existing website via a REST interface.
 Currently, Mimosa does not have distribution packages, so you must use git. This
 will change as Mimosa gets closer to a public release.
 
+### Installing non-Perl dependencies
+
+Mimosa requires the 'fastacmd' binary and some image libraries. If you are on
+a Debian-ish system, you can install these with apt-get:
+
+    apt-get install libgd2-xpm-dev blast2
+
+### Cloning via Git
+
 If you have cpanminus:
 
     git clone git://github.com/GMOD/mimosa.git
     cd mimosa
-    cpanm --installdeps . # install necessary dependencies
+    cpanm --installdeps . # install necessary Perl dependencies
     perl Build.PL
     ./Build
 
@@ -52,7 +61,7 @@ If you don't have cpanminus:
     git clone git://github.com/GMOD/mimosa.git
     cd mimosa
     perl Build.PL
-    ./Build --installdeps # install necessary dependencies
+    ./Build --installdeps # install necessary Perl dependencies
     ./Build
 
 ## How do I run the Mimosa test suite ?
