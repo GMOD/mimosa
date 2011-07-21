@@ -168,6 +168,12 @@ Ext.onReady(function(){
             textarea,
             checkbox,
             {
+                fieldLabel: 'E-value Threshold',
+                value: '1e-10',
+                name: 'evalue',
+                allowBlank:false,
+            },
+            {
                 inputType: 'hidden',
                 id: 'mimosa_sequence_set_ids',
                 name: 'mimosa_sequnce_set_ids',
