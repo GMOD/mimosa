@@ -75,28 +75,28 @@ to run the Mimosa test suite.
 
 If you want to use Mimosa with SQLite, that is the default:
 
-    perl script/mimosa_deploy.pl
+    perl -Ilib script/mimosa_deploy.pl
 
 If you want to deploy Mimosa to an already installed Chado schema, pass the --chado flag
 
-    perl script/mimosa_deploy.pl --chado 1
+    perl -Ilib script/mimosa_deploy.pl --chado 1
 
 This will also require you to give the proper DSN to your Chado instance in app_mimosa.conf.
 
 If you want to use a different config file:
 
-    perl script/mimosa_deploy.pl --chado 1 --conf my_other.conf
+    perl -Ilib script/mimosa_deploy.pl --chado 1 --conf my_other.conf
 
 
 ## How do I start Mimosa ?
 
 To start Mimosa on the default port of 3000 :
 
-    perl script/mimosa_server.pl
+    perl -Ilib script/mimosa_server.pl
 
 If you want to run it on a specific port, then pass the -p param :
 
-    perl script/mimosa_server.pl -p 8080
+    perl -Ilib script/mimosa_server.pl -p 8080
 
 ## How do I hack on Mimosa ?
 
