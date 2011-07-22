@@ -5,6 +5,7 @@ use Test::More;
 use Data::Dumper;
 use Getopt::Long;
 use App::Mimosa::Schema::BCS;
+use App::Mimosa::Auth::Schema;
 
 # default to app_mimosa.conf and not deploying to chado
 my $conf  = '';
@@ -25,6 +26,9 @@ if ($chado) {
     diag "Deploying Mimosa Schema into a Chado schema";
     $schema->deploy({
              sources => [
+                'Mimosa::Auth::Schema::Result::Role',
+                'Mimosa::Auth::Schema::Result::User',
+                'Mimosa::Auth::Schema::Result::UserRole',
                 'Mimosa::Job',
                 'Mimosa::SequenceSet',
                 'Mimosa::SequenceSetOrganism',
@@ -35,6 +39,12 @@ if ($chado) {
 }
 
 exit 0 if $empty;
+
+diag "Adding a default user";
+$schema->populate('Mimosa::Auth::Schema::Result::User', [
+    [qw/username password email/],
+    [qw/bob bob 'bob@example.com'/],
+]);
 
 diag "Populating default Mimosa Schema";
 $schema->populate('Mimosa::SequenceSet', [

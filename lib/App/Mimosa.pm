@@ -13,7 +13,7 @@ use Catalyst::Runtime 5.80;
 #                 directory
 
 use Catalyst ((
-    #'-Debug',
+    '-Debug',
     qw/
     ConfigLoader
     Static::Simple
@@ -23,8 +23,8 @@ use Catalyst ((
     Session
     Session::State::Cookie
     Session::Store::FastMmap
-    /)
-);
+    /
+));
 
 extends 'Catalyst';
 
@@ -39,19 +39,21 @@ __PACKAGE__->config(
     disable_component_resolution_regex_fallback              => 1,
 
     default_view                                             => 'Mason',
-    'Plugin::Authentication'                                 => {
-        default_realm => 'members',
-        members       => {
-            credential  => {
-                class              => 'Password',
-                password_field     => 'password',
-                password_type      => 'hashed',
-                password_hash_type => 'SHA-1',
+    authentication => {
+        'default_realm' => 'users',
+        'realms' => {
+            'users' => {
+                'store' => {
+                    'role_column' => 'role_text',
+                    'user_model'  => 'App::Mimosa::Auth::Schema::User',
+                    'class'       => 'DBIx::Class',
                 },
-            store => {
-                class       => 'DBIx::Class',
-                user_model  => 'App::Mimosa::Users',
-                role_column => 'roles',
+            'credential' => {
+                    'password_type' => 'hashed',
+                    'password_field' => 'password',
+                    'password_hash_type' => 'SHA-1',
+                    'class' => 'Password'
+                }
             }
         },
     },
