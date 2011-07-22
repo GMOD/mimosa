@@ -6,7 +6,9 @@
     <div id="t1_content">
     <div id="report">
     <div id="raw_download">
-    Download Raw Report <a href="/api/report/raw/<% $job_id %>">Report #<% $job_id %></a>
+    Bookmarkable URLs:<br/>
+    Mimosa Report #<% $job_id %><a href="/api/report/raw/<% $job_id %>">Raw</a>
+    <a href="/api/report/html/<% $job_id %>">HTML</a>
     </div>
     <% $report %>
     </div>

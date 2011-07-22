@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::Most tests => 9;
+use Test::Most tests => 10;
 
 use lib 't/lib';
 use App::Mimosa::Test;
@@ -25,7 +25,8 @@ fixtures_ok 'basic_ss';
                     alphabet               => 'nucleotide',
     ];
     is($response->code, 200, '/submit returns 200');
-    like($response->content,qr!Download Raw Report.*/api/report/raw/\d+!, 'download raw report link');
+    like($response->content,qr!/api/report/raw/\d+!, 'download raw report link');
+    like($response->content,qr!/api/report/html/\d+!, 'download raw report link');
 }
 {
     my $response = request POST '/submit', [
