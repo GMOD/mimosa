@@ -23,6 +23,7 @@ use Try::Tiny;
 use DateTime;
 use HTML::Entities;
 use Digest::SHA1 qw/sha1_hex/;
+#use Carp::Always;
 use Cwd;
 
 BEGIN { extends 'Catalyst::Controller' }
@@ -147,7 +148,9 @@ sub _temp_file {
     my $self = shift;
     my $tmp_base = dir( File::Spec->tmpdir, lc $self->_app->config->{name} );
     $tmp_base->mkpath unless -d $tmp_base;
-    return $tmp_base->file( @_ );
+    my $file = $tmp_base->file( @_ );
+
+    return "$file";
 }
 
 sub validate : Private {
@@ -296,7 +299,9 @@ sub submit :Path('/submit') :Args(0) {
     }
     $c->stash->{sequence} = $sequence;
 
-    $input_file->openw->print( $sequence );
+    #$input_file->openw->print( $sequence );
+    warn "writing $sequence to $input_file";
+    write_file $input_file, $sequence;
 
     $c->forward('validate');
 
@@ -350,7 +355,8 @@ sub submit :Path('/submit') :Args(0) {
         # some kind of bizarre race condition i've been seeing in
         # which the file doesn't appear to be visible yet to the web
         # process after blast exits.
-        $output_file->stat;
+        # $output_file->stat;
+        stat $output_file;
 
         my $in = Bio::SearchIO->new(
                 -format => 'blast',
@@ -446,6 +452,7 @@ sub make_job_id :Private {
             $c->stash->{job_id} = $jid;
             $c->detach('/show_cached_report');
         } else {
+            $user ||= 'anonymous';
             $c->stash->{error} = <<ERROR;
 This job (# $jid) was started at $start by $user and is still running.
 ERROR
