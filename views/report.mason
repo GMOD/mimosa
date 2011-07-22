@@ -13,12 +13,5 @@
     <% $report %>
     </div>
     </div> <!-- t1_content -->
-    <div id="t2_content">
-        <div id="t2_content">
-         </div>
-    </div>
-    <div id="t3_content">
-        <div id="t3_content">
-         </div>
-    </div>
+    <& tabs.mason, admin => 0 &>
 </div> <!-- tabs1 -->

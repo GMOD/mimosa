@@ -55,6 +55,12 @@ sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
     $c->forward('login');
+    $c->forward('show_grid');
+
+}
+
+sub show_grid :Local {
+    my ($self, $c) = @_;
 
     my @sets = $c->model('BCS')->resultset('Mimosa::SequenceSet')->all;
     my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
@@ -75,7 +81,7 @@ sub index :Path :Args(0) {
 sub login :Local {
     my ($self, $c) = @_;
 
-    if($self->_app->config->{allow_anonymous}) {
+    if($c->user_exists || $self->_app->config->{allow_anonymous}) {
         # keep on forwardin'
     } else {
         $c->stash->{template} = 'login.mason';

@@ -1,0 +1,42 @@
+<%args>
+    $admin => 0
+</%args>
+<div id="t2_content" style="" class="x-hide-display">
+Prefs
+</div>
+
+<div id="t3_content" style="" class="x-hide-display">
+<p>
+Mimosa is powered by many pieces of Free and Open Source software.
+</p>
+
+<p>
+Here is a list of those that it relies on most:
+</p>
+
+<ul>
+<li><a href="http://perl.org/">Perl</a></li>
+<li><a href="http://bioperl.org/">BioPerl</a></li>
+<li><a href="http://jquery.org">jQuery 1.4.2 (bundled)</a></li>
+<li><a href="http://dev.sencha.com/deploy/ext-3.3.1/docs/">ExtJS 3.3.1 (bundled)</a></li>
+<li><a href="http://iinteractive.com/moose/">Moose</a></li>
+<li><a href="http://catalystframework.org">Catalyst</a></li>
+</ul>
+
+<p>
+You can see a detailed list of our Perl dependencies in our <a href="https://github.com/GMOD/mimosa/blob/master/Build.PL">Build.PL</a>
+</p>
+<p>
+    Mimosa is also designed to interoperate with the <a href="http://www.gmod.org">Generic Model Organism Database (GMOD)</a> <a href="http://www.gmod.org/wiki/Chado">Chado</a> database schema.
+</p>
+
+</div>
+
+
+
+% if ($admin) {
+<div id="t4_content" style="" class="x-hide-display">
+<h1>Admin</h1>
+<a href="/autocrud/bcs/mimosa_sequence_set">Edit Sequence Sets</a>
+</div>
+% }
