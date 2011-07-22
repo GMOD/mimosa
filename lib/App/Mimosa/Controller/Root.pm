@@ -82,7 +82,7 @@ sub show_grid :Local {
 sub login :Local {
     my ($self, $c) = @_;
 
-    if($c->user_exists || $self->_app->config->{allow_anonymous}) {
+    if($self->_app->config->{allow_anonymous}) {
         # keep on forwardin'
     } else {
         $c->stash->{template} = 'login.mason';
