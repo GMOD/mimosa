@@ -4,7 +4,7 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller' }
 
-sub login : Local {
+sub authentication :Path('/authenticate') {
     my ( $self, $c ) = @_;
 
     my $user     = $c->req->params->{user};
@@ -15,10 +15,12 @@ sub login : Local {
                                 password => $password } ) ) {
             $c->forward('index');
         } else {
-            # login incorrect
+            $c->stash->{error} = 'Incorrect username/password. Please <a href="/">try again</a>.';
+            $c->detach('/input_error');
         }
     } else {
-        # invalid form input
+        $c->stash->{error} = 'You must provide both a username and password. Please <a href="/">try again</a>.';
+        $c->detach('/input_error');
     }
 }
 

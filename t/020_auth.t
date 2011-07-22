@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::Most tests => 2;
+use Test::Most tests => 4;
 
 BEGIN {
     $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} = 'test_auth';
@@ -20,4 +20,13 @@ fixtures_ok 'basic_ss';
 {
     my $response = request GET '/';
     like($response->content,qr/Login/, 'index page is a login if allow_anonymous=0');
+    like($response->content,qr/Username/, 'index page is a login if allow_anonymous=0');
+    like($response->content,qr/Password/, 'index page is a login if allow_anonymous=0');
+}
+{
+    my $r = request POST '/authenticate', {
+        user => "nyarlathotep",
+        password => "planeteater",
+    };
+    like($r->content, qr/Stuff/);
 }
