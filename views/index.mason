@@ -23,7 +23,7 @@
   <br>
   Program: <select id="program_selector"   name="program">
 <option value="none">Choose a BLAST program</option>
-<option value="blastn">BLASTN (nucleotide to nucleotide)</option>
+<option selected="true" value="blastn">BLASTN (nucleotide to nucleotide)</option>
 <option value="tblastx">TBLASTX (protein to protein; both database and query are translated)</option>
 <option value="tblastn">TBLASTN (protein to nucleotide; database translated to protein)</option>
 </select>

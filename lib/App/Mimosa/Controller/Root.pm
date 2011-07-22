@@ -93,6 +93,8 @@ sub login :Local {
 sub download_raw :Path("/api/report/raw") :Args(1) {
     my ( $self, $c, $job_id ) = @_;
 
+    $c->forward('login');
+
     my $jobs = $c->model('BCS')->resultset('Mimosa::Job');
     my $rs   = $jobs->search({ mimosa_job_id => $job_id });
     if ($rs->count) {
@@ -108,6 +110,8 @@ sub download_raw :Path("/api/report/raw") :Args(1) {
 
 sub download_report :Path("/api/report/html") :Args(1) {
     my ( $self, $c, $job_id ) = @_;
+
+    $c->forward('login');
 
     my $jobs = $c->model('BCS')->resultset('Mimosa::Job');
     my $rs   = $jobs->search({ mimosa_job_id => $job_id });
