@@ -28,7 +28,7 @@
 <script src="/js/jquery.js" type="text/javascript"></script>
 
 <!-- Bundled copy of Jquery backstretch plugin -->
-<script type="text/javascript" src="js/jquery.backstretch.min.js"></script>
+<script type="text/javascript" src="/js/jquery.backstretch.min.js"></script>
 
 <!-- overrides to library -->
 
