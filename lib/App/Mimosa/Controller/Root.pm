@@ -2,7 +2,6 @@ package App::Mimosa::Controller::Root;
 use Moose;
 use namespace::autoclean;
 
-
 use File::Temp qw/tempfile/;
 use IO::String;
 use File::Spec::Functions;
