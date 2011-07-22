@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::Most tests => 1;
+use Test::Most tests => 2;
 
 BEGIN {
     $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} = 'test_auth';

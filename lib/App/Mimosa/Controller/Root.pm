@@ -53,6 +53,8 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
+    $c->forward('login');
+
     my @sets = $c->model('BCS')->resultset('Mimosa::SequenceSet')->all;
     my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
 
@@ -67,6 +69,18 @@ sub index :Path :Args(0) {
 
     # Must encode HTML entities here to prevent XSS attack
     $c->stash->{sequence_input} = encode_entities($c->req->param('sequence_input')) || '';
+}
+
+sub login :Local {
+    my ($self, $c) = @_;
+
+    if($self->_app->config->{allow_anonymous}) {
+        # keep on forwardin'
+    } else {
+        $c->stash->{template} = 'login.mason';
+        $c->detach;
+    }
+
 }
 
 sub download_raw :Path("/api/report/raw") :Args(1) {
@@ -106,11 +120,6 @@ sub _temp_file {
 
 sub validate : Private {
     my ( $self, $c ) = @_;
-
-    unless ($self->_app->config->{allow_anonymous}) {
-        $c->stash->{error} = 'Anonymous users are not allowed to submit BLAST jobs. Please log in.';
-        $c->detach('/input_error');
-    }
 
     if( $c->req->param('program') eq 'none' ) {
         $c->stash->{error} = "You must select a BLAST program to generate your report with.";
