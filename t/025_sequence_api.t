@@ -1,4 +1,4 @@
-use Test::Most tests => 5;
+use Test::Most tests => 6;
 use strict;
 use warnings;
 
@@ -21,4 +21,8 @@ fixtures_ok 'basic_ss';
     is($r->code, 200, 'got a 200');
 
     is_valid_json( $json, 'it returns valid JSON') or diag $json;
+}
+{
+    my $r = request('/api/sequence/99/Solanum%20foobarium%20FAKE%20DNA%201.txt');
+    is($r->code, 400, 'nonextistent mimosa_sequence_set id gives a 400');
 }
