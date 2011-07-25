@@ -4,25 +4,24 @@ use warnings;
 
 use lib 't/lib';
 use App::Mimosa::Test;
+use aliased 'App::Mimosa::Test::Mech';
 use Test::DBIx::Class;
 use Test::JSON;
+
+my $mech = Mech->new;
 
 fixtures_ok 'basic_ss';
 
 {
-    my $r = request('/api/sequence/1/Solanum%20foobarium%20FAKE%20DNA%201.txt');
-    my $content = $r->content;
-    ok(length($content), 'got non-zero content length');
-    is($r->code, 200, 'got a 200');
+    $mech->get_ok('/api/sequence/1/Solanum%20foobarium%20FAKE%20DNA%201.txt');
+    ok(length($mech->content), 'got non-zero content length');
 }
 {
-    my $r = request('/api/sequence/1/Solanum%20foobarium%20FAKE%20DNA%201.json');
-    my $json = $r->content;
-    is($r->code, 200, 'got a 200');
+    $mech->get_ok('/api/sequence/1/Solanum%20foobarium%20FAKE%20DNA%201.json');
+    my $json = $mech->content;
 
     is_valid_json( $json, 'it returns valid JSON') or diag $json;
 }
 {
-    my $r = request('/api/sequence/99/Solanum%20foobarium%20FAKE%20DNA%201.txt');
-    is($r->code, 400, 'nonextistent mimosa_sequence_set id gives a 400');
+    $mech->get_ok('/api/sequence/99/Solanum%20foobarium%20FAKE%20DNA%201.txt');
 }

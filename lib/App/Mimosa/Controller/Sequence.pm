@@ -2,7 +2,7 @@ package App::Mimosa::Controller::Sequence;
 use Moose;
 use Bio::Chado::Schema;
 use File::Spec::Functions;
-use Bio::BLAST::Database;
+use App::Mimosa::Database;
 
 use namespace::autoclean;
 
@@ -32,7 +32,18 @@ sub sequence_GET {
         $c->detach('/input_error');
     }
 
-    my $data = '';
+    my $seq_data_dir = $c->config->{sequence_data_dir};
+    my $dbname       = catfile($seq_data_dir, $rs->shortname);
+
+    my $db = App::Mimosa::Database->new(
+        db_basename => $dbname,
+        alphabet    => $rs->alphabet,
+    );
+
+    # this will only index if indices don't already exist
+    $db->index;
+
+    my $data = $db->db->get_sequence($name);
     # Return a 200 OK, with the data in entity serialized in the body
     $self->status_ok( $c, entity => $data );
 }
