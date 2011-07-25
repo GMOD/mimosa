@@ -37,8 +37,6 @@
         <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')">
         <label for="advanced_control">Advanced Options</label>
     <div class="info_table_fieldval">
-      <div style="text-align: right"><input type="reset" value="Clear" onclick="clearField(); "> <input type="submit" name="search" value="Align" ></div>
-    </div>
 
          <div id="advanced" style="display:none; width: 700px;">
   Filter Query?: <input type="checkbox" checked="checked" name="filtered" value="T" /><br/>
@@ -73,6 +71,8 @@
     Max hits to show: <input type="text" name="maxhits" size="6" value="100" />
     </div>
     </div> <!-- advanced -->
+      <div><br/><input type="reset" value="Clear" onclick="clearField(); "> <input type="submit" name="search" value="Align" ></div>
+    </div>
 </form>
 
 </div> <!-- t1_content -->
