@@ -9,7 +9,7 @@ use File::Basename;
 use autodie ':all';
 
 use Bio::BLAST::Database;
-#use Carp::Always;
+use Carp::Always;
 
 # TODO: store this in a shared place, because App::Mimosa::Job has it too
 enum 'Alphabet' => qw(protein nucleotide);
@@ -30,6 +30,21 @@ has db => (
     isa => 'Bio::BLAST::Database',
     is  => 'rw',
 );
+
+sub get_sequence {
+    my ($self, $name) = @_;
+    my $cwd = getcwd;
+
+    chdir dirname($self->db_basename);
+
+    $self->db->index;
+
+    my $sequence = $self->db->get_sequence($name);
+
+    chdir $cwd;
+
+    return $sequence;
+}
 
 sub index {
     my ($self, %opts) = @_;
