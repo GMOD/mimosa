@@ -5,7 +5,7 @@ body {
     background-color: #ddd;
     background-repeat: no-repeat;
     background-position: top left;
-    font-size: 13px;
+    font-size: 15px;
     font-family: 'Linux Libertine', Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Times New Roman', serif;
 }
 
@@ -32,6 +32,7 @@ margin-right: auto;
 }
 
 #content {
+padding-left: 0px;
 background-color: white;
 border: 3px solid #aaa;
 border-top: none;
