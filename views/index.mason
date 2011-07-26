@@ -43,14 +43,31 @@
          <div id="advanced" style="display:none; width: 700px;">
   Filter Query?: <input type="checkbox" checked="checked" name="filtered" value="T" /><br/>
 
-    <span class="info_table_fieldname">Expect (e-value) Threshold</span>
     <div class="info_table_fieldval">
+    Expect (e-value) Threshold
       <input type="text" size="6" value="1e-10" name="evalue" />
     <br/>
     </div>
 
-    <span class="info_table_fieldname">Substitution Matrix</span>
+    <div>
+    Alignment View
+    <select id="alignment_views" name="alignment_view">
+    <option value="0">Pairwise</option>
+    <option value="1">Query-anchored showing identities</option>
+    <option value="2">Query-anchored no identities</option>
+    <option value="3">Flat query-anchored, show identities</option>
+    <option value="4">Flat query-anchored, no identities</option>
+    <option value="5">Query-anchored no identities and blunt ends</option>
+    <option value="6">Flat query-anchored, no identities and blunt ends</option>
+    <option value="7">XML Blast output</option>
+    <option value="8">Tabular</option>
+    <option value="9">Tabular with comment lines</option>
+    <option value="10">ASN text</option>
+    </select>
+    </div>
+
     <div class="info_table_fieldval">
+    Substitution Matrix
       <select id="simple_selectbox_2"   name="matrix">
             <option value="BLOSUM62">BLOSUM62 (default)</option>
             <option value="BLOSUM80">BLOSUM80 (recent divergence)</option>
@@ -58,11 +75,10 @@
             <option value="PAM30">PAM30</option>
             <option value="PAM70">PAM70</option>
     </select>
-    <br/>
     </div>
 
-    <span class="info_table_fieldname">Show Graphics</span>
     <div class="info_table_fieldval">
+    Show Graphics
       <select id="simple_selectbox_3"   name="output_graphs">
         <option value="bioperl_histogram">all</option>
         <option value="none">none</option>
