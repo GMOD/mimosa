@@ -98,6 +98,12 @@ has timeout => (
     default => 30,
 );
 
+has alignment_view => (
+    is      => 'ro',
+    isa     => 'Int',
+    default => 0,
+);
+
 sub run {
     my ($self) = @_;
     my ($error, $output);
@@ -121,6 +127,7 @@ sub run {
             -F => $self->filtered,
             -i => $self->input_file,
             -o => $self->output_file,
+            -m => $self->alignment_view,
         );
 
         my $harness        = IPC::Run::harness \@blast_cmd, \*STDIN, \$output, \$error, timeout( $self->timeout );

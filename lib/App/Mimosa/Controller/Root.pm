@@ -81,7 +81,28 @@ sub download_raw :Path("/api/report/raw") :Args(1) {
         my $output_file = $self->_temp_file( "$job_id.out.blast" );
         $c->serve_static_file( $output_file );
     } else {
-        $c->stash->{error} = 'That job does not exist';
+        $c->stash->{error} = 'Sorry, that raw report does not exist';
+        $c->detach('/input_error');
+    }
+}
+
+sub download_report :Path("/api/report/html") :Args(1) {
+    my ( $self, $c, $job_id ) = @_;
+
+    my $jobs = $c->model('BCS')->resultset('Mimosa::Job');
+    my $rs   = $jobs->search({ mimosa_job_id => $job_id });
+    if ($rs->count) {
+        my $job = $rs->single;
+        $c->stash->{job} = $job;
+        my $cached_report = $self->_temp_file( "$job_id.html" );
+        if ( !-e $cached_report ) {
+            warn "Cached file not found!";
+        }
+        $c->stash->{job_id} = $job_id;
+        $c->stash->{report} = slurp($cached_report);
+        $c->stash->{template} = 'report.mason';
+    } else {
+        $c->stash->{error} = 'Sorry, that HTML report does not exist';
         $c->detach('/input_error');
     }
 }
@@ -234,6 +255,7 @@ sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
 
     my $ids = $c->req->param('mimosa_sequence_set_ids') || '';
+    my $alignment_view = $c->req->param('alignment_view') || '0';
 
     unless( $ids ) {
         $c->stash->{error} = "You must select at least one Mimosa sequence set.";
@@ -273,10 +295,13 @@ sub submit :Path('/submit') :Args(0) {
     if( @ss_ids > 1 ) {
         $c->forward('compose_sequence_sets');
         $db_basename = catfile($c->stash->{seq_root}, $c->stash->{composite_db_name});
-    } else {
+    } elsif( @ss_ids == 1) {
         my $rs       = $c->model('BCS')->resultset('Mimosa::SequenceSet');
         my ($ss)     = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_ids[0] })->single;
         $db_basename = catfile($c->stash->{seq_root}, $ss->shortname);
+    } else {
+        $c->stash->{error} = "The value " . encode_entities($ids) . " does not match any sequence sets";
+        $c->detach('/input_error');
     }
 
     my $j = App::Mimosa::Job->new(
@@ -289,6 +314,7 @@ sub submit :Path('/submit') :Args(0) {
         alphabet               => $c->stash->{alphabet} || 'nucleotide',
         output_file            => "$output_file",
         input_file             => "$input_file",
+        alignment_view         => $alignment_view,
             map { $_ => $c->req->param($_) || '' }
             qw/ program maxhits output_graphs evalue matrix /,
     );

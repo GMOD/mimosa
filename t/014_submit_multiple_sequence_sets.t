@@ -1,4 +1,4 @@
-use Test::Most tests => 6;
+use Test::Most tests => 7;
 use strict;
 use warnings;
 
@@ -34,7 +34,8 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
                     alphabet               => 'nucleotide',
     ];
     is($response->code, 200, '/submit returns 200');
-    like($response->content, qr!Download Raw Report.*/api/report/raw/\d+!, 'got a download raw report link');
+    like($response->content, qr!/api/report/raw/\d+!, 'got a download raw report link');
+    like($response->content, qr!/api/report/html/\d+!, 'got a download html report link');
     like($response->content, qr!Database:.*ebe9f24f7c4bd899d31a058a703045ed4d9678c8!, 'got the correct database file');
     like($response->content, qr!5 sequences; 2,796 total letters!, 'got the correct number of sequences and letters');
 
