@@ -32,7 +32,8 @@
     Description: <input type="text" name="search_description" size="20" id="search_description"><br/>
 
     <b>Query sequence</b><br/>
-    <textarea name="sequence" id="sequence_input" rows="8" cols="80"><% $sequence_input %></textarea>
+    <textarea name="sequence" id="sequence_input" rows="8" cols="80"><% $sequence_input %></textarea><br/>
+    Upload query sequence file: <input type="file" name="sequence_input_file" size="40"><br/>
        <br/>
         <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')">
         <label for="advanced_control">Advanced Options</label>
