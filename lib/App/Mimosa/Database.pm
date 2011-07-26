@@ -35,9 +35,10 @@ sub get_sequence {
     my ($self, $name) = @_;
     my $cwd = getcwd;
 
-    chdir dirname($self->db_basename);
+    my $dir = dirname($self->db_basename);
+    chdir $dir;
 
-    $self->db->index;
+    $self->index;
 
     my $sequence = $self->db->get_sequence($name);
 

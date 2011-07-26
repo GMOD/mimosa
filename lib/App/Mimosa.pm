@@ -13,7 +13,7 @@ use Catalyst::Runtime 5.80;
 #                 directory
 
 use Catalyst ((
-    #'-Debug',
+#    '-Debug',
     qw/
     ConfigLoader
     Static::Simple

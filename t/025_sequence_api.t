@@ -9,10 +9,10 @@ use Test::JSON;
 
 my $mech = Mech->new;
 
-fixtures_ok 'basic_ss';
+#fixtures_ok 'basic_ss';
 
 {
-    $mech->get_ok('/api/sequence/1/Solanum%20foobarium%20FAKE%20DNA%201.txt');
+    $mech->get_ok('/api/sequence/3/SGN-E741072.txt');
     ok(length($mech->content), 'got non-zero content length');
 }
 

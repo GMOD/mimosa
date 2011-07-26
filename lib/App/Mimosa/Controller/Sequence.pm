@@ -21,18 +21,18 @@ sub sequence :Path("/api/sequence/") :Args(2) {
         $c->stash->{error} = 'Sorry, that sequence set id is invalid';
         $c->detach('/input_error');
     }
-    use Cwd;
-    my $cwd = getcwd;
 
     my $seq_data_dir = $c->config->{sequence_data_dir};
-    my $dbname       = catfile($cwd, $seq_data_dir, $rs->shortname);
-    warn "dbname=$dbname";
+    my $mimosa_root  = $c->config->{mimosa_root};
+    my $dbname       = catfile($mimosa_root, $seq_data_dir, $rs->shortname);
+    warn "dbname=$dbname, alphabet=" . $rs->alphabet;
 
     my $db = App::Mimosa::Database->new(
         db_basename => $dbname,
         alphabet    => $rs->alphabet,
+        write       => 1,
     );
-
+    $db->index;
     my $data = $db->get_sequence($name);
     warn "Data= $data";
     # Return a 200 OK, with the data in entity serialized in the body
