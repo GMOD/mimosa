@@ -255,6 +255,7 @@ sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
 
     my $ids = $c->req->param('mimosa_sequence_set_ids') || '';
+    my $alignment_view = $c->req->param('alignment_view') || '0';
 
     unless( $ids ) {
         $c->stash->{error} = "You must select at least one Mimosa sequence set.";
@@ -313,6 +314,7 @@ sub submit :Path('/submit') :Args(0) {
         alphabet               => $c->stash->{alphabet} || 'nucleotide',
         output_file            => "$output_file",
         input_file             => "$input_file",
+        alignment_view         => $alignment_view,
             map { $_ => $c->req->param($_) || '' }
             qw/ program maxhits output_graphs evalue matrix /,
     );
