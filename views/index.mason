@@ -23,7 +23,7 @@
   <br>
   Program: <select id="program_selector"   name="program">
 <option value="none">Choose a BLAST program</option>
-<option value="blastn">BLASTN (nucleotide to nucleotide)</option>
+<option selected="true" value="blastn">BLASTN (nucleotide to nucleotide)</option>
 <option value="tblastx">TBLASTX (protein to protein; both database and query are translated)</option>
 <option value="tblastn">TBLASTN (protein to nucleotide; database translated to protein)</option>
 </select>
@@ -37,8 +37,6 @@
         <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')">
         <label for="advanced_control">Advanced Options</label>
     <div class="info_table_fieldval">
-      <div style="text-align: right"><input type="reset" value="Clear" onclick="clearField(); "> <input type="submit" name="search" value="Align" ></div>
-    </div>
 
          <div id="advanced" style="display:none; width: 700px;">
   Filter Query?: <input type="checkbox" checked="checked" name="filtered" value="T" /><br/>
@@ -89,49 +87,12 @@
     Max hits to show: <input type="text" name="maxhits" size="6" value="100" />
     </div>
     </div> <!-- advanced -->
+      <div><br/><input type="reset" value="Clear" onclick="clearField(); "> <input type="submit" name="search" value="Align" ></div>
+    </div>
 </form>
 
 </div> <!-- t1_content -->
 
-<div id="t2_content" style="" class="x-hide-display">
-Prefs
-</div>
-
-<div id="t3_content" style="" class="x-hide-display">
-<p>
-Mimosa is powered by many pieces of Free and Open Source software.
-</p>
-
-<p>
-Here is a list of those that it relies on most:
-</p>
-
-<ul>
-<li><a href="http://perl.org/">Perl</a></li>
-<li><a href="http://bioperl.org/">BioPerl</a></li>
-<li><a href="http://jquery.org">jQuery 1.4.2 (bundled)</a></li>
-<li><a href="http://dev.sencha.com/deploy/ext-3.3.1/docs/">ExtJS 3.3.1 (bundled)</a></li>
-<li><a href="http://iinteractive.com/moose/">Moose</a></li>
-<li><a href="http://catalystframework.org">Catalyst</a></li>
-</ul>
-
-<p>
-You can see a detailed list of our Perl dependencies in our <a href="https://github.com/GMOD/mimosa/blob/master/Build.PL">Build.PL</a>
-</p>
-<p>
-    Mimosa is also designed to interoperate with the <a href="http://www.gmod.org">Generic Model Organism Database (GMOD)</a> <a href="http://www.gmod.org/wiki/Chado">Chado</a> database schema.
-</p>
-
-</div>
-
-
-
-% if ($admin) {
-<div id="t4_content" style="" class="x-hide-display">
-<h1>Admin</h1>
-<a href="/autocrud/bcs/mimosa_sequence_set">Edit Sequence Sets</a>
-</div>
-% }
-
+    <& tabs.mason &>
 
 </div>

@@ -23,6 +23,7 @@ use Try::Tiny;
 use DateTime;
 use HTML::Entities;
 use Digest::SHA1 qw/sha1_hex/;
+#use Carp::Always;
 use Cwd;
 
 BEGIN { extends 'Catalyst::Controller' }
@@ -54,6 +55,14 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
+    $c->forward('login');
+    $c->forward('show_grid');
+
+}
+
+sub show_grid :Local {
+    my ($self, $c) = @_;
+
     my @sets = $c->model('BCS')->resultset('Mimosa::SequenceSet')->all;
     my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
 
@@ -70,8 +79,22 @@ sub index :Path :Args(0) {
     $c->stash->{sequence_input} = encode_entities($c->req->param('sequence_input')) || '';
 }
 
+sub login :Local {
+    my ($self, $c) = @_;
+
+    if($c->user_exists || $self->_app->config->{allow_anonymous}) {
+        # keep on forwardin'
+    } else {
+        $c->stash->{template} = 'login.mason';
+        $c->detach;
+    }
+
+}
+
 sub download_raw :Path("/api/report/raw") :Args(1) {
     my ( $self, $c, $job_id ) = @_;
+
+    $c->forward('login');
 
     my $jobs = $c->model('BCS')->resultset('Mimosa::Job');
     my $rs   = $jobs->search({ mimosa_job_id => $job_id });
@@ -88,6 +111,8 @@ sub download_raw :Path("/api/report/raw") :Args(1) {
 
 sub download_report :Path("/api/report/html") :Args(1) {
     my ( $self, $c, $job_id ) = @_;
+
+    $c->forward('login');
 
     my $jobs = $c->model('BCS')->resultset('Mimosa::Job');
     my $rs   = $jobs->search({ mimosa_job_id => $job_id });
@@ -123,16 +148,13 @@ sub _temp_file {
     my $self = shift;
     my $tmp_base = dir( File::Spec->tmpdir, lc $self->_app->config->{name} );
     $tmp_base->mkpath unless -d $tmp_base;
-    return $tmp_base->file( @_ );
+    my $file = $tmp_base->file( @_ );
+
+    return "$file";
 }
 
 sub validate : Private {
     my ( $self, $c ) = @_;
-
-    unless ($self->_app->config->{allow_anonymous}) {
-        $c->stash->{error} = 'Anonymous users are not allowed to submit BLAST jobs. Please log in.';
-        $c->detach('/input_error');
-    }
 
     if( $c->req->param('program') eq 'none' ) {
         $c->stash->{error} = "You must select a BLAST program to generate your report with.";
@@ -278,7 +300,9 @@ sub submit :Path('/submit') :Args(0) {
     }
     $c->stash->{sequence} = $sequence;
 
-    $input_file->openw->print( $sequence );
+    #$input_file->openw->print( $sequence );
+    warn "writing $sequence to $input_file";
+    write_file $input_file, $sequence;
 
     $c->forward('validate');
 
@@ -333,7 +357,8 @@ sub submit :Path('/submit') :Args(0) {
         # some kind of bizarre race condition i've been seeing in
         # which the file doesn't appear to be visible yet to the web
         # process after blast exits.
-        $output_file->stat;
+        # $output_file->stat;
+        stat $output_file;
 
         my $in = Bio::SearchIO->new(
                 -format => 'blast',
@@ -429,6 +454,7 @@ sub make_job_id :Private {
             $c->stash->{job_id} = $jid;
             $c->detach('/show_cached_report');
         } else {
+            $user ||= 'anonymous';
             $c->stash->{error} = <<ERROR;
 This job (# $jid) was started at $start by $user and is still running.
 ERROR

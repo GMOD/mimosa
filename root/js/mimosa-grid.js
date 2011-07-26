@@ -94,7 +94,7 @@ Ext.onReady(function(){
         store: store,
         stripeRows: true,
         title: 'Available Sequence Sets to BLAST against',
-        autoWidth: true,
+        width: 600,
         autoHeight: false,
         height: 200,
         stripeRows : true,
