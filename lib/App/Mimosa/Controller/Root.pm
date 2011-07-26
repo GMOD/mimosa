@@ -301,7 +301,6 @@ sub submit :Path('/submit') :Args(0) {
     $c->stash->{sequence} = $sequence;
 
     #$input_file->openw->print( $sequence );
-    warn "writing $sequence to $input_file";
     write_file $input_file, $sequence;
 
     $c->forward('validate');
