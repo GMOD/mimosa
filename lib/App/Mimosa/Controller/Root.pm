@@ -196,6 +196,11 @@ sub validate_sequence : Private {
         $c->detach('/input_error');
     };
 
+    unless ($program) {
+        $c->stash->{error} = "Invalid program";
+        $c->detach('/input_error');
+    }
+
     my %validate   = (
         blastn  => qr/^([ACGTURYKMSWBDHVN]+)$/i,
         tblastx => qr/^([GAVLIPFYCMHKRWSTDENQBZ\.X\*]+)$/i,

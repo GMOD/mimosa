@@ -79,10 +79,11 @@ $mech->submit_form(
         filtered               => 'T',
         mimosa_sequence_set_ids => 1,
         sequence               => 'ATGCTAGTCGTCGATAGTCGTAGTAGCTGA',
+        program => '',
     },
 );
 $mech->content_like( qr/Error!/i);
-is $mech->status, 400, 'input error if no program is selected';
+is $mech->status, 400, 'input error if no program is selected' or diag $mech->content;
 
 {
 
