@@ -17,6 +17,7 @@ fixtures_ok 'basic_ss';
     my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
     my $response = request POST '/submit', [
                     program                => 'blastn',
+                    sequence_input_file    => '',
                     sequence               => $seq,
                     maxhits                => 100,
                     matrix                 => 'BLOSUM62',
