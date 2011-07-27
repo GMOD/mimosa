@@ -310,8 +310,12 @@ sub submit :Path('/submit') :Args(0) {
     }
     $c->stash->{sequence} = $sequence;
 
-    #$input_file->openw->print( $sequence );
     write_file $input_file, $sequence;
+
+    # we create a file to keep track of what kind raw report format is being generated,
+    # so later on we can tell Bio::SearchIO which format to parse
+
+    $c->stash->{report_format} = $alignment_view;
 
     # prevent race conditions
     stat $input_file;
@@ -369,11 +373,19 @@ sub submit :Path('/submit') :Args(0) {
         # some kind of bizarre race condition i've been seeing in
         # which the file doesn't appear to be visible yet to the web
         # process after blast exits.
-        # $output_file->stat;
         stat $output_file;
 
+        # these are the only formats we can parse and generate an HTML report for
+        my $format_num_to_name = {
+            0 => 'blast',
+            7 => 'blastxml',
+            8 => 'blasttable',
+            9 => 'blasttable',
+        };
+        my $format = $format_num_to_name->{$c->stash->{report_format}} || 'blast';
+
         my $in = Bio::SearchIO->new(
-                -format => 'blast',
+                -format => $format,
                 -file   => "$output_file",
         );
         my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
@@ -393,11 +405,12 @@ sub submit :Path('/submit') :Args(0) {
         my $cached_report_file = $self->_temp_file( $c->stash->{job_id}.'.html' );
         my $report_html;
 
-        if( $report =~ m/Sbjct: / ){
+        # Bio::GMOD::Blast::Graph can only deal with plain blast reports
+        if( $format eq 'blast' && $report =~ m/Sbjct: / ){
             my $graph_html = '';
             my $graph = Bio::GMOD::Blast::Graph->new(
                                             -outputfile => "$output_file",
-                                            -format     => 'blast',
+                                            -format     => $format,
                                             -fh         => IO::String->new( \$graph_html ),
                                             -dstDir     => $self->_app->config->{tmp_dir} || "/tmp/mimosa",
                                             -dstURL     => "/graphics/",
@@ -407,12 +420,18 @@ sub submit :Path('/submit') :Args(0) {
 
             $report_html        = $graph_html . $report;
             $c->stash->{report} = $report_html;
-        } else {
+        } elsif ($format eq 'blast') {
             # Don't show a report if there were no hits.
             # The user can always download the raw report if they want.
             # This is why we don't assign to $c->stash->{report}
 
             $report_html  = $report;
+        } else {
+            # The report format is not a plain blast, so just render
+            # the HTML report with no images
+            $report_html        = $report;
+            $c->stash->{report} = $report_html;
+
         }
         $c->stash->{template} = 'report.mason';
 
