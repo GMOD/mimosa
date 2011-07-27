@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::Most tests => 11;
+use Test::Most tests => 12;
 
 use lib 't/lib';
 use App::Mimosa::Test;
@@ -96,4 +96,26 @@ SEQ
     ok($res->content !~ qr/catalyst_detach/, "We don't get the error Invalid input: catalyst_detach");
 }
 
+
+{
+    my $sequence = <<SEQ;
+>Solanum foobarium FAKE DNA 2
+TGCGAGATGCAGAAACTAAAATAGTTCCAATTCCAATATCTCACAAAGCCACTACCCCTC
+SEQ
+    my $r = request POST '/submit', Content_Type => 'form-data', Content => [
+            program                 => 'blastn',
+            mimosa_sequence_set_ids => 1,
+            matrix                  => 'BLOSUM62',
+            maxhits                 => 42,
+            evalue                  => 0.1,
+            alphabet                => 'nucleotide',
+            sequence_input_file => [
+                undef, 'test.fasta',
+                Content_Type => 'application/octet-stream',
+                Content => $sequence,
+            ],
+    ];
+    is($r->code, 200, 'Posting a seqence file gives a 200') or diag $r->content;
+
+}
 
