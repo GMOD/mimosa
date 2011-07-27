@@ -283,8 +283,6 @@ sub submit :Path('/submit') :Args(0) {
     my $ids            = $c->req->param('mimosa_sequence_set_ids') || '';
     my $alignment_view = $c->req->param('alignment_view') || '0';
 
-    warn "Content-type: " . $c->req->content_type;
-
     unless( $ids ) {
         $c->stash->{error} = "You must select at least one Mimosa sequence set.";
         $c->detach('/input_error');
