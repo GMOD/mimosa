@@ -283,6 +283,8 @@ sub submit :Path('/submit') :Args(0) {
     my $ids            = $c->req->param('mimosa_sequence_set_ids') || '';
     my $alignment_view = $c->req->param('alignment_view') || '0';
 
+    warn "Content-type: " . $c->req->content_type;
+
     unless( $ids ) {
         $c->stash->{error} = "You must select at least one Mimosa sequence set.";
         $c->detach('/input_error');
@@ -312,6 +314,9 @@ sub submit :Path('/submit') :Args(0) {
 
     #$input_file->openw->print( $sequence );
     write_file $input_file, $sequence;
+
+    # prevent race conditions
+    stat $input_file;
 
     $c->forward('validate');
 
