@@ -382,7 +382,7 @@ sub submit :Path('/submit') :Args(0) {
             8 => 'blasttable',
             9 => 'blasttable',
         };
-        my $format = $format_num_to_name->{$c->stash->{report_format}} || 'blast';
+        my $format = $format_num_to_name->{$c->stash->{report_format}} || '';
 
         my $in = Bio::SearchIO->new(
                 -format => $format,
