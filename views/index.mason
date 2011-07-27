@@ -16,7 +16,7 @@
     </div>
 
 
-<form method="post" action="/submit" name="main_input_form">
+<form method="post" enctype="multipart/form-data" action="/submit" name="main_input_form">
   <input type="hidden" id="mimosa_sequence_set_ids" name="mimosa_sequence_set_ids" value="0" />
   <input type="hidden" name="interface_type" value="simple" />
   <input type="hidden" name="outformat" value="0" />

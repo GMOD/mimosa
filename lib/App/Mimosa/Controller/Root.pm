@@ -162,10 +162,9 @@ sub validate : Private {
     }
 
     my $min_length = $self->_app->config->{min_sequence_input_length};
-    my $program    = $c->req->param('program')  || '';
-    my $sequence   = $c->req->param('sequence')  || '';
+    my $program    = $c->req->param('program');
 
-    my $cwd = getcwd;
+    my $cwd               = getcwd;
     my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
     $c->stash->{seq_root} = catfile($cwd, $seq_root);
 
@@ -281,8 +280,10 @@ sub compose_sequence_sets : Private {
 sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
 
-    my $ids = $c->req->param('mimosa_sequence_set_ids') || '';
+    my $ids            = $c->req->param('mimosa_sequence_set_ids') || '';
     my $alignment_view = $c->req->param('alignment_view') || '0';
+
+    warn "Content-type: " . $c->req->content_type;
 
     unless( $ids ) {
         $c->stash->{error} = "You must select at least one Mimosa sequence set.";
@@ -299,6 +300,12 @@ sub submit :Path('/submit') :Args(0) {
     # If we accepted a POSTed sequence as input, it will be HTML encoded
     my $sequence = decode_entities($c->req->param('sequence'));
 
+    # if the user specified a file as their sequence input, read it in
+    if( $c->req->param('sequence_input_file') ) {
+        my ($upload) = $c->req->upload('sequence_input_file');
+        $sequence  = $upload->slurp if $upload;
+    }
+
     # if there is no defline, create one
     unless ($sequence =~ m/^>/) {
         $sequence = ">web user sequence\n$sequence";
@@ -307,6 +314,9 @@ sub submit :Path('/submit') :Args(0) {
 
     #$input_file->openw->print( $sequence );
     write_file $input_file, $sequence;
+
+    # prevent race conditions
+    stat $input_file;
 
     $c->forward('validate');
 
