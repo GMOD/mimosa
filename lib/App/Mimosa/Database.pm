@@ -9,7 +9,7 @@ use File::Basename;
 use autodie ':all';
 
 use Bio::BLAST::Database;
-use Carp::Always;
+#use Carp::Always;
 
 # TODO: store this in a shared place, because App::Mimosa::Job has it too
 enum 'Alphabet' => qw(protein nucleotide);
@@ -33,16 +33,12 @@ has db => (
 
 sub get_sequence {
     my ($self, $name) = @_;
-    my $cwd = getcwd;
-
-    my $dir = dirname($self->db_basename);
-    chdir $dir;
 
     $self->index;
 
+    #warn "Is it indexed? " . ( $self->db->indexed_seqs ? 1 : 0 );
+    #warn "Complete? " . ( $self->db->files_are_complete ? 1 : 0 );
     my $sequence = $self->db->get_sequence($name);
-
-    chdir $cwd;
 
     return $sequence;
 }
@@ -63,12 +59,14 @@ sub index {
 
     my $seqfile = catfile($self->db_basename . '.seq');
 
-    unless ($self->already_indexed) {
-        $self->db->format_from_file( 
-            seqfile => $seqfile,
-            title   => basename($self->db_basename),
+    #unless ($self->already_indexed) {
+        #warn "formatting $seqfile!";
+        $self->db->format_from_file(
+            seqfile      => $seqfile,
+            title        => basename($self->db_basename),
+            indexed_seqs => 1,
         );
-    }
+    #}
 
     chdir $cwd;
     return $self;

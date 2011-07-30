@@ -13,6 +13,8 @@ sub sequence :Path("/api/sequence/") :Args(2) {
     my ( $self, $c, $mimosa_sequence_set_id, $name ) = @_;
     my $bcs = $c->model('BCS');
 
+    my $return_json = ( $name =~ m/\.json$/ );
+
     $name =~ s/\.txt$//g;
 
     # Mimosa resultsets
@@ -25,7 +27,7 @@ sub sequence :Path("/api/sequence/") :Args(2) {
     my $seq_data_dir = $c->config->{sequence_data_dir};
     my $mimosa_root  = $c->config->{mimosa_root};
     my $dbname       = catfile($mimosa_root, $seq_data_dir, $rs->shortname);
-    warn "dbname=$dbname, alphabet=" . $rs->alphabet;
+    #warn "dbname=$dbname, alphabet=" . $rs->alphabet;
 
     my $db = App::Mimosa::Database->new(
         db_basename => $dbname,
@@ -33,10 +35,12 @@ sub sequence :Path("/api/sequence/") :Args(2) {
         write       => 1,
     );
     $db->index;
-    my $data = $db->get_sequence($name);
-    warn "Data= $data";
-    # Return a 200 OK, with the data in entity serialized in the body
-    $self->status_ok( $c, entity => $data );
+    my $fasta = $db->get_sequence($name);
+    my $j     = JSON::Any->new;
+    $c->stash->{fasta}    = $return_json
+        ? $j->to_json({ fasta => $fasta })
+        : $fasta ;
+    $c->stash->{template} = 'sequence.mason';
 }
 
 1;
