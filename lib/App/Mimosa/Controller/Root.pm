@@ -405,6 +405,8 @@ sub submit :Path('/submit') :Args(0) {
         my $cached_report_file = $self->_temp_file( $c->stash->{job_id}.'.html' );
         my $report_html;
 
+        mkdir $self->_app->config->{tmp_dir} unless -e $self->_app->config->{tmp_dir};
+
         # Bio::GMOD::Blast::Graph can only deal with plain blast reports
         if( $format eq 'blast' && $report =~ m/Sbjct: / ){
             my $graph_html = '';
