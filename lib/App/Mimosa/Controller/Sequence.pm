@@ -16,6 +16,7 @@ sub sequence :Path("/api/sequence/") :Args(2) {
     my $return_json = ( $name =~ m/\.json$/ );
 
     $name =~ s/\.txt$//g;
+    $name =~ s/\.fasta$//g;
 
     # Mimosa resultsets
     my $rs   = $bcs->resultset('Mimosa::SequenceSet')->find( { mimosa_sequence_set_id => $mimosa_sequence_set_id } );

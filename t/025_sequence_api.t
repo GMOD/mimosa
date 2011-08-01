@@ -1,4 +1,4 @@
-use Test::Most tests => 12;
+use Test::Most tests => 17;
 use strict;
 use warnings;
 
@@ -23,6 +23,7 @@ sub basic_test {
 }
 {
     basic_test('/api/sequence/1/LE_HBa0001A15_T7_30.txt');
+    basic_test('/api/sequence/1/LE_HBa0001A15_T7_30.fasta');
     basic_test('/api/sequence/1/LE_HBa0001A15_T7_30');
 
     # TODO

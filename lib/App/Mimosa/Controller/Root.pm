@@ -388,9 +388,19 @@ sub submit :Path('/submit') :Args(0) {
                 -format => $format,
                 -file   => "$output_file",
         );
+        my $hit_link = sub {
+            my ($self, $hit) = @_;
+            my $name = $hit->name;
+            my $id   = $ss_ids[0] || 1;
+
+            return qq{<a href="/api/sequence/$id/$name.fasta">$name</a>};
+        };
         my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
         $writer->start_report(sub {''});
         $writer->end_report(sub {''});
+        $writer->hit_link_desc( $hit_link );
+        $writer->hit_link_align( $hit_link );
+
         my $report = '';
         my $out = Bio::SearchIO->new(
             -writer => $writer,
