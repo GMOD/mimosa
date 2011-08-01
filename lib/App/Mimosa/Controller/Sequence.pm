@@ -7,7 +7,7 @@ use JSON::Any;
 
 use namespace::autoclean;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Catalyst::Controller' };
 
 sub sequence :Path("/api/sequence/") :Args(2) {
     my ( $self, $c, $mimosa_sequence_set_id, $name ) = @_;
@@ -35,12 +35,12 @@ sub sequence :Path("/api/sequence/") :Args(2) {
         write       => 1,
     );
     $db->index;
-    my $fasta = $db->get_sequence($name);
-    my $j     = JSON::Any->new;
-    $c->stash->{fasta}    = $return_json
-        ? $j->to_json({ fasta => $fasta })
-        : $fasta ;
-    $c->stash->{template} = 'sequence.mason';
+
+    my $seq   = $db->get_sequence($name);
+
+    $c->stash->{sequences} = [ $seq ];
+    $c->forward( 'View::SeqIO' );
+
 }
 
 1;

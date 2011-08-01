@@ -1,6 +1,7 @@
 package App::Mimosa::Schema::BCS;
 use strict;
 use warnings;
+#use Carp::Always;
 
 use base 'DBIx::Class::Schema';
 
