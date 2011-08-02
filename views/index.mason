@@ -15,25 +15,28 @@
     <div id="mimosa-grid">
     </div>
 
-
+<table border="0">
 <form method="post" enctype="multipart/form-data" action="/submit" name="main_input_form">
   <input type="hidden" id="mimosa_sequence_set_ids" name="mimosa_sequence_set_ids" value="0" />
   <input type="hidden" name="interface_type" value="simple" />
   <input type="hidden" name="outformat" value="0" />
   <br>
-  Program: <select id="program_selector"   name="program">
+<tr><td>
+  Program:</td><td> <select id="program_selector"   name="program">
 <option value="none">Choose a BLAST program</option>
 <option selected="true" value="blastn">BLASTN (nucleotide to nucleotide)</option>
 <option value="tblastx">TBLASTX (protein to protein; both database and query are translated)</option>
 <option value="tblastn">TBLASTN (protein to nucleotide; database translated to protein)</option>
 </select>
-    <br/>
-    Name: <input type="text" name="search_name" size="20" id="search_name"><br/>
-    Description: <input type="text" name="search_description" size="20" id="search_description"><br/>
+</td></tr>
+    <tr><td>Name:</td><td> <input type="text" name="search_name" size="20" id="search_name"></td>
+    <tr><td>Description:</td><td> <input type="text" name="search_description" size="20" id="search_description"></td>
 
-    <b>Query sequence</b><br/>
-    <textarea name="sequence" id="sequence_input" rows="8" cols="80"><% $sequence_input %></textarea><br/>
-    Upload query sequence file: <input type="file" name="sequence_input_file" size="40"><br/>
+    <tr><td><b>Query sequence</b></td></tr>
+    <tr><td colspan="2">
+    <textarea name="sequence" id="sequence_input" rows="8" cols="80"><% $sequence_input %></textarea></td></tr>
+    <tr><td>Upload query sequence file:</td><td> <input type="file" name="sequence_input_file" size="40"></td></tr>
+    </table>
        <br/>
         <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')">
         <label for="advanced_control">Advanced Options</label>
