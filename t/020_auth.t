@@ -3,7 +3,7 @@ use warnings;
 use Test::Most tests => 2;
 
 BEGIN {
-    $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} = 'petunia_test';
+    $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} = 'testing_auth';
 }
 
 use lib 't/lib';
