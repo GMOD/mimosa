@@ -124,13 +124,6 @@ Ext.onReady(function(){
         var program = jQuery("#program_selector").val();
         var alphabet = '';
 
-        // Which databases should we filter?
-        if( program == "blastn" || program == "tblastn") {
-            alphabet = 'nucleotide';
-        } else if (program == "tblastx") {
-            alphabet = 'protein';
-        } else {
-        }
         store.filter([
         {
             property : 'name',
