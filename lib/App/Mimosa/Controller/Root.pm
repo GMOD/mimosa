@@ -403,6 +403,9 @@ sub submit :Path('/submit') :Args(0) {
                 -format => $format,
                 -file   => "$output_file",
         );
+
+        die "Bio::SearchIO->new could not read $output_file" unless $in;
+
         my $hit_link = sub {
             my ($self, $hit) = @_;
             my $name = $hit->name;
