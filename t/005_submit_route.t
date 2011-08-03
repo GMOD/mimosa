@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::Most tests => 22;
+use Test::Most tests => 25;
 
 use lib 't/lib';
 use App::Mimosa::Test;
@@ -12,6 +12,23 @@ use File::Spec::Functions;
 #use Carp::Always;
 
 fixtures_ok 'basic_ss';
+
+{
+    my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
+    my $response = request POST '/submit', [
+                    program                => 'tblastx',
+                    sequence_input_file    => '',
+                    sequence               => $seq,
+                    maxhits                => 100,
+                    matrix                 => 'BLOSUM62',
+                    evalue                 => 0.1,
+                    mimosa_sequence_set_ids=> 1,
+                    alphabet               => 'nucleotide',
+    ];
+    is($response->code, 200, '/submit returns 200');
+    like($response->content,qr!/api/report/raw/\d+!, 'download raw report link');
+    like($response->content,qr!/api/report/html/\d+!, 'download raw report link');
+}
 
 {
     my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
