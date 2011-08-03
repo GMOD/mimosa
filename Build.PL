@@ -61,6 +61,8 @@ my $builder = Module::Build->new(
         'namespace::autoclean'                         => 0,
         'Path::Class'                                  => 0,
         'YAML'                                         => 0,
+        # required to deal with xml blast reports
+        'XML::SAX'                                     => 0,
     },
     add_to_cleanup      => [ 'mimosa.db', 'mimosa_test.db', catfile(qw/examples data .mimosa_cache*/),
                               catfile(qr/t data .mimosa_cache*/), catfile(qw/t var BCS.db/)  ],
