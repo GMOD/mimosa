@@ -29,8 +29,8 @@
 <option value="tblastn">TBLASTN (protein to nucleotide; database translated to protein)</option>
 </select>
 </td></tr>
-    <tr><td>Name:</td><td> <input type="text" name="search_name" size="20" id="search_name"></td>
-    <tr><td>Description:</td><td> <input type="text" name="search_description" size="20" id="search_description"></td>
+    <tr><td>Name:</td><td> <input type="text" name="search_name" size="20" id="search_name"></td></tr>
+    <tr><td>Description:</td><td> <input type="text" name="search_description" size="20" id="search_description"></td></tr>
 
     <tr><td><b>Query sequence</b></td></tr>
     <tr><td colspan="2">
