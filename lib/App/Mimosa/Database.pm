@@ -29,6 +29,16 @@ has db_basename => (
 has db => (
     isa => 'Bio::BLAST::Database',
     is  => 'rw',
+    default => sub {
+        my $self = shift;
+        my $db = Bio::BLAST::Database->open(
+            full_file_basename => $self->db_basename,
+            type               => $self->alphabet,
+            write              => 1,
+            create_dirs        => 1,
+        );
+        return $db;
+    }
 );
 
 sub get_sequence {
@@ -46,14 +56,6 @@ sub index {
     my $dir = dirname($self->db_basename);
     my $cwd = getcwd;
     chdir $dir;
-
-    my $db = Bio::BLAST::Database->open(
-        full_file_basename => $self->db_basename,
-        type               => $self->alphabet,
-        write              => 1,
-        create_dirs        => 1,
-    );
-    $self->db($db);
 
     my $seqfile = catfile($self->db_basename . '.seq');
 

@@ -286,7 +286,7 @@ sub compose_sequence_sets : Private {
         App::Mimosa::Database->new(
             alphabet    => $alphabet,
             db_basename => $db_basename,
-        );
+        )->index;
     }
     $c->stash->{composite_db_name} = ".mimosa_cache_$composite_sha1";
     $c->stash->{alphabet}          = $alphabet;

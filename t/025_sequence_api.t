@@ -5,9 +5,27 @@ use warnings;
 use lib 't/lib';
 use App::Mimosa::Test;
 use Test::DBIx::Class;
+use HTTP::Request::Common;
+use File::Spec::Functions;
+use File::Slurp qw/slurp/;
 use Test::JSON;
 
 fixtures_ok 'basic_ss';
+
+# we need to generate a report first, so our db gets indexed
+
+my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
+my $response = request POST '/submit', [
+                program                => 'blastn',
+                sequence_input_file    => '',
+                sequence               => $seq,
+                maxhits                => 100,
+                matrix                 => 'BLOSUM62',
+                evalue                 => 0.1,
+                mimosa_sequence_set_ids=> 1,
+                alphabet               => 'nucleotide',
+];
+
 
 sub basic_test {
     my $url = shift;
