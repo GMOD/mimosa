@@ -155,7 +155,6 @@ sub _temp_file {
 
 sub validate : Private {
     my ( $self, $c ) = @_;
-    warn "validate";
 
     if( $c->req->param('program') eq 'none' ) {
         $c->stash->{error} = "You must select a BLAST program to generate your report with.";
@@ -188,8 +187,6 @@ sub validate_sequence : Private {
     my ($self, $c) = @_;
     my $sequence = $c->stash->{sequence};
     my $program  = $c->stash->{program};
-
-    warn "validate seq";
 
     try {
         $sequence->validate_seq();
@@ -226,9 +223,6 @@ sub compose_sequence_sets : Private {
     my $composite_fasta= '';
     my $alphabet;
 
-    warn "compose seq sets";
-
-
     # TODO: error if any one of the ids is not valid
     for my $ss_id (grep { $_ } @ss_ids) {
         my $search = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_id });
@@ -250,14 +244,14 @@ sub compose_sequence_sets : Private {
         if ($sha1) {
         } else {
             die "Can't read sequence set FASTA $seq_root/$ss_name.seq : $!" unless -e "$seq_root/$ss_name.seq";
-            warn "slurping $seq_root/$ss_name.seq";
+            #warn "reading in $seq_root/$ss_name.seq";
             my $fasta = '';
             open( my $fh, '<', "$seq_root/$ss_name.seq");
             while (<$fh>) { $fasta .= $_ };
             close $fh;
             # my $fasta          = slurp("$seq_root/$ss_name.seq");
             $composite_fasta  .= $fasta;
-            warn "computing sha1 of $ss_name";
+            #warn "computing sha1 of $ss_name";
             $sha1              = sha1_hex($fasta);
         }
         $composite_sha1   .= $sha1;
@@ -265,18 +259,18 @@ sub compose_sequence_sets : Private {
         $search->update({ sha1 => $sha1 });
         #warn "found $ss_id with sha1 $sha1";
     }
-    warn "computing composite sha1";
+    #warn "computing composite sha1";
     $composite_sha1 = sha1_hex($composite_sha1);
     my $db_basename = catfile($seq_root, '.mimosa_cache_' . $composite_sha1);
 
     unless (-e "$db_basename.seq" ) {
         my $len = length($composite_fasta);
-        warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length = $len";
+        #warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length = $len";
         unless( $len ) {
             $c->stash->{error} = "Mimosa attempted to write a zero-size cache file. Some file permissions are probably incorrect.";
             $c->detach('/error');
         }
-        warn "writing composite fasta";
+        #warn "writing composite fasta";
         open( my $fh, '>', "$db_basename.seq" );
         print $fh $composite_fasta;
         close $fh;
