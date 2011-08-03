@@ -50,7 +50,7 @@ __PACKAGE__->config(
                 class => 'Minimal',
                 users => {
                     petunia => {
-                        password => "42",
+                        password => "cUC598",
                     },
                 }
             }
