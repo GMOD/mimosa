@@ -29,24 +29,21 @@ has db_basename => (
 has db => (
     isa => 'Bio::BLAST::Database',
     is  => 'rw',
-    default => sub {
-        my $self = shift;
-        my $db = Bio::BLAST::Database->open(
-            full_file_basename => $self->db_basename,
-            type               => $self->alphabet,
-            write              => 1,
-            create_dirs        => 1,
-        );
-        return $db;
-    }
 );
 
 sub get_sequence {
     my ($self, $name) = @_;
 
+    my $db = Bio::BLAST::Database->open(
+        full_file_basename => $self->db_basename,
+        type               => $self->alphabet,
+        write              => 1,
+        create_dirs        => 1,
+    );
+
     #warn "Is it indexed? " . ( $self->db->indexed_seqs ? 1 : 0 );
     #warn "Complete? " . ( $self->db->files_are_complete ? 1 : 0 );
-    my $sequence = $self->db->get_sequence($name);
+    my $sequence = $db->get_sequence($name);
 
     return $sequence;
 }
@@ -58,6 +55,14 @@ sub index {
     chdir $dir;
 
     my $seqfile = catfile($self->db_basename . '.seq');
+
+    my $db = Bio::BLAST::Database->open(
+        full_file_basename => $self->db_basename,
+        type               => $self->alphabet,
+        write              => 1,
+        create_dirs        => 1,
+    );
+    $self->db($db);
 
     unless ($self->already_indexed) {
         #warn "formatting $seqfile!";
