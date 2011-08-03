@@ -35,7 +35,6 @@ sub sequence :Path("/api/sequence/") :Args(2) {
         alphabet    => $rs->alphabet,
         write       => 1,
     );
-    $db->index;
 
     my $seq   = $db->get_sequence($name);
 
