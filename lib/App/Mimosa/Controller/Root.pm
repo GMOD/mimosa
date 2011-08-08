@@ -430,10 +430,6 @@ sub report :Local {
     );
     $out->write_result($in->next_result);
 
-    # TODO: Fix this stuff upstream
-    $report =~ s!\Q<CENTER><H1><a href="http://bioperl.org">Bioperl</a> Reformatted HTML of BLASTN Search Report<br> for </H1></CENTER>\E!!g;
-    $report =~ s!<p><p><hr><h5>Produced by Bioperl .*\$</h5>!!gs;
-
     my $cached_report_file = $self->_temp_file( $c->stash->{job_id}.'.html' );
     my $report_html;
 
@@ -471,6 +467,61 @@ sub report :Local {
 
     write_file( $cached_report_file, $report_html );
 
+}
+
+sub linkit {
+    return qq{<a href="foo">$_</a>};
+}
+
+sub _get_custom_formatter {
+    my ( $blast_output_format ) = @_;
+
+    my %custom_formatters = (
+                             7 => sub {  ### XML
+                                 my ($raw,$fmt) = @_;
+                                 print $fmt qq|<pre>|;
+                                 while (my $line = <$raw>) {
+                                     $line = encode_entities($line);
+                                     $line =~ s/(?<=&lt;BlastOutput_query-def&gt;)[^&\s]+/linkit($1)/e;
+                                     $line =~ s/(?<=&lt;Hit_accession&gt;)[^&\s]+/linkit($1)/e;
+                                     print $fmt $line;
+                                 }
+                                 print $fmt qq|</pre>\n|;
+                             },
+
+                             8 => sub { ## TABULAR, NO COMMENTS
+                                 my ($raw,$fmt) = @_;
+                                 my @data;
+                                 while (my $line = <$raw>) {
+                                     chomp $line;
+                                     $line = encode_entities($line);
+                                     my @fields = split /\t/,$line;
+                                     @fields[0,1] = map {linkit($_)} @fields[0,1];
+                                     push @data, \@fields;
+                                 }
+                                 print $fmt columnar_table_html( data => \@data );
+                             },
+
+                             9 => sub { ## TABULAR WITH COMMENTS
+                                 my ($raw,$fmt) = @_;
+                                 print $fmt qq|<pre>|;
+                                 while (my $line = <$raw>) {
+                                     $line = encode_entities($line);
+                                     if( $line =~ /^\s*#/ ) {
+                                         $line =~ s/(?<=Query: )\S+/linkit($1)/e;
+                                     } else {
+                                         my @fields = split /\t/,$line;
+                                         @fields[0,1] = map linkit($_),@fields[0,1];
+                                         $line = join "\t",@fields;
+                                     }
+                                     print $fmt $line;
+                                 }
+                                 print $fmt qq|</pre>\n|;
+                             },
+                             );
+
+
+    return $custom_formatters{ $blast_output_format };
 }
 
 sub show_cached_report :Private {
