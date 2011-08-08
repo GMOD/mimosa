@@ -172,6 +172,7 @@ sub validate : Private {
         -format   => 'fasta',
         -file     => $c->stash->{input_file},
     );
+    my $sequence_count = 0;
     while ( my $s = $i->next_seq ) {
         unless (length($s->seq()) >= $min_length) {
             $c->stash->{error} = "Sequence input too short. Must have a length of at least $min_length";
@@ -180,7 +181,9 @@ sub validate : Private {
         $c->stash->{sequence} = $s;
         $c->stash->{program}  = $program;
         $c->forward('validate_sequence');
+        $sequence_count++;
     }
+    $c->stash->{sequence_count} = $sequence_count;
 }
 
 sub validate_sequence : Private {
@@ -291,6 +294,8 @@ sub submit :Path('/submit') :Args(0) {
 
     my $ids            = $c->req->param('mimosa_sequence_set_ids') || '';
     my $alignment_view = $c->req->param('alignment_view') || '0';
+
+    $c->stash->{alignment_view} = $alignment_view;
 
     unless( $ids ) {
         $c->stash->{error} = "You must select at least one Mimosa sequence set.";
@@ -403,49 +408,53 @@ sub report :Local {
     };
     my $format = $format_num_to_name->{$c->stash->{report_format}} || '';
 
-    my $in = Bio::SearchIO->new(
-            -format => $format,
-            -file   => "$output_file",
-    );
-
-    die "Bio::SearchIO->new could not read $output_file" unless $in;
-
-    my $hit_link = sub {
-        my ($self, $hit) = @_;
-        my $name = $hit->name;
-        my $id   = $ss_ids[0] || 1;
-
-        return qq{<a href="/api/sequence/$id/$name.fasta">$name</a>};
-    };
-    my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
-    $writer->start_report(sub {''});
-    $writer->end_report(sub {''});
-    $writer->hit_link_desc( $hit_link );
-    $writer->hit_link_align( $hit_link );
+    mkdir $self->_app->config->{tmp_dir} unless -e $self->_app->config->{tmp_dir};
 
     my $report = '';
-    my $out = Bio::SearchIO->new(
-        -writer => $writer,
-        -fh     => IO::String->new( \$report ),
-    );
-    $out->write_result($in->next_result);
-
+    my $report_fh = IO::String->new( \$report );
     my $cached_report_file = $self->_temp_file( $c->stash->{job_id}.'.html' );
     my $report_html;
 
-    mkdir $self->_app->config->{tmp_dir} unless -e $self->_app->config->{tmp_dir};
+    # we only use bioperl to write the html report if is a single sequence and the default view
+    if ( $c->stash->{sequence_count} == 1 && $c->stash->{alignment_view} == 0) {
+        my $in = Bio::SearchIO->new(
+                -format => $format,
+                -file   => "$output_file",
+        );
 
+        die "Bio::SearchIO->new could not read $output_file" unless $in;
+
+        my $hit_link = sub {
+            my ($self, $hit) = @_;
+            my $name = $hit->name;
+            my $id   = $ss_ids[0] || 1;
+
+            return qq{<a href="/api/sequence/$id/$name.fasta">$name</a>};
+        };
+        my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
+        $writer->start_report(sub {''});
+        $writer->end_report(sub {''});
+        $writer->hit_link_desc( $hit_link );
+        $writer->hit_link_align( $hit_link );
+        my $out = Bio::SearchIO->new(
+            -writer => $writer,
+            -fh     => $report_fh,
+        );
+        $out->write_result($in->next_result);
+    } else { # we have to build the HTML report ourselves
+
+    }
     # Bio::GMOD::Blast::Graph can only deal with plain blast reports
     if( $format eq 'blast' && $report =~ m/Sbjct: / ){
         my $graph_html = '';
         my $graph = Bio::GMOD::Blast::Graph->new(
-                                        -outputfile => "$output_file",
-                                        -format     => $format,
-                                        -fh         => IO::String->new( \$graph_html ),
-                                        -dstDir     => $self->_app->config->{tmp_dir} || "/tmp/mimosa",
-                                        -dstURL     => "/graphics/",
-                                        -imgName    => $c->stash->{job_id} . '.png',
-                                        );
+                        -outputfile => "$output_file",
+                        -format     => $format,
+                        -fh         => IO::String->new( \$graph_html ),
+                        -dstDir     => $self->_app->config->{tmp_dir} || "/tmp/mimosa",
+                        -dstURL     => "/graphics/",
+                        -imgName    => $c->stash->{job_id} . '.png',
+        );
         $graph->showGraph;
 
         $report_html        = $graph_html . $report;
@@ -470,56 +479,68 @@ sub report :Local {
 }
 
 sub linkit {
-    return qq{<a href="foo">$_</a>};
+    my ($id) = @_;
+    return qq{<a href="foo">$id</a>};
 }
 
-sub _get_custom_formatter {
-    my ( $blast_output_format ) = @_;
+# forgive me, for this function is a sin
+sub get_custom_formatter {
+    my ($self,$c, $blast_output_format) = @_;
+    my $report = '';
+    my $fmt = IO::String->new( \$report );
+
+    # the raw report
+    open my $raw, $c->stash->{output_file};
 
     my %custom_formatters = (
-                             7 => sub {  ### XML
-                                 my ($raw,$fmt) = @_;
-                                 print $fmt qq|<pre>|;
-                                 while (my $line = <$raw>) {
-                                     $line = encode_entities($line);
-                                     $line =~ s/(?<=&lt;BlastOutput_query-def&gt;)[^&\s]+/linkit($1)/e;
-                                     $line =~ s/(?<=&lt;Hit_accession&gt;)[^&\s]+/linkit($1)/e;
-                                     print $fmt $line;
-                                 }
-                                 print $fmt qq|</pre>\n|;
-                             },
+        0 => sub {  # default formatter
+        print $fmt qq|<pre>|;
+        while (my $line = <$raw>) {
+            $line = encode_entities($line);
+            $line =~ s/(?<=Query[=:]\s)(\S+)/linkit($1)/eg;
+            print $fmt $line;
+        }
+        print $fmt qq|</pre>\n|;
+        },
+        7 => sub {  ### XML
+            print $fmt qq|<pre>|;
+            while (my $line = <$raw>) {
+                $line = encode_entities($line);
+                $line =~ s/(?<=&lt;BlastOutput_query-def&gt;)[^&\s]+/linkit($1)/e;
+                $line =~ s/(?<=&lt;Hit_accession&gt;)[^&\s]+/linkit($1)/e;
+                print $fmt $line;
+            }
+            print $fmt qq|</pre>\n|;
+        },
 
-                             8 => sub { ## TABULAR, NO COMMENTS
-                                 my ($raw,$fmt) = @_;
-                                 my @data;
-                                 while (my $line = <$raw>) {
-                                     chomp $line;
-                                     $line = encode_entities($line);
-                                     my @fields = split /\t/,$line;
-                                     @fields[0,1] = map {linkit($_)} @fields[0,1];
-                                     push @data, \@fields;
-                                 }
-                                 print $fmt columnar_table_html( data => \@data );
-                             },
+        8 => sub { ## TABULAR, NO COMMENTS
+            my @data;
+            while (my $line = <$raw>) {
+                chomp $line;
+                $line = encode_entities($line);
+                my @fields = split /\t/,$line;
+                @fields[0,1] = map {linkit($_)} @fields[0,1];
+                push @data, \@fields;
+            }
+            print $fmt columnar_table_html( data => \@data );
+        },
 
-                             9 => sub { ## TABULAR WITH COMMENTS
-                                 my ($raw,$fmt) = @_;
-                                 print $fmt qq|<pre>|;
-                                 while (my $line = <$raw>) {
-                                     $line = encode_entities($line);
-                                     if( $line =~ /^\s*#/ ) {
-                                         $line =~ s/(?<=Query: )\S+/linkit($1)/e;
-                                     } else {
-                                         my @fields = split /\t/,$line;
-                                         @fields[0,1] = map linkit($_),@fields[0,1];
-                                         $line = join "\t",@fields;
-                                     }
-                                     print $fmt $line;
-                                 }
-                                 print $fmt qq|</pre>\n|;
-                             },
-                             );
-
+        9 => sub { ## TABULAR WITH COMMENTS
+            print $fmt qq|<pre>|;
+            while (my $line = <$raw>) {
+                $line = encode_entities($line);
+                if( $line =~ /^\s*#/ ) {
+                    $line =~ s/(?<=Query: )\S+/linkit($1)/e;
+                } else {
+                    my @fields = split /\t/,$line;
+                    @fields[0,1] = map linkit($_),@fields[0,1];
+                    $line = join "\t",@fields;
+                }
+                print $fmt $line;
+            }
+            print $fmt qq|</pre>\n|;
+        },
+    );
 
     return $custom_formatters{ $blast_output_format };
 }
@@ -626,6 +647,158 @@ This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
+
+sub columnar_table_html {
+    my %params = @_;
+
+    die "must provide 'data' parameter" unless $params{data};
+
+    my $noborder = $params{__border} ? '' : '_noborder';
+
+    my $html;
+
+    #table beginning
+    $params{__tableattrs} ||= qq{summary="" cellspacing="0" width="100%"};
+    $html .=
+      qq|<table class="columnar_table$noborder" $params{__tableattrs}>\n|;
+
+    if( defined $params{__caption} ) {
+        $html .= "<caption>$params{__caption}</caption>\n";
+    }
+
+    unless ( defined $params{__alt_freq} ) {
+        $params{__alt_freq} =
+            @{ $params{data} } > 6 ? 4
+          : @{ $params{data} } > 2 ? 2
+          :                          0;
+    }
+    unless ( defined $params{__alt_width} ) {
+        $params{__alt_width} = @{ $params{data} } > 6 ? 2 : 1;
+    }
+    unless ( $params{__alt_width} < $params{__alt_freq} ) {
+        $params{__alt_width} = $params{__alt_freq} / 2;
+    }
+    unless ( defined $params{__alt_offset} ) {
+        $params{__alt_offset} = 0;
+    }
+
+    #set the number of columns in our table.  rows will be padded
+    #up to this with '&nbsp;' if they don't have that many columns
+    my $cols =
+      $params{headings}
+      ? scalar( @{ $params{headings} } )
+      : max( map { scalar(@$_) } @{ $params{data} } );
+
+    ###figure out text alignments of each column
+    my @alignments = do {
+        if ( ref $params{__align} ) {
+            ref( $params{__align} ) eq 'ARRAY'
+              or die '__align parameter must be either a string or an arrayref';
+            @{ $params{__align} }    #< just dereference it
+        }
+        elsif ( $params{__align} ) {
+            split '', $params{__align};    #< explode the string into an array
+        }
+        else {
+            ('c') x $cols;
+        }
+    };
+    my %lcr =
+      ( l => 'align="left"', c => 'align="center"', r => 'align="right"' );
+    foreach (@alignments) {
+        if ($_) {
+            $_ = $lcr{$_} or die "'$_' is not a valid column alignment";
+        }
+    }
+
+    #columns headings
+    if ( $params{headings} ) {
+
+        # Turn headings like this:
+        #  [ 'foo', undef, undef, 'bar' ]
+        # into this:
+        # <tr><th colspan="3">foo</th><th>bar</th></tr>
+        # The first column heading may not be undef.
+        unless ( defined( $params{headings}->[0] ) ) {
+            die "First column heading is undefined";
+        }
+        $html .= '<thead><tr>';
+
+        # The outer loop grabs the defined colheading; the
+        # inner loop advances over any undefs.
+        my $i = 0;
+        while ( $i < @{ $params{headings} } ) {
+            my $colspan = 1;
+            my $align   = $alignments[$i] || '';
+            my $heading = $params{headings}->[ $i++ ] || '';
+            while (( $i < @{ $params{headings} } )
+                && ( !defined( $params{headings}->[$i] ) ) )
+            {
+                $colspan++;
+                $i++;
+            }
+            $html .=
+"<th $align class=\"columnar_table$noborder\" colspan=\"$colspan\">$heading</th>";
+        }
+        $html .= "</tr></thead>\n";
+    }
+
+    $html .= "<tbody>\n";
+    my $hctr                     = 0;
+    my $rows_remaining_to_hilite = 0;
+    foreach my $row ( @{ $params{data} } ) {
+        if ( $params{__alt_freq} != 0
+            && ( $hctr++ - $params{__alt_offset} ) % $params{__alt_freq} == 0 )
+        {
+            $rows_remaining_to_hilite = $params{__alt_width};
+        }
+        my $hilite = do {
+            if ($rows_remaining_to_hilite) {
+                $rows_remaining_to_hilite--;
+                'class="columnar_table bgcoloralt2"';
+            }
+            else {
+                'class="columnar_table bgcoloralt1"';
+            }
+        };
+
+        #pad the row with &nbsp;s up to the length of the headings
+        if ( @$row < $cols ) {
+            $_ = '&nbsp;' foreach @{$row}[ scalar(@$row) .. ( $cols - 1 ) ];
+        }
+        $html .= "<tr>";
+        for ( my $i = 0 ; $i < @$row ; $i++ ) {
+            my $a = $alignments[$i] || '';
+            my $c = $row->[$i]      || '';
+            my $tdparams = '';
+            if ( ref $c eq 'HASH' )
+            {    #< process HTML attributes if this piece of data is a hashref
+                my $d = $c;
+                $c = delete $d->{content};
+                if ( my $moreclasses = delete $d->{class} )
+                {    #< add more classes if present
+                    $hilite =~ s/"$/ $moreclasses"/x;
+                }
+                if ( exists $d->{'colspan'} )
+                { ### If exists a colspan it should not add more columns so, we increase
+                    ### the column count as many times as colspan
+                    $i = $i + $d->{'colspan'};
+                }
+                $tdparams = join ' ',
+                  map { qq|$_="$d->{$_}"| } grep { $_ ne 'content' } keys %$d;
+            } elsif( ref $c eq 'ARRAY' ) {
+                $c = "@$c";
+            }
+            $html .= "<td $hilite $tdparams $a>$c</td>";
+        }
+        $html .= "</tr>\n";
+
+#    $html .= join( '',('<tr>',(map {"<td $hilite>$_</td>"} @$row),'</tr>'),"\n" );
+    }
+    $html .= "</tbody></table>\n";
+
+    return $html;
+}
 
 __PACKAGE__->meta->make_immutable;
 
