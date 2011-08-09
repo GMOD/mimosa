@@ -43,16 +43,12 @@
     <div class="info_table_fieldval">
 
          <div id="advanced" style="display:none; width: 700px;">
-  Filter Query?: <input type="checkbox" checked="checked" name="filtered" value="T" /><br/>
+        <table>
+<tr><td>  Filter Query?:</td><td> <input type="checkbox" checked="checked" name="filtered" value="T" /></td></tr>
 
-    <div class="info_table_fieldval">
-    Expect (e-value) Threshold
-      <input type="text" size="6" value="1e-10" name="evalue" />
-    <br/>
-    </div>
+<tr><td>    Expect (e-value) Threshold</td><td> <input type="text" size="6" value="1e-10" name="evalue" /></td></tr>
 
-    <div>
-    Alignment View
+<tr><td>    Alignment View</td><td>
     <select id="alignment_views" name="alignment_view">
     <option value="0">Pairwise</option>
     <option value="1">Query-anchored showing identities</option>
@@ -66,10 +62,9 @@
     <option value="9">Tabular with comment lines</option>
     <option value="10">ASN text</option>
     </select>
-    </div>
-
-    <div class="info_table_fieldval">
-    Substitution Matrix
+</td></tr>
+<tr><td>
+    Substitution Matrix</td><td>
       <select id="simple_selectbox_2"   name="matrix">
             <option value="BLOSUM62">BLOSUM62 (default)</option>
             <option value="BLOSUM80">BLOSUM80 (recent divergence)</option>
@@ -77,19 +72,15 @@
             <option value="PAM30">PAM30</option>
             <option value="PAM70">PAM70</option>
     </select>
-    </div>
-
-    <div class="info_table_fieldval">
-    Show Graphics
+</td></tr>
+<tr><td> Show Graphics</td><td>
       <select id="simple_selectbox_3"   name="output_graphs">
         <option value="bioperl_histogram">all</option>
         <option value="none">none</option>
         <option value="bioperl_only">alignment summary only</option>
     </select>
-    </div>
-    <div class="info_table_fieldval">
-    Max hits to show: <input type="text" name="maxhits" size="6" value="100" />
-    </div>
+    </td></tr>
+<tr><td>    Max hits to show: </td><td><input type="text" name="maxhits" size="6" value="100" /></td></tr>
     </div> <!-- advanced -->
       <div><br/><input type="reset" value="Clear" onclick="clearField(); "> <input type="submit" name="search" value="Align" ></div>
     </div>
