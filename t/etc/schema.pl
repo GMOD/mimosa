@@ -32,7 +32,6 @@ return {
         'basic_job' => {
             'Mimosa::Job' => [
                 [qw/mimosa_job_id sha1 user start_time end_time/],
-                [ 1, 'deadbeef', 'blarg', '1010102011', undef, ],
             ],
         },
   },

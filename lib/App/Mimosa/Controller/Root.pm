@@ -355,6 +355,7 @@ sub submit :Path('/submit') :Args(0) {
     } elsif( @ss_ids == 1) {
         my $rs       = $c->model('BCS')->resultset('Mimosa::SequenceSet');
         my ($ss)     = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_ids[0] })->single;
+        die "No mimosa_sequence_set_id $ss_ids[0] !" unless $ss;
         $db_basename = catfile($c->stash->{seq_root}, $ss->shortname);
     } else {
         $c->stash->{error} = "The value " . encode_entities($ids) . " does not match any sequence sets";
@@ -444,7 +445,7 @@ sub report :Local {
         );
         $out->write_result($in->next_result);
     } else { # we have to build the HTML report ourselves
-        $report_html        = _generate_html_report($c);
+        $report = $report_html  = _generate_html_report($c);
         $c->stash->{report} = $report_html;
     }
     # Bio::GMOD::Blast::Graph can only deal with plain blast reports
