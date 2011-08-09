@@ -1,4 +1,4 @@
-use Test::Most tests => 3;
+use Test::Most tests => 4;
 use strict;
 use warnings;
 
@@ -18,13 +18,25 @@ use File::Spec::Functions;
 
 fixtures_ok 'basic_ss';
 
-my $response = request POST '/submit', [
-                program                 => 'blastn',
-                sequence                => ">fasta title\nabitsmall",
-                maxhits                 => 100,
-                matrix                  => 'BLOSUM62',
-                evalue                  => 0.1,
-                mimosa_sequence_set_ids => 1,
-];
-is($response->code, 400, "/submit with too small input sequence returns 400");
-like($response->content,qr/Sequence input too short\. Must have a length of at least 17/, "error explains the min length");
+{
+    my $response = request POST '/submit', [
+                    program                 => 'blastn',
+                    sequence                => ">fasta title\nabitsmall",
+                    maxhits                 => 100,
+                    matrix                  => 'BLOSUM62',
+                    evalue                  => 0.1,
+                    mimosa_sequence_set_ids => 1,
+    ];
+    is($response->code, 400, "/submit with too small input sequence returns 400");
+    like($response->content,qr/Sequence input too short\. Must have a length of at least 17/, "error explains the min length");
+    $response = request POST '/submit', [
+                    program                 => 'blastn',
+                    sequence                => ">fasta title\nabitsmall",
+                    maxhits                 => 100,
+                    matrix                  => 'BLOSUM62',
+                    evalue                  => 0.1,
+                    mimosa_sequence_set_ids => 1,
+    ];
+    # Make sure we don't get 'job still running'
+    like($response->content,qr/Sequence input too short\. Must have a length of at least 17/, "error explains the min length");
+}
