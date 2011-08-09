@@ -483,8 +483,10 @@ sub report :Local {
 }
 
 sub linkit {
-    my ($id) = @_;
-    return qq{<a href="foo">$id</a>};
+    my ($c,$id) = @_;
+    my (@ss) = @{ $c->stash->{sequence_set_ids} };
+    # TODO: we need to be able to look up sequences by the SHA1 of a composed sequence set
+    return qq{<a href="/api/sequence/$ss[0]/$id.fasta">$id</a>};
 }
 
 # forgive me, for this function is a sin
@@ -501,7 +503,7 @@ sub _generate_html_report {
             print $fmt qq|<pre>|;
             while (my $line = <$raw>) {
                 $line = encode_entities($line);
-                $line =~ s/(?<=Query[=:]\s)(\S+)/linkit($1)/eg;
+                $line =~ s/(?<=Query[=:]\s)(\S+)/linkit($c,$1)/eg;
                 print $fmt $line;
             }
             print $fmt qq|</pre>\n|;
@@ -510,8 +512,8 @@ sub _generate_html_report {
             print $fmt qq|<pre>|;
             while (my $line = <$raw>) {
                 $line = encode_entities($line);
-                $line =~ s/(?<=&lt;BlastOutput_query-def&gt;)[^&\s]+/linkit($1)/e;
-                $line =~ s/(?<=&lt;Hit_accession&gt;)[^&\s]+/linkit($1)/e;
+                $line =~ s/(?<=&lt;BlastOutput_query-def&gt;)[^&\s]+/linkit($c,$1)/e;
+                $line =~ s/(?<=&lt;Hit_accession&gt;)[^&\s]+/linkit($c,$1)/e;
                 print $fmt $line;
             }
             print $fmt qq|</pre>\n|;
@@ -523,7 +525,7 @@ sub _generate_html_report {
                 chomp $line;
                 $line = encode_entities($line);
                 my @fields = split /\t/,$line;
-                @fields[0,1] = map {linkit($_)} @fields[0,1];
+                @fields[0,1] = map {linkit($c,$_)} @fields[0,1];
                 push @data, \@fields;
             }
             print $fmt columnar_table_html( data => \@data );
@@ -534,10 +536,10 @@ sub _generate_html_report {
             while (my $line = <$raw>) {
                 $line = encode_entities($line);
                 if( $line =~ /^\s*#/ ) {
-                    $line =~ s/(?<=Query: )\S+/linkit($1)/e;
+                    $line =~ s/(?<=Query: )\S+/linkit($c,$1)/e;
                 } else {
                     my @fields = split /\t/,$line;
-                    @fields[0,1] = map linkit($_),@fields[0,1];
+                    @fields[0,1] = map linkit($c,$_),@fields[0,1];
                     $line = join "\t",@fields;
                 }
                 print $fmt $line;
@@ -694,6 +696,7 @@ sub columnar_table_html {
       $params{headings}
       ? scalar( @{ $params{headings} } )
       : max( map { scalar(@$_) } @{ $params{data} } );
+    $cols ||= 1;
 
     ###figure out text alignments of each column
     my @alignments = do {
