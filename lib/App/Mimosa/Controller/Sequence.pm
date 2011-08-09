@@ -28,7 +28,7 @@ sub sequence :Path("/api/sequence/") :Args(2) {
     my $seq_data_dir = $c->config->{sequence_data_dir};
     my $mimosa_root  = $c->config->{mimosa_root};
     my $dbname       = catfile($mimosa_root, $seq_data_dir, $rs->shortname);
-    warn "dbname=$dbname, alphabet=" . $rs->alphabet;
+    #warn "dbname=$dbname, alphabet=" . $rs->alphabet;
 
     my $db = App::Mimosa::Database->new(
         db_basename => $dbname,

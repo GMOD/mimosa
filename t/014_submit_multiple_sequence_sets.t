@@ -37,7 +37,7 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
     like($response->content, qr!/api/report/raw/\d+!, 'got a download raw report link');
     like($response->content, qr!/api/report/html/\d+!, 'got a download html report link');
     like($response->content, qr!Database:.*fbe21c6749e08ae8eef1b203a53fd385c52238a4!, 'got the correct database file');
-    like($response->content, qr!5 sequences; 2,796 total letters!, 'got the correct number of sequences and letters');
+    like($response->content, qr!5 sequences; 2796 total letters!, 'got the correct number of sequences and letters');
 
     # Now submit against the same sequence sets, but with a different sequence
     # Even if we do not get any hits, this shouldn't blow up

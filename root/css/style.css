@@ -196,7 +196,6 @@ font-size: 10px;
 
 #report {
     background: white;
-    width: 700px;
     margin: 10px auto;
     padding: 10px;
     border: 1px solid black;
@@ -214,4 +213,5 @@ font-size: 10px;
 #outercontainer, #outercontainer div, #outercontainer table {
     color: white;
 }
+.bgcoloralt2 { background-color: #D5D5FF; }
 

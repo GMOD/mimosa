@@ -1,4 +1,4 @@
-use Test::Most tests => 5;
+use Test::Most tests => 6;
 use strict;
 use warnings;
 
@@ -12,6 +12,7 @@ use File::Spec::Functions;
 use Test::DBIx::Class;
 
 fixtures_ok 'basic_job';
+fixtures_ok 'basic_ss';
 
 {
     my $response = request GET '/api/report/raw/42', [
@@ -20,8 +21,23 @@ fixtures_ok 'basic_job';
     like($response->content,qr/does not exist/);
 }
 {
+    generate_report();
     my $response = request GET '/api/report/raw/1', [
     ];
     is($response->code, 200, 'get a raw report');
     like($response->content,qr/Altschul, Stephen F/);
+}
+
+sub generate_report {
+    my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
+    my $response = request POST '/submit', [
+                    alignment_view		   => 0,
+                    program                => 'blastn',
+                    sequence               => $seq,
+                    maxhits                => 100,
+                    matrix                 => 'BLOSUM62',
+                    evalue                 => 0.1,
+                    mimosa_sequence_set_ids=> 1,
+                    alphabet               => 'nucleotide',
+    ];
 }
