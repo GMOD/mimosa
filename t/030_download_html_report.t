@@ -1,9 +1,10 @@
-use Test::Most tests => 8;
+use Test::Most tests => 9;
 use strict;
 use warnings;
 
 use lib 't/lib';
 use App::Mimosa::Test;
+use aliased 'App::Mimosa::Test::Mech';
 
 use Catalyst::Test 'App::Mimosa';
 use File::Slurp qw/slurp/;
@@ -36,8 +37,13 @@ fixtures_ok 'basic_ss';
     my $response = request GET '/api/report/html/1';
     is($response->code, 200, 'get an html report');
     like($response->content,qr/Altschul, Stephen F/);
-
 }
+{
+    my $mech = Mech->new;
+    $mech->get('/api/report/html/1');
+    $mech->links_ok();
+}
+
 
 sub generate_report {
     my ($view) = @_;
