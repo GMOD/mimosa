@@ -28,7 +28,7 @@ $mech->submit_form_ok({
 'submit single sequence with defaults',
 ) or diag $mech->content;
 
-$mech->content_contains('All hits shown') or diag $mech->content;
+$mech->content_contains('Sequences producing significant alignments') or diag $mech->content;
 
 
 # now try a spammy submission

@@ -30,8 +30,7 @@ fixtures_ok 'basic_job';
 
 {
     # make sure there is at least one report
-    # this hits a bug in our root controller
-    #generate_report();
+    generate_report();
 
     my $response = request GET '/api/report/html/1';
     is($response->code, 200, 'get an html report');

@@ -23,6 +23,8 @@ use Try::Tiny;
 use DateTime;
 use HTML::Entities;
 use Digest::SHA1 qw/sha1_hex/;
+use List::Util 'max';
+use List::MoreUtils 'minmax';
 #use Carp::Always;
 use Cwd;
 
@@ -442,7 +444,8 @@ sub report :Local {
         );
         $out->write_result($in->next_result);
     } else { # we have to build the HTML report ourselves
-
+        $report_html        = _generate_html_report($c);
+        $c->stash->{report} = $report_html;
     }
     # Bio::GMOD::Blast::Graph can only deal with plain blast reports
     if( $format eq 'blast' && $report =~ m/Sbjct: / ){
@@ -484,8 +487,8 @@ sub linkit {
 }
 
 # forgive me, for this function is a sin
-sub get_custom_formatter {
-    my ($self,$c, $blast_output_format) = @_;
+sub _generate_html_report {
+    my ($c) = @_;
     my $report = '';
     my $fmt = IO::String->new( \$report );
 
@@ -494,13 +497,13 @@ sub get_custom_formatter {
 
     my %custom_formatters = (
         0 => sub {  # default formatter
-        print $fmt qq|<pre>|;
-        while (my $line = <$raw>) {
-            $line = encode_entities($line);
-            $line =~ s/(?<=Query[=:]\s)(\S+)/linkit($1)/eg;
-            print $fmt $line;
-        }
-        print $fmt qq|</pre>\n|;
+            print $fmt qq|<pre>|;
+            while (my $line = <$raw>) {
+                $line = encode_entities($line);
+                $line =~ s/(?<=Query[=:]\s)(\S+)/linkit($1)/eg;
+                print $fmt $line;
+            }
+            print $fmt qq|</pre>\n|;
         },
         7 => sub {  ### XML
             print $fmt qq|<pre>|;
@@ -542,7 +545,9 @@ sub get_custom_formatter {
         },
     );
 
-    return $custom_formatters{ $blast_output_format };
+    my $formatter = $custom_formatters{ $c->stash->{alignment_view} };
+    $formatter->() if $formatter;
+    return $report;
 }
 
 sub show_cached_report :Private {
