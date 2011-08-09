@@ -2,6 +2,11 @@ use Test::Most tests => 3;
 use strict;
 use warnings;
 
+BEGIN {
+    $ENV{CATALYST_CONFIG_LOCAL_SUFFIX} = 'testing2';
+
+}
+
 use lib 't/lib';
 use App::Mimosa::Test;
 use Test::DBIx::Class;
