@@ -24,7 +24,7 @@ my $response = request POST '/submit', [
                 maxhits                 => 100,
                 matrix                  => 'BLOSUM62',
                 evalue                  => 0.1,
-                mimosa_sequence_set_ids => 42,
+                mimosa_sequence_set_ids => 1,
 ];
 is($response->code, 400, "/submit with too small input sequence returns 400");
 like($response->content,qr/Sequence input too short\. Must have a length of at least 17/, "error explains the min length");

@@ -170,9 +170,12 @@ sub validate : Private {
     my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
     $c->stash->{seq_root} = catfile($cwd, $seq_root);
 
+    # a job hasn't been created yet, so we can't yet read from stash->{input_file}
+    my $sequence = $c->stash->{sequence};
+
     my $i = Bio::SeqIO->new(
         -format   => 'fasta',
-        -file     => $c->stash->{input_file},
+        -fh       => IO::String->new( \$sequence ),
     );
     my $sequence_count = 0;
     while ( my $s = $i->next_seq ) {
@@ -200,7 +203,7 @@ sub validate_sequence : Private {
         $c->detach('/input_error');
     };
 
-    unless ($program) {
+    unless ($program && $program ne 'none') {
         $c->stash->{error} = "Invalid program";
         $c->detach('/input_error');
     }
@@ -304,14 +307,6 @@ sub submit :Path('/submit') :Args(0) {
         $c->detach('/input_error');
     }
 
-    $c->forward('make_job_id');
-
-    my $input_file  = $self->_temp_file( $c->stash->{job_id}.'.in.fasta'  );
-    my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.blast' );
-
-    $c->stash->{input_file} = $input_file;
-    $c->stash->{output_file}= $output_file;
-
     # If we accepted a POSTed sequence as input, it will be HTML encoded
     my $sequence = decode_entities($c->req->param('sequence'));
 
@@ -327,7 +322,22 @@ sub submit :Path('/submit') :Args(0) {
     }
     $c->stash->{sequence} = $sequence;
 
+    # we must validate before creating jobs, so we don't get the dumb message
+    # that an invalid job submission is "still running"
+    $c->forward('validate');
+
+    $c->forward('make_job_id');
+
+    die "job_id not set!" unless $c->stash->{job_id};
+
+    my $input_file  = $self->_temp_file( $c->stash->{job_id}.'.in.fasta'  );
+    my $output_file = $self->_temp_file( $c->stash->{job_id}.'.out.blast' );
+
+    $c->stash->{input_file} = $input_file;
+    $c->stash->{output_file}= $output_file;
+
     write_file $input_file, $sequence;
+
 
     # we create a file to keep track of what kind raw report format is being generated,
     # so later on we can tell Bio::SearchIO which format to parse
@@ -337,7 +347,6 @@ sub submit :Path('/submit') :Args(0) {
     # prevent race conditions
     stat $input_file;
 
-    $c->forward('validate');
 
     my @ss_ids;
 
@@ -486,7 +495,7 @@ sub linkit {
     my ($c,$id) = @_;
     my (@ss) = @{ $c->stash->{sequence_set_ids} };
     # TODO: we need to be able to look up sequences by the SHA1 of a composed sequence set
-    return qq{<a href="/api/sequence/$ss[0]/$id.fasta">$id</a>};
+    return $id ? qq{<a href="/api/sequence/$ss[0]/$id.fasta">$id</a>} : '';
 }
 
 # forgive me, for this function is a sin
@@ -573,14 +582,18 @@ ERROR
 sub make_job_id :Private {
     my ( $self, $c ) = @_;
 
+    # Storable cannot serialize filehandles, which are GLOBs,
+    # so we can't pass in $c->req->uploads
     my $sha1 =  sha1_hex freeze {
-        params  => $c->req->parameters,
-        uploads => $c->req->uploads,
+        params   => $c->req->parameters,
+        # the sequence key takes into account the file content of uploads
+        sequence => $c->stash->{sequence},
         #TODO: add the user - user   => $c->user,
     };
 
-    my $rs = $c->model('BCS')->resultset('Mimosa::Job');
+    my $rs   = $c->model('BCS')->resultset('Mimosa::Job');
     my $jobs = $rs->search( { sha1 => $sha1 } );
+
     if ($jobs->count == 0) { # not a duplicate job, proceed
         my $job = $rs->create({
             sha1       => $sha1,
@@ -589,7 +602,7 @@ sub make_job_id :Private {
         });
         $c->stash->{job_id} = $job->mimosa_job_id();
     } else { # this is a duplicate, check if it is still running and notify user appropriately
-        my $job = $jobs->single;
+        my $job          = $jobs->single;
         my ($start,$end) = ($job->start_time, $job->end_time);
         my $jid          = $job->mimosa_job_id;
         my $user         = $job->user;
