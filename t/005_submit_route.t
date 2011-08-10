@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::Most tests => 60;
+use Test::Most tests => 72;
 
 use lib 't/lib';
 use App::Mimosa::Test;
@@ -13,7 +13,6 @@ use File::Spec::Functions;
 
 fixtures_ok 'basic_ss';
 
-my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
 
 {
     my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
@@ -34,6 +33,7 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
 
 sub test_submit {
     my ($seq, $view, $program) = @_;
+    diag("Testing /submit with view=$view and program=$program");
     my $response = request POST '/submit', [
                     program                => $program,
                     sequence_input_file    => '',
@@ -48,10 +48,12 @@ sub test_submit {
     is($response->code, 200, '/submit returns 200');
     like($response->content,qr!/api/report/raw/\d+!, 'download raw report link');
     like($response->content,qr!/api/report/html/\d+!, 'download raw report link');
+    ok($response->content !~ qr{<div id="actual_report"></div>}, 'found a non-empty actual_report div');
 }
 
 
 for (0 .. 11) {
+    my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
     test_submit($seq, $_, 'blastn');
 }
 

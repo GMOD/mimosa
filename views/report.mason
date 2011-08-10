@@ -11,7 +11,7 @@
     Bookmarkable URLs: Mimosa Report #<% $job_id %> <a href="/api/report/raw/<% $job_id %>">Raw</a>
     <a href="/api/report/html/<% $job_id %>">HTML</a>
     </div>
-    <% $report %>
+    <div id="actual_report"><% $report %></div>
     </div>
     </div> <!-- t1_content -->
     <& tabs.mason, admin => 0 &>

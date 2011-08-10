@@ -556,6 +556,18 @@ sub _generate_html_report {
             print $fmt qq|</pre>\n|;
         },
     );
+    my $default_formatter = sub {
+            print $fmt qq{<pre>};
+            while (my $line = <$raw>) {
+                print $fmt $line;
+            }
+            print $fmt qq{</pre};
+    };
+
+    # these formats just get a <pre> tag wrapped around them for now
+    for ((1 .. 6,10 .. 12)) {
+        $custom_formatters{ $_ } = $default_formatter;
+    }
 
     my $formatter = $custom_formatters{ $c->stash->{alignment_view} };
     $formatter->() if $formatter;
