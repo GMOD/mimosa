@@ -4,6 +4,7 @@ use Bio::Chado::Schema;
 use File::Spec::Functions;
 use App::Mimosa::Database;
 use JSON::Any;
+use Data::Dumper;
 
 use namespace::autoclean;
 
@@ -37,6 +38,8 @@ sub sequence :Path("/api/sequence/") :Args(2) {
     )->index;
 
     my $seq   = $db->get_sequence($name);
+
+    die Dumper [ "get_sequence returned an invalid bioperl sequence:", $seq ] unless $seq->isa("Bio::PrimarySeqI");
 
     $c->stash->{sequences} = [ $seq ];
     $c->forward( 'View::SeqIO' );
