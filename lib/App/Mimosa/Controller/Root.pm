@@ -512,7 +512,7 @@ sub _generate_html_report {
             print $fmt qq|<pre>|;
             while (my $line = <$raw>) {
                 $line = encode_entities($line);
-                $line =~ s/(?<=Query[=:]\s)(\S+)/linkit($c,$1)/eg;
+                # $line =~ s/(?<=Query[=:]\s)(\S+)/linkit($c,$1)/eg;
                 print $fmt $line;
             }
             print $fmt qq|</pre>\n|;
@@ -521,7 +521,7 @@ sub _generate_html_report {
             print $fmt qq|<pre>|;
             while (my $line = <$raw>) {
                 $line = encode_entities($line);
-                $line =~ s/(?<=&lt;BlastOutput_query-def&gt;)[^&\s]+/linkit($c,$1)/e;
+                # $line =~ s/(?<=&lt;BlastOutput_query-def&gt;)[^&\s]+/linkit($c,$1)/e;
                 $line =~ s/(?<=&lt;Hit_accession&gt;)[^&\s]+/linkit($c,$1)/e;
                 print $fmt $line;
             }
@@ -545,7 +545,7 @@ sub _generate_html_report {
             while (my $line = <$raw>) {
                 $line = encode_entities($line);
                 if( $line =~ /^\s*#/ ) {
-                    $line =~ s/(?<=Query: )\S+/linkit($c,$1)/e;
+                    # $line =~ s/(?<=Query: )\S+/linkit($c,$1)/e;
                 } else {
                     my @fields = split /\t/,$line;
                     @fields[0,1] = map linkit($c,$_),@fields[0,1];
