@@ -6,6 +6,8 @@
 </%args>
 <script type="text/javascript" src="/js/mimosa-grid.js"></script>
 
+<div id="spinner">
+</div>
 <div id="tabs1">
  <div id="t1_content">
     <div id="pagetitle">
