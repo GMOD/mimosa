@@ -39,7 +39,7 @@ sub sequence :Path("/api/sequence/") :Args(2) {
 
     my $seq   = $db->get_sequence($name);
 
-    die Dumper [ "get_sequence returned an invalid bioperl sequence:", $seq ] unless $seq->isa("Bio::PrimarySeqI");
+    die Dumper [ "get_sequence returned an invalid bioperl sequence:", $seq ] unless $seq && $seq->isa("Bio::PrimarySeqI");
 
     $c->stash->{sequences} = [ $seq ];
     $c->forward( 'View::SeqIO' );
