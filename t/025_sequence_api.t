@@ -52,3 +52,14 @@ sub basic_test {
     is($r->code, 400, 'asking for the sequence of a non-existent mimosa_sequence_set_id borks' );
 }
 
+{
+
+    # the sha1 of the composite seq set of mimosa_sequence_set's 1 and 2
+    my $sha1 = "ebe9f24f7c4bd899d31a058a703045ed4d9678c8";
+
+    # the following sequence is in the blastdb_test.nucleotide.seq file
+    my $r = request "/api/sequence/$sha1/LE_HBa0001A17_SP6_33.txt";
+    is($r->code, 200, 'asking for a sequence from a composite seq set works');
+
+}
+
