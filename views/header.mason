@@ -30,17 +30,12 @@
 <!-- Bundled copy of Jquery backstretch plugin -->
 <script type="text/javascript" src="/js/jquery.backstretch.min.js"></script>
 
+<!-- http://fgnass.github.com/spin.js/ -->
+<script type="text/javascript" src="/js/spin.js"></script>
+
 <!-- overrides to library -->
 
 <!-- extensions -->
-
-<!-- page specific -->
-
-% if ($admin) {
-<script type="text/javascript" src="/js/tabs-admin.js"></script>
-% } else {
-<script type="text/javascript" src="/js/tabs.js"></script>
-% }
 
 <script type="text/javascript">
 // Path to the blank image should point to a valid location on your server

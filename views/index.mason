@@ -5,6 +5,11 @@
     $admin            => 0
 </%args>
 <script type="text/javascript" src="/js/mimosa-grid.js"></script>
+% if ($admin) {
+<script type="text/javascript" src="/js/tabs-admin.js"></script>
+% } else {
+<script type="text/javascript" src="/js/tabs.js"></script>
+% }
 
 <div id="tabs1">
  <div id="t1_content">
@@ -13,6 +18,9 @@
     </div>
 
     <div id="mimosa-grid">
+    </div>
+
+    <div id="spinner">
     </div>
 
 <table border="0">
@@ -83,7 +91,7 @@
 <tr><td>    Max hits to show: </td><td><input type="text" name="maxhits" size="6" value="100" /></td></tr>
 </table>
     </div> <!-- advanced -->
-      <div><br/><input type="reset" value="Clear" onclick="clearField(); "> <input type="submit" name="search" value="Align" ></div>
+      <div><br/><input type="reset" value="Clear"> <input type="submit" id="align_button" name="search" value="Align" ></div>
     </div>
 </form>
 

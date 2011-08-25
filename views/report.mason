@@ -1,7 +1,13 @@
 <%args>
     $report => 'No hits found! Please try changing some of the advanced options, such as the e-value'
     $job_id
+    $admin => 0
 </%args>
+% if ($admin) {
+<script type="text/javascript" src="/js/tabs-admin.js"></script>
+% } else {
+<script type="text/javascript" src="/js/tabs.js"></script>
+% }
 <div id="tabs1">
     <div id="t1_content">
     <div id="report">
