@@ -147,8 +147,8 @@ Ext.onReady(function(){
     jQuery("#search_description").keyup(filter);
 
     var opts = {
-        lines: 20, // The number of lines to draw
-        length: 20, // The length of each line
+        lines: 30, // The number of lines to draw
+        length: 50, // The length of each line
         width: 10, // The line thickness
         radius: 30, // The radius of the inner circle
         color: '#000', // #rbg or #rrggbb
