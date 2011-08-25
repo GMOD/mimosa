@@ -1,4 +1,0 @@
-<%args>
-    $output
-</%args>
-<% $output %>

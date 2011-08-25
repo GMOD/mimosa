@@ -215,3 +215,14 @@ font-size: 10px;
 }
 .bgcoloralt2 { background-color: #D5D5FF; }
 
+#spinner {
+    background: none repeat scroll 0 0 #333333;
+    border-radius: 10px 10px 10px 10px;
+    color: #FFFFFF;
+    float: left;
+    height: 200px;
+    margin: 40px 40px 40px 40px;
+    width: 200px;
+    padding: 10px;
+    font-size: 16;
+}
