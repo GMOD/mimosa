@@ -10,7 +10,7 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller' };
 
-sub sequence :Path("/api/sequence/") :Args(2) {
+sub sequence :Path("/api/sequence/id/") :Args(2) {
     my ( $self, $c, $mimosa_sequence_set_id, $name ) = @_;
     my $bcs = $c->model('BCS');
 
