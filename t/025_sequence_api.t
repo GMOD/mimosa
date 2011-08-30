@@ -54,8 +54,20 @@ sub basic_test {
 
 {
 
+    # make sure the composite seq set exists
+    my $response = request POST '/submit', [
+                    program                => 'blastn',
+                    sequence_input_file    => '',
+                    sequence               => $seq,
+                    maxhits                => 100,
+                    matrix                 => 'BLOSUM62',
+                    evalue                 => 0.1,
+                    mimosa_sequence_set_ids=> "1,2",
+                    alphabet               => 'nucleotide',
+    ];
+
     # the sha1 of the composite seq set of mimosa_sequence_set's 1 and 2
-    my $sha1 = "ebe9f24f7c4bd899d31a058a703045ed4d9678c8";
+    my $sha1 = "ea491461cc330ce602d26e4c30f5fcf116638663";
 
     # the following sequence is in the blastdb_test.nucleotide.seq file
     my $r = request "/api/sequence/sha1/$sha1/LE_HBa0001A17_SP6_33.txt";

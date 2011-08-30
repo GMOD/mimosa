@@ -19,7 +19,8 @@ sub sequence_sha1 :Path("/api/sequence/sha1/") :Args(2) {
 
     my $seq_data_dir = $c->config->{sequence_data_dir};
     my $mimosa_root  = $c->config->{mimosa_root};
-    my $dbname       = catfile($mimosa_root, $seq_data_dir, $composite_sha1);
+    # TODO: stop hardcoding location and prefix of cached composite seq sets
+    my $dbname       = catfile($mimosa_root, $seq_data_dir, ".mimosa_cache_$composite_sha1.seq");
 
     my $db = App::Mimosa::Database->new(
         db_basename => $dbname,
