@@ -1,4 +1,4 @@
-use Test::Most tests => 18;
+use Test::Most tests => 19;
 use strict;
 use warnings;
 
@@ -47,6 +47,7 @@ sub basic_test {
     # TODO
     # basic_test('/api/sequence/1/LE_HBa0001A15_T7_30.json');
 }
+
 {
     my $r = request '/api/sequence/id/99/blarg.txt';
     is($r->code, 400, 'asking for the sequence of a non-existent mimosa_sequence_set_id borks' );
@@ -67,11 +68,24 @@ sub basic_test {
     ];
 
     # the sha1 of the composite seq set of mimosa_sequence_set's 1 and 2
-    my $sha1 = "ea491461cc330ce602d26e4c30f5fcf116638663";
+    my $sha1 = "fbe21c6749e08ae8eef1b203a53fd385c52238a4";
 
     # the following sequence is in the blastdb_test.nucleotide.seq file
     my $r = request "/api/sequence/sha1/$sha1/LE_HBa0001A17_SP6_33.txt";
     is($r->code, 200, 'asking for a sequence from a composite seq set works');
+    my $content = $r->content;
+    my $expected_seq =<<SEQ;
+>LE_HBa0001A17_SP6_33 Chromat_file:Le-HBa001_A17-SP6.ab1 SGN_GSS_ID:33 (vector and quality trimmed)
+TCTGCGAGATGCAGAAACTAAAATAGTTCCAATTCCAATATCTCACAAAGCCACTACCCCCCACCCCCACTCCCCCAAAA
+AAAAGGCTGCCACACTAAGATATAGTAAGGCTCAACCATCTAATAAATAAAGAATGAAAATCATTACTGCCTGATTGAGA
+ACTTATTTTGCTAAATAAAAGAGTGGTTTAAATTTGGGAAATTTTGGGTGATCATTGGCTTCTAAGAATGACAGAGAGGG
+GCAACTATGTCAAAAACTCTCTGAATCCAGTAGACTTAGACTTAAACAAATGAGATTTTTTCCATTTTCATTTCACCTTC
+TGCTTCATATTTATAGTGCCTAAATTGTTTTGGACCTCAACAATGGTTCACTCAACTGATGGGGTTAACAAACTGGGGCA
+CTGAAGACAATACAACCCGTATCTTGGCCAGGCAAATCCCAAGATGACCTGCAATGGAGGCTCTCTTTTTTGCATGCAAC
+CAGTGATCTTACAGCCATGGCGTGGTTGCCTTCTCCTTTGTGAGCTGAGGGTCAATCGGAAACAGCTTATCTACCCCAAA
+AAGGTAAAGTAAGGTCCACCTACACTCCACCCGCCCCATACCCCGCTTTTGGGATTACACTAGGTTGTTGTTGTTGTATA
+ATCTCTTTTGACCTCCCAAAATTAAGGGCCTCATGTCGAAGATCTTATATGT
+SEQ
+    is($content, $expected_seq, 'got the expected seq for LE_HBa0001A17_SP6_33');
 
 }
-
