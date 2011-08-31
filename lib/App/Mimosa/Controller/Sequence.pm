@@ -22,6 +22,11 @@ sub sequence_sha1 :Path("/api/sequence/sha1/") :Args(2) {
     # TODO: stop hardcoding location and prefix of cached composite seq sets
     my $dbname       = catfile($mimosa_root, $seq_data_dir, ".mimosa_cache_$composite_sha1");
 
+    unless (-e "$dbname.seq") {
+        $c->stash->{error} = 'Sorry, that sequence set cannot be found';
+        $c->detach('/input_error');
+    }
+
     my $db = App::Mimosa::Database->new(
         db_basename => $dbname,
         # TODO: get the correct alphabet
@@ -50,7 +55,7 @@ sub sequence_id :Path("/api/sequence/id/") :Args(2) {
     # Mimosa resultsets
     my $rs   = $bcs->resultset('Mimosa::SequenceSet')->find( { mimosa_sequence_set_id => $mimosa_sequence_set_id } );
     unless ($rs) {
-        $c->stash->{error} = 'Sorry, that sequence set id is invalid';
+        $c->stash->{error} = 'Sorry, that sequence set cannot be found';
         $c->detach('/input_error');
     }
 

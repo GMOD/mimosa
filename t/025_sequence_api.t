@@ -1,4 +1,4 @@
-use Test::Most tests => 19;
+use Test::Most tests => 22;
 use strict;
 use warnings;
 
@@ -50,7 +50,19 @@ sub basic_test {
 
 {
     my $r = request '/api/sequence/id/99/blarg.txt';
-    is($r->code, 400, 'asking for the sequence of a non-existent mimosa_sequence_set_id borks' );
+    is($r->code, 400, 'asking for the sequence by id of a non-existent mimosa_sequence_set_id borks' );
+}
+{
+    my $r = request '/api/sequence/id/99/blarg.fasta';
+    is($r->code, 400, 'asking for the sequence by id of a non-existent mimosa_sequence_set_id borks' );
+}
+{
+    my $r = request '/api/sequence/sha1/deadbeef/blarg.txt';
+    is($r->code, 400, 'asking for the sequence by sha1 of a non-existent mimosa_sequence_set_id borks' );
+}
+{
+    my $r = request '/api/sequence/sha1/deadbeef/blarg.fasta';
+    is($r->code, 400, 'asking for the sequence by sha1 of a non-existent mimosa_sequence_set_id borks' );
 }
 
 {
