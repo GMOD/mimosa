@@ -290,6 +290,7 @@ sub compose_sequence_sets : Private {
             db_basename => $db_basename,
         )->index;
     }
+    $c->stash->{composite_sha1}    = $composite_sha1;
     $c->stash->{composite_db_name} = ".mimosa_cache_$composite_sha1";
     $c->stash->{alphabet}          = $alphabet;
 }
@@ -441,7 +442,7 @@ sub report :Local {
             my $name = $hit->name;
             my $id   = $ss_ids[0] || 1;
 
-            return qq{<a href="/api/sequence/$id/$name.fasta">$name</a>};
+            return qq{<a href="/api/sequence/id/$id/$name.fasta">$name</a>};
         };
         my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
         $writer->start_report(sub {''});
@@ -494,8 +495,16 @@ sub report :Local {
 sub linkit {
     my ($c,$id) = @_;
     my (@ss) = @{ $c->stash->{sequence_set_ids} };
-    # TODO: we need to be able to look up sequences by the SHA1 of a composed sequence set
-    return $id ? qq{<a href="/api/sequence/$ss[0]/$id.fasta">$id</a>} : '';
+
+    return '' unless $id;
+
+    # if we have a composite db name, we are dealing with a composite sequence set
+    # and need to look stuff up by sha1
+    if (my $sha1 = $c->stash->{composite_sha1}) {
+        return qq{<a href="/api/sequence/sha1/$sha1/$id.fasta">$id</a>};
+    } else { # we can look stuff up by id
+        return qq{<a href="/api/sequence/id/$ss[0]/$id.fasta">$id</a>};
+    }
 }
 
 # forgive me, for this function is a sin
