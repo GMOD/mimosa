@@ -36,7 +36,7 @@ my $seq = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
     is($response->code, 200, '/submit returns 200');
     like($response->content, qr!/api/report/raw/\d+!, 'got a download raw report link');
     like($response->content, qr!/api/report/html/\d+!, 'got a download html report link');
-    like($response->content, qr!Database:.*ebe9f24f7c4bd899d31a058a703045ed4d9678c8!, 'got the correct database file');
+    like($response->content, qr!Database:.*fbe21c6749e08ae8eef1b203a53fd385c52238a4!, 'got the correct database file');
     like($response->content, qr!5 sequences; 2,796 total letters!, 'got the correct number of sequences and letters');
 
     # Now submit against the same sequence sets, but with a different sequence

@@ -1,7 +1,7 @@
 package App::Mimosa::Controller::Root;
 use Moose;
 use namespace::autoclean;
-
+use autodie qw/:all/;
 
 use File::Temp qw/tempfile/;
 use IO::String;
@@ -23,6 +23,7 @@ use Try::Tiny;
 use DateTime;
 use HTML::Entities;
 use Digest::SHA1 qw/sha1_hex/;
+#use Carp::Always;
 use Cwd;
 
 BEGIN { extends 'Catalyst::Controller' }
@@ -54,6 +55,14 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
+    $c->forward('login');
+    $c->forward('show_grid');
+
+}
+
+sub show_grid :Local {
+    my ($self, $c) = @_;
+
     my @sets = $c->model('BCS')->resultset('Mimosa::SequenceSet')->all;
     my @setinfo = map { [ $_->mimosa_sequence_set_id, $_->title ] } @sets;
 
@@ -70,8 +79,22 @@ sub index :Path :Args(0) {
     $c->stash->{sequence_input} = encode_entities($c->req->param('sequence_input')) || '';
 }
 
+sub login :Local {
+    my ($self, $c) = @_;
+
+    if($self->_app->config->{allow_anonymous}) {
+        # keep on forwardin'
+    } else {
+        $c->stash->{template} = 'login.mason';
+        $c->detach;
+    }
+
+}
+
 sub download_raw :Path("/api/report/raw") :Args(1) {
     my ( $self, $c, $job_id ) = @_;
+
+    $c->forward('login');
 
     my $jobs = $c->model('BCS')->resultset('Mimosa::Job');
     my $rs   = $jobs->search({ mimosa_job_id => $job_id });
@@ -88,6 +111,8 @@ sub download_raw :Path("/api/report/raw") :Args(1) {
 
 sub download_report :Path("/api/report/html") :Args(1) {
     my ( $self, $c, $job_id ) = @_;
+
+    $c->forward('login');
 
     my $jobs = $c->model('BCS')->resultset('Mimosa::Job');
     my $rs   = $jobs->search({ mimosa_job_id => $job_id });
@@ -123,16 +148,13 @@ sub _temp_file {
     my $self = shift;
     my $tmp_base = dir( File::Spec->tmpdir, lc $self->_app->config->{name} );
     $tmp_base->mkpath unless -d $tmp_base;
-    return $tmp_base->file( @_ );
+    my $file = $tmp_base->file( @_ );
+
+    return "$file";
 }
 
 sub validate : Private {
     my ( $self, $c ) = @_;
-
-    unless ($self->_app->config->{allow_anonymous}) {
-        $c->stash->{error} = 'Anonymous users are not allowed to submit BLAST jobs. Please log in.';
-        $c->detach('/input_error');
-    }
 
     if( $c->req->param('program') eq 'none' ) {
         $c->stash->{error} = "You must select a BLAST program to generate your report with.";
@@ -140,10 +162,9 @@ sub validate : Private {
     }
 
     my $min_length = $self->_app->config->{min_sequence_input_length};
-    my $program    = $c->req->param('program')  || '';
-    my $sequence   = $c->req->param('sequence')  || '';
+    my $program    = $c->req->param('program');
 
-    my $cwd = getcwd;
+    my $cwd               = getcwd;
     my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
     $c->stash->{seq_root} = catfile($cwd, $seq_root);
 
@@ -174,6 +195,11 @@ sub validate_sequence : Private {
         $c->detach('/input_error');
     };
 
+    unless ($program) {
+        $c->stash->{error} = "Invalid program";
+        $c->detach('/input_error');
+    }
+
     my %validate   = (
         blastn  => qr/^([ACGTURYKMSWBDHVN]+)$/i,
         tblastx => qr/^([GAVLIPFYCMHKRWSTDENQBZ\.X\*]+)$/i,
@@ -197,7 +223,6 @@ sub compose_sequence_sets : Private {
     my $composite_fasta= '';
     my $alphabet;
 
-
     # TODO: error if any one of the ids is not valid
     for my $ss_id (grep { $_ } @ss_ids) {
         my $search = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_id });
@@ -219,8 +244,14 @@ sub compose_sequence_sets : Private {
         if ($sha1) {
         } else {
             die "Can't read sequence set FASTA $seq_root/$ss_name.seq : $!" unless -e "$seq_root/$ss_name.seq";
-            my $fasta          = slurp("$seq_root/$ss_name.seq");
+            #warn "reading in $seq_root/$ss_name.seq";
+            my $fasta = '';
+            open( my $fh, '<', "$seq_root/$ss_name.seq");
+            while (<$fh>) { $fasta .= $_ };
+            close $fh;
+            # my $fasta          = slurp("$seq_root/$ss_name.seq");
             $composite_fasta  .= $fasta;
+            #warn "computing sha1 of $ss_name";
             $sha1              = sha1_hex($fasta);
         }
         $composite_sha1   .= $sha1;
@@ -228,18 +259,22 @@ sub compose_sequence_sets : Private {
         $search->update({ sha1 => $sha1 });
         #warn "found $ss_id with sha1 $sha1";
     }
-
+    #warn "computing composite sha1";
     $composite_sha1 = sha1_hex($composite_sha1);
     my $db_basename = catfile($seq_root, '.mimosa_cache_' . $composite_sha1);
 
     unless (-e "$db_basename.seq" ) {
         my $len = length($composite_fasta);
-        warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length = $len";
+        #warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length = $len";
         unless( $len ) {
             $c->stash->{error} = "Mimosa attempted to write a zero-size cache file. Some file permissions are probably incorrect.";
             $c->detach('/error');
         }
-        write_file "$db_basename.seq", $composite_fasta;
+        #warn "writing composite fasta";
+        open( my $fh, '>', "$db_basename.seq" );
+        print $fh $composite_fasta;
+        close $fh;
+        #write_file "$db_basename.seq", $composite_fasta;
 
         #warn "creating mimosa db with db_basename=$db_basename";
         App::Mimosa::Database->new(
@@ -254,7 +289,8 @@ sub compose_sequence_sets : Private {
 sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
 
-    my $ids = $c->req->param('mimosa_sequence_set_ids') || '';
+    my $ids            = $c->req->param('mimosa_sequence_set_ids') || '';
+    my $alignment_view = $c->req->param('alignment_view') || '0';
 
     unless( $ids ) {
         $c->stash->{error} = "You must select at least one Mimosa sequence set.";
@@ -271,13 +307,27 @@ sub submit :Path('/submit') :Args(0) {
     # If we accepted a POSTed sequence as input, it will be HTML encoded
     my $sequence = decode_entities($c->req->param('sequence'));
 
+    # if the user specified a file as their sequence input, read it in
+    if( $c->req->param('sequence_input_file') ) {
+        my ($upload) = $c->req->upload('sequence_input_file');
+        $sequence  = $upload->slurp if $upload;
+    }
+
     # if there is no defline, create one
     unless ($sequence =~ m/^>/) {
         $sequence = ">web user sequence\n$sequence";
     }
     $c->stash->{sequence} = $sequence;
 
-    $input_file->openw->print( $sequence );
+    write_file $input_file, $sequence;
+
+    # we create a file to keep track of what kind raw report format is being generated,
+    # so later on we can tell Bio::SearchIO which format to parse
+
+    $c->stash->{report_format} = $alignment_view;
+
+    # prevent race conditions
+    stat $input_file;
 
     $c->forward('validate');
 
@@ -313,6 +363,7 @@ sub submit :Path('/submit') :Args(0) {
         alphabet               => $c->stash->{alphabet} || 'nucleotide',
         output_file            => "$output_file",
         input_file             => "$input_file",
+        alignment_view         => $alignment_view,
             map { $_ => $c->req->param($_) || '' }
             qw/ program maxhits output_graphs evalue matrix /,
     );
@@ -331,15 +382,37 @@ sub submit :Path('/submit') :Args(0) {
         # some kind of bizarre race condition i've been seeing in
         # which the file doesn't appear to be visible yet to the web
         # process after blast exits.
-        $output_file->stat;
+        stat $output_file;
+
+        # these are the only formats we can parse and generate an HTML report for
+        my $format_num_to_name = {
+            0 => 'blast',
+            7 => 'blastxml',
+            8 => 'blasttable',
+            9 => 'blasttable',
+        };
+        my $format = $format_num_to_name->{$c->stash->{report_format}} || '';
 
         my $in = Bio::SearchIO->new(
-                -format => 'blast',
+                -format => $format,
                 -file   => "$output_file",
         );
+
+        die "Bio::SearchIO->new could not read $output_file" unless $in;
+
+        my $hit_link = sub {
+            my ($self, $hit) = @_;
+            my $name = $hit->name;
+            my $id   = $ss_ids[0] || 1;
+
+            return qq{<a href="/api/sequence/$id/$name.fasta">$name</a>};
+        };
         my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
         $writer->start_report(sub {''});
         $writer->end_report(sub {''});
+        $writer->hit_link_desc( $hit_link );
+        $writer->hit_link_align( $hit_link );
+
         my $report = '';
         my $out = Bio::SearchIO->new(
             -writer => $writer,
@@ -354,11 +427,14 @@ sub submit :Path('/submit') :Args(0) {
         my $cached_report_file = $self->_temp_file( $c->stash->{job_id}.'.html' );
         my $report_html;
 
-        if( $report =~ m/Sbjct: / ){
+        mkdir $self->_app->config->{tmp_dir} unless -e $self->_app->config->{tmp_dir};
+
+        # Bio::GMOD::Blast::Graph can only deal with plain blast reports
+        if( $format eq 'blast' && $report =~ m/Sbjct: / ){
             my $graph_html = '';
             my $graph = Bio::GMOD::Blast::Graph->new(
                                             -outputfile => "$output_file",
-                                            -format     => 'blast',
+                                            -format     => $format,
                                             -fh         => IO::String->new( \$graph_html ),
                                             -dstDir     => $self->_app->config->{tmp_dir} || "/tmp/mimosa",
                                             -dstURL     => "/graphics/",
@@ -368,12 +444,18 @@ sub submit :Path('/submit') :Args(0) {
 
             $report_html        = $graph_html . $report;
             $c->stash->{report} = $report_html;
-        } else {
+        } elsif ($format eq 'blast') {
             # Don't show a report if there were no hits.
             # The user can always download the raw report if they want.
             # This is why we don't assign to $c->stash->{report}
 
             $report_html  = $report;
+        } else {
+            # The report format is not a plain blast, so just render
+            # the HTML report with no images
+            $report_html        = $report;
+            $c->stash->{report} = $report_html;
+
         }
         $c->stash->{template} = 'report.mason';
 
@@ -427,6 +509,7 @@ sub make_job_id :Private {
             $c->stash->{job_id} = $jid;
             $c->detach('/show_cached_report');
         } else {
+            $user ||= 'anonymous';
             $c->stash->{error} = <<ERROR;
 This job (# $jid) was started at $start by $user and is still running.
 ERROR

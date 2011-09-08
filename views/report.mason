@@ -5,20 +5,14 @@
 <div id="tabs1">
     <div id="t1_content">
     <div id="report">
+    <a href="/show_grid">Align a different sequence</a>
     <div id="raw_download">
-    Bookmarkable URLs:<br/>
-    Mimosa Report #<% $job_id %><a href="/api/report/raw/<% $job_id %>">Raw</a>
+
+    Bookmarkable URLs: Mimosa Report #<% $job_id %> <a href="/api/report/raw/<% $job_id %>">Raw</a>
     <a href="/api/report/html/<% $job_id %>">HTML</a>
     </div>
     <% $report %>
     </div>
     </div> <!-- t1_content -->
-    <div id="t2_content">
-        <div id="t2_content">
-         </div>
-    </div>
-    <div id="t3_content">
-        <div id="t3_content">
-         </div>
-    </div>
+    <& tabs.mason, admin => 0 &>
 </div> <!-- tabs1 -->

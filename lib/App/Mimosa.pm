@@ -13,7 +13,7 @@ use Catalyst::Runtime 5.80;
 #                 directory
 
 use Catalyst ((
-    #'-Debug',
+#    '-Debug',
     qw/
     ConfigLoader
     Static::Simple
@@ -40,21 +40,22 @@ __PACKAGE__->config(
 
     default_view                                             => 'Mason',
     'Plugin::Authentication'                                 => {
-        default_realm => 'members',
-        members       => {
-            credential  => {
-                class              => 'Password',
-                password_field     => 'password',
-                password_type      => 'hashed',
-                password_hash_type => 'SHA-1',
-                },
+        default => {
+            credential => {
+                class => 'Password',
+                password_field => 'password',
+                password_type => 'clear'
+            },
             store => {
-                class       => 'DBIx::Class',
-                user_model  => 'App::Mimosa::Users',
-                role_column => 'roles',
+                class => 'Minimal',
+                users => {
+                    petunia => {
+                        password => "cUC598",
+                    },
+                }
             }
-        },
-    },
+        }
+}
 );
 
 
