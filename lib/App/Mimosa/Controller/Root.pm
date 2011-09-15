@@ -148,7 +148,7 @@ sub graphics :Path("/graphics") :Args(1) {
 
 sub _temp_file {
     my $self = shift;
-    my $tmp_base = dir( File::Spec->tmpdir, lc $self->_app->config->{name} );
+    my $tmp_base = dir( $self->_app->config->{tmp_dir} );
     $tmp_base->mkpath unless -d $tmp_base;
     my $file = $tmp_base->file( @_ );
 
