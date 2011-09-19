@@ -238,10 +238,11 @@ sub compose_sequence_sets : Private {
         #warn "ss_id $ss_id alphabet = $alphabet";
 
         # SHA1's are null until the first time we are asked to align against
-        # the sequence set. If files on disk are changed without names changing,
-        # we will need to refresh sha1's
+        # the sequence set.
         my $sha1 = $ss->sha1;
         if ($sha1) {
+            # TODO: If files on disk are changed without names changing,
+            # we will need to refresh sha1's
         } else {
             die "Can't read sequence set FASTA $seq_root/$ss_name.seq : $!" unless -e "$seq_root/$ss_name.seq";
             #warn "reading in $seq_root/$ss_name.seq";
