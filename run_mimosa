@@ -1,0 +1,4 @@
+#!/bin/sh
+
+CATALYST_CONFIG_LOCAL_SUFFIX=petunia perl script/mimosa_server.pl -d -p 8080 &> mimosa.log & sleep 1; tail -f mimosa.log
+
