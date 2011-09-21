@@ -244,6 +244,14 @@ sub compose_sequence_sets : Private {
         my $ss_name     = $ss->shortname();
         $alphabet       = $ss->alphabet();
 
+        die "Can't read sequence set FASTA $seq_root/$ss_name.seq : $!" unless -e "$seq_root/$ss_name.seq";
+        $c->log->debug("reading in $seq_root/$ss_name.seq");
+        my $fasta = '';
+        open( my $fh, '<', "$seq_root/$ss_name.seq");
+        while (<$fh>) { $fasta .= $_ };
+        close $fh;
+        $composite_fasta  .= $fasta;
+
         # SHA1's are null until the first time we are asked to align against
         # the sequence set. If files on disk are changed without names changing,
         # we will need to refresh sha1's
@@ -253,19 +261,14 @@ sub compose_sequence_sets : Private {
             # TODO: If files on disk are changed without names changing,
             # we will need to refresh sha1's
         } else {
-            die "Can't read sequence set FASTA $seq_root/$ss_name.seq : $!" unless -e "$seq_root/$ss_name.seq";
-            $c->log->debug("reading in $seq_root/$ss_name.seq");
-            my $fasta = '';
-            open( my $fh, '<', "$seq_root/$ss_name.seq");
-            while (<$fh>) { $fasta .= $_ };
-            close $fh;
-            $composite_fasta  .= $fasta;
             #warn "computing sha1 of $ss_name";
             $sha1              = sha1_hex($fasta);
         }
         $composite_sha1   .= $sha1;
         $c->log->debug("updating $ss_id to $sha1");
+
         $search->update({ sha1 => $sha1 });
+
         $c->log->debug("found $ss_id with sha1 $sha1");
     }
     $composite_sha1 = sha1_hex($composite_sha1);
