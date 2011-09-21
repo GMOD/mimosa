@@ -250,7 +250,6 @@ sub compose_sequence_sets : Private {
             open( my $fh, '<', "$seq_root/$ss_name.seq");
             while (<$fh>) { $fasta .= $_ };
             close $fh;
-            # my $fasta          = slurp("$seq_root/$ss_name.seq");
             $composite_fasta  .= $fasta;
             #warn "computing sha1 of $ss_name";
             $sha1              = sha1_hex($fasta);
@@ -268,7 +267,7 @@ sub compose_sequence_sets : Private {
         my $len = length($composite_fasta);
         #warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length = $len";
         unless( $len ) {
-            $c->stash->{error} = "Mimosa attempted to write a zero-size cache file. Some file permissions are probably incorrect.";
+            $c->stash->{error} = "Mimosa attempted to write a zero-size cache file $db_basename.seq . Some file permissions are probably incorrect.";
             $c->detach('/error');
         }
         #warn "writing composite fasta";
