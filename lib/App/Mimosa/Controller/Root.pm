@@ -235,17 +235,17 @@ sub compose_sequence_sets : Private {
         }
         my $ss_name     = $ss->shortname();
         $alphabet       = $ss->alphabet();
-        #warn "ss_id $ss_id alphabet = $alphabet";
 
         # SHA1's are null until the first time we are asked to align against
         # the sequence set.
         my $sha1 = $ss->sha1;
         if ($sha1) {
+            $c->log->debug("Found cached sha1 $sha1");
             # TODO: If files on disk are changed without names changing,
             # we will need to refresh sha1's
         } else {
             die "Can't read sequence set FASTA $seq_root/$ss_name.seq : $!" unless -e "$seq_root/$ss_name.seq";
-            #warn "reading in $seq_root/$ss_name.seq";
+            $c->log->debug("reading in $seq_root/$ss_name.seq");
             my $fasta = '';
             open( my $fh, '<', "$seq_root/$ss_name.seq");
             while (<$fh>) { $fasta .= $_ };
@@ -255,28 +255,27 @@ sub compose_sequence_sets : Private {
             $sha1              = sha1_hex($fasta);
         }
         $composite_sha1   .= $sha1;
-        #warn "updating $ss_id to $sha1";
+        $c->log->debug("updating $ss_id to $sha1");
         $search->update({ sha1 => $sha1 });
-        #warn "found $ss_id with sha1 $sha1";
+        $c->log->debug("found $ss_id with sha1 $sha1");
     }
-    #warn "computing composite sha1";
     $composite_sha1 = sha1_hex($composite_sha1);
+    $c->log->debug("computed composite sha1 $composite_sha1");
     my $db_basename = catfile($seq_root, '.mimosa_cache_' . $composite_sha1);
 
     unless (-e "$db_basename.seq" ) {
         my $len = length($composite_fasta);
-        #warn "Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length = $len";
+        $c->log->debug("Cached database of multi sequence set $composite_sha1 not found, creating $db_basename.seq, length = $len");
         unless( $len ) {
             $c->stash->{error} = "Mimosa attempted to write a zero-size cache file $db_basename.seq . Some file permissions are probably incorrect.";
             $c->detach('/error');
         }
-        #warn "writing composite fasta";
+        $c->log->debug("writing composite fasta $db_basename.seq");
         open( my $fh, '>', "$db_basename.seq" );
         print $fh $composite_fasta;
         close $fh;
-        #write_file "$db_basename.seq", $composite_fasta;
 
-        #warn "creating mimosa db with db_basename=$db_basename";
+        $c->log->debug("creating mimosa db with db_basename=$db_basename");
         App::Mimosa::Database->new(
             alphabet    => $alphabet,
             db_basename => $db_basename,
