@@ -128,6 +128,7 @@ sub run {
             -i => $self->input_file,
             -o => $self->output_file,
             -m => $self->alignment_view,
+            -K => 100, # best hits to keep
         );
 
         my $harness        = IPC::Run::harness \@blast_cmd, \*STDIN, \$output, \$error, timeout( $self->timeout );
