@@ -354,6 +354,7 @@ sub submit :Path('/submit') :Args(0) {
     }
 
     my $j = App::Mimosa::Job->new(
+        context                => $c,
         timeout                => $self->_app->config->{job_runtime_max} || 5,
         job_id                 => $c->stash->{job_id},
         config                 => $self->_app->config,

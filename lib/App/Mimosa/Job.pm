@@ -34,6 +34,10 @@ has input_file => (
     is  => 'rw',
 );
 
+has context => (
+    is  => 'rw',
+);
+
 has output_file => (
     isa => 'Str',
     is  => 'rw',
@@ -101,6 +105,13 @@ has alignment_view => (
     default => 0,
 );
 
+sub debug {
+    my ($self, $msg) = @_;
+    if ($self->context) {
+        $self->context->log->debug($msg);
+    }
+}
+
 sub run {
     my ($self) = @_;
     my ($error, $output);
@@ -129,6 +140,7 @@ sub run {
             -o => $self->output_file,
             -m => $self->alignment_view,
         );
+        $self->debug("Running (timeout=" . $self->timeout. ") @blast_cmd");
 
         my $harness        = IPC::Run::harness \@blast_cmd, \*STDIN, \$output, \$error, timeout( $self->timeout );
 
