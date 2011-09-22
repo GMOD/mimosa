@@ -1,4 +1,4 @@
-use Test::Most tests => 12;
+use Test::Most tests => 14;
 use strict;
 use warnings;
 
@@ -55,6 +55,11 @@ cmp_ok (length($json2),'>', length($json), 'autodetection: new json is bigger th
 like($json2, qr/"extraomgbbq"/, 'autodetection: the correct shortname appears in the new json');
 
 }
+
+fixtures_ok 'ss_referring_to_nonexistent_organism';
+my $r    = request('/api/grid/json.json');
+my $json = $r->content;
+is_valid_json( $json, 'it returns valid JSON') or diag $json;
 
 END {
     unlink( catfile($seq_data_dir, 'extraomgbbq.seq') );

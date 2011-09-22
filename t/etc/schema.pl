@@ -34,5 +34,15 @@ return {
                 [qw/mimosa_job_id sha1 user start_time end_time/],
             ],
         },
+        'ss_referring_to_nonexistent_organism' => {
+            'Mimosa::SequenceSet' => [
+                [qw/ mimosa_sequence_set_id shortname title description alphabet source_spec lookup_spec info_url update_interval is_public /],
+                [    4, 'xenoblargocanth', 'test db', 'test db', 'nucleotide', '', '', ,'', 30, 1    ],
+            ],
+            'Mimosa::SequenceSetOrganism' => [
+                [qw/ mimosa_sequence_set_id organism_id /],
+                [    4,                     42,           ],
+            ],
+        },
   },
 };
