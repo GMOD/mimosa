@@ -8,9 +8,6 @@ use Moose::Util::TypeConstraints;
 use Bio::BLAST::Database;
 use File::Spec::Functions;
 
-use File::Slurp qw/slurp/;
-use File::Temp qw/tempfile/;
-
 use IPC::Run qw/timeout/;
 
 # Good breakdown of commandline flags
