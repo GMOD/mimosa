@@ -26,7 +26,6 @@ use HTML::Entities;
 use Digest::SHA1 qw/sha1_hex/;
 use List::Util 'max';
 use List::MoreUtils 'minmax';
-#use Carp::Always;
 use Cwd;
 
 BEGIN { extends 'Catalyst::Controller' }
@@ -245,7 +244,11 @@ sub compose_sequence_sets : Private {
         my $ss_name     = $ss->shortname();
         $alphabet       = $ss->alphabet();
 
-        die "Can't read sequence set FASTA $seq_root/$ss_name.seq : $!" unless -e "$seq_root/$ss_name.seq";
+        unless (-e "$seq_root/$ss_name.seq") {
+            $c->stash->{error} = "Sequence set $seq_root/$ss_name.seq does not exist";
+            $c->detach('/input_error');
+        }
+
         $c->log->debug("reading in $seq_root/$ss_name.seq");
         my $fasta = '';
         open( my $fh, '<', "$seq_root/$ss_name.seq");
@@ -352,7 +355,6 @@ sub submit :Path('/submit') :Args(0) {
     # prevent race conditions
     stat $input_file;
 
-
     my @ss_ids;
 
     if ($ids =~ m/,/){
@@ -373,6 +375,10 @@ sub submit :Path('/submit') :Args(0) {
         $db_basename = catfile($c->stash->{seq_root}, $ss->shortname);
     } else {
         $c->stash->{error} = "The value " . encode_entities($ids) . " does not match any sequence sets";
+        $c->detach('/input_error');
+    }
+    unless (-e "$db_basename.seq") {
+        $c->stash->{error} = "Sequence set $db_basename.seq does not exist";
         $c->detach('/input_error');
     }
 
