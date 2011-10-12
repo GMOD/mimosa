@@ -13,6 +13,7 @@ use Digest::SHA1 'sha1_hex';
 use Path::Class;
 
 use Bio::SearchIO;
+use Bio::SearchIO::FastHitEventBuilder;
 use Bio::SearchIO::Writer::HTMLResultWriter;
 use File::Spec::Functions;
 use Bio::GMOD::Blast::Graph;
@@ -457,6 +458,7 @@ sub report :Local {
             -writer => $writer,
             -fh     => $report_fh,
         );
+        $out->attach_EventHandler(Bio::SearchIO::FastHitEventBuilder->new);
         $out->write_result($in->next_result);
     } else { # we have to build the HTML report ourselves
         $report = $report_html  = _generate_html_report($c);
