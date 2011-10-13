@@ -45,19 +45,25 @@ sub get_sequence {
         create_dirs        => 1,
     );
 
-    $self->context->log->debug("Is it indexed? " . ( $self->db->indexed_seqs ? 1 : 0 ));
-    $self->context->log->debug("Complete? " . ( $self->db->files_are_complete ? 1 : 0 ));
+    $self->debug("Is it indexed? " . ( $self->db->indexed_seqs ? 1 : 0 ));
+    $self->debug("Complete? " . ( $self->db->files_are_complete ? 1 : 0 ));
 
     my $sequence = $db->get_sequence($name);
 
     return $sequence;
 }
 
+sub debug {
+    my ($self, $msg) = @_;
+    if ($self->context) {
+        $self->context->log->debug($msg);
+    }
+}
+
 sub index {
     my ($self, %opts) = @_;
     my $dir = dirname($self->db_basename);
     my $cwd = getcwd;
-    my $c   = $self->context;
     chdir $dir;
 
     my $seqfile = catfile($self->db_basename . '.seq');
@@ -68,11 +74,11 @@ sub index {
         write              => 1,
         create_dirs        => 1,
     );
-    $c->log->debug("Created Bio::BLAST::Database $db");
+    $self->debug("Created Bio::BLAST::Database $db");
     $self->db($db);
 
     unless ($self->already_indexed) {
-        $c->log->debug("indexing $seqfile");
+        $self->debug("indexing $seqfile");
         $self->db->format_from_file(
             seqfile      => $seqfile,
             title        => basename($self->db_basename),

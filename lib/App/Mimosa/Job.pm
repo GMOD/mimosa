@@ -105,7 +105,10 @@ sub run {
     my ($self) = @_;
     my ($error, $output);
 
+    $self->debug("creating Mimosa::Database");
+
     App::Mimosa::Database->new(
+        context     => $self->context,
         alphabet    => $self->alphabet,
         db_basename => $self->db_basename,
     )->index;
