@@ -12,7 +12,7 @@ my $log    = 'mimosa.log';
 # TODO: debug mode + autorestart
 
 my $result = GetOptions(
-                "port=p",   \$port,
+                "port=s",   \$port,
                 "suffix=s", \$suffix,
                 "log=s",    \$log,
             );
