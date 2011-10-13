@@ -19,7 +19,8 @@ chdir catdir(qw/t data/);
 
 my $db = App::Mimosa::Database->new(
     db_basename => catfile(qw/blastdb_test.nucleotide/),
-    alphabet    => 'protein'
+    alphabet    => 'protein',
+    context     => app(),
 );
 isa_ok $db, 'App::Mimosa::Database';
 

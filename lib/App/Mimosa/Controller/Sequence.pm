@@ -28,6 +28,7 @@ sub sequence_sha1 :Path("/api/sequence/sha1/") :Args(2) {
     }
 
     my $db = App::Mimosa::Database->new(
+        context     => $c,
         db_basename => $dbname,
         # TODO: get the correct alphabet
         alphabet    => "nucleotide",
