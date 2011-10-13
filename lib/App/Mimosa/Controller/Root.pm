@@ -282,6 +282,7 @@ sub compose_sequence_sets : Private {
             db_basename => $db_basename,
         )->index;
     }
+    $c->stash->{composite_sha1}    = $composite_sha1;
     $c->stash->{composite_db_name} = ".mimosa_cache_$composite_sha1";
     $c->stash->{alphabet}          = $alphabet;
 }
@@ -404,9 +405,13 @@ sub submit :Path('/submit') :Args(0) {
         my $hit_link = sub {
             my ($self, $hit) = @_;
             my $name = $hit->name;
-            my $id   = $ss_ids[0] || 1;
-
-            return qq{<a href="/api/sequence/id/$id/$name.fasta">$name</a>};
+            if (@ss_ids > 1) {
+                my $sha1  = $c->stash->{composite_sha1};
+                return qq{<a href="/api/sequence/sha1/$sha1/$name.fasta">$name</a>};
+            } else {
+                my $id = $ss_ids[0] || 1;
+                return qq{<a href="/api/sequence/id/$id/$name.fasta">$name</a>};
+            }
         };
         my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
         $writer->start_report(sub {''});
