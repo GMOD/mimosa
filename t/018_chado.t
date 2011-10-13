@@ -54,3 +54,10 @@ lives_ok { $mimosa_schema->populate('Mimosa::SequenceSet', [
 my $rs = $mimosa_schema->resultset('Mimosa::SequenceSet');
 
 is_deeply( [ sort map { $_->mimosa_sequence_set_id } ($rs->all) ], [ 1 ], 'we get back one mimosa sequence with the correct id');
+
+END {
+    $bcs_db = "t/var/BCS.db";
+
+    diag("Removing $bcs_db");
+    unlink $bcs_db if -e $bcs_db;
+}
