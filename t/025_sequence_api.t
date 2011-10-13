@@ -40,15 +40,15 @@ sub basic_test {
     is(length($r->content),596, 'got non-zero content length') or diag $r->content;
 }
 {
-    basic_test('/api/sequence/1/LE_HBa0001A15_T7_30.txt');
-    basic_test('/api/sequence/1/LE_HBa0001A15_T7_30.fasta');
-    basic_test('/api/sequence/1/LE_HBa0001A15_T7_30');
+    basic_test('/api/sequence/id/1/LE_HBa0001A15_T7_30.txt');
+    basic_test('/api/sequence/id/1/LE_HBa0001A15_T7_30.fasta');
+    basic_test('/api/sequence/id/1/LE_HBa0001A15_T7_30');
 
     # TODO
     # basic_test('/api/sequence/1/LE_HBa0001A15_T7_30.json');
 }
 {
-    my $r = request '/api/sequence/99/blarg.txt';
+    my $r = request '/api/sequence/id/99/blarg.txt';
     is($r->code, 400, 'asking for the sequence of a non-existent mimosa_sequence_set_id borks' );
 }
 

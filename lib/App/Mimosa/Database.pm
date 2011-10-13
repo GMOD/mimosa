@@ -45,6 +45,8 @@ sub get_sequence {
         create_dirs        => 1,
     );
 
+    $self->db($db);
+
     $self->debug("Is it indexed? " . ( $self->db->indexed_seqs ? 1 : 0 ));
     $self->debug("Complete? " . ( $self->db->files_are_complete ? 1 : 0 ));
 

@@ -109,7 +109,7 @@ sub test_blast_hits() {
     $mech->content_like( qr/OMGBBQWTF/, 'fasta defline found in report');
 
     my @links = $mech->find_all_links( url_regex => qr!/api/! );
-    $mech->links_ok( \@links, "All /api links work");
+    $mech->links_ok( \@links, "All /api links work: " . join(" ",map { $_->url } @links) );
 
     for my $img ($mech->find_all_images()) {
         $mech->get_ok($img->url, $img->url . " works");

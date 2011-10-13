@@ -406,7 +406,7 @@ sub submit :Path('/submit') :Args(0) {
             my $name = $hit->name;
             my $id   = $ss_ids[0] || 1;
 
-            return qq{<a href="/api/sequence/$id/$name.fasta">$name</a>};
+            return qq{<a href="/api/sequence/id/$id/$name.fasta">$name</a>};
         };
         my $writer = Bio::SearchIO::Writer::HTMLResultWriter->new;
         $writer->start_report(sub {''});
