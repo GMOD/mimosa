@@ -141,7 +141,10 @@ sub test_composite_blast_hits() {
 
     my @links = $mech->find_all_links( url_regex => qr!/api/! );
     $mech->links_ok( \@links, "All /api links work: " . join(" ",map { $_->url } @links) );
-
+    for my $l (@links){
+        $mech->get($l->url);
+        $mech->content_unlike(qr/(Error|sequence set cannot be found)/);
+    }
     for my $img ($mech->find_all_images()) {
         $mech->get_ok($img->url, $img->url . " works");
     }
