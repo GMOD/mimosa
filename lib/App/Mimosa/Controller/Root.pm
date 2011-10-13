@@ -293,6 +293,7 @@ sub compose_sequence_sets : Private {
 
         $c->log->debug("creating mimosa db with db_basename=$db_basename");
         App::Mimosa::Database->new(
+            context     => $c,
             alphabet    => $alphabet,
             db_basename => $db_basename,
         )->index;
