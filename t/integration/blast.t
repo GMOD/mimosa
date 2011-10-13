@@ -14,6 +14,12 @@ fixtures_ok('basic_ss');
 
 my $mech = Mech->new;
 my $seq  = slurp(catfile(qw/t data blastdb_test.nucleotide.seq/));
+my $fasta = <<FASTA;
+>OMGBBQWTF
+TCTGCGAGATGCAGAAACTAAAATAGTTCCAATTCCAATATCTCACAAAGCCACTACCCC
+CCACCCCCACTCCCCCAAAAAAAAGGCTGCCACACTAAGATATAGTAAGGCTCAACCATC
+TAATAAATAAAGAATGAAAATCATTACTGCCTGATTGAGAACTTATTTTGCTAAATAAAA
+FASTA
 
 $mech->get_ok('/');
 
@@ -87,12 +93,6 @@ is $mech->status, 400, 'input error if no program is selected' or diag $mech->co
 
 {
 
-    my $fasta = <<FASTA;
->OMGBBQWTF
-TCTGCGAGATGCAGAAACTAAAATAGTTCCAATTCCAATATCTCACAAAGCCACTACCCC
-CCACCCCCACTCCCCCAAAAAAAAGGCTGCCACACTAAGATATAGTAAGGCTCAACCATC
-TAATAAATAAAGAATGAAAATCATTACTGCCTGATTGAGAACTTATTTTGCTAAATAAAA
-FASTA
 
 sub test_blast_hits() {
     $mech->get_ok('/');
@@ -124,5 +124,30 @@ sub test_blast_hits() {
     test_blast_hits();
 
 }
+
+sub test_composite_blast_hits() {
+    $mech->get_ok('/');
+    $mech->submit_form_ok({
+        form_name => 'main_input_form',
+        fields => {
+            mimosa_sequence_set_ids => "1,2",
+            filtered               => 'T',
+            sequence               => $fasta,
+            program                => "blastn",
+        },
+    });
+    $mech->content_like( qr/Sbjct: /, 'got a blast hit');
+    $mech->content_like( qr/OMGBBQWTF/, 'fasta defline found in report');
+
+    my @links = $mech->find_all_links( url_regex => qr!/api/! );
+    $mech->links_ok( \@links, "All /api links work: " . join(" ",map { $_->url } @links) );
+
+    for my $img ($mech->find_all_images()) {
+        $mech->get_ok($img->url, $img->url . " works");
+    }
+
+}
+
+test_composite_blast_hits();
 
 done_testing;
