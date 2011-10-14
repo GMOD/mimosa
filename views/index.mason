@@ -3,6 +3,7 @@
     $organism_html    => undef
     $sequence_input   => undef
     $admin            => 0
+    $sequence_data_dir
 </%args>
 <script type="text/javascript" src="/js/mimosa-grid.js"></script>
 
@@ -97,6 +98,6 @@
 
 </div> <!-- t1_content -->
 
-    <& tabs.mason &>
+    <& tabs.mason, sequence_data_dir => $sequence_data_dir &>
 
 </div>

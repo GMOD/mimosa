@@ -1,8 +1,11 @@
 <%args>
     $admin => 0
+    $sequence_data_dir
 </%args>
 <div id="t2_content" style="" class="x-hide-display">
-User Preferences Coming Soon
+<form>
+Sequence data directory: <input type="text" value="<% $sequence_data_dir %>" size="30">
+</form>
 </div>
 
 <div id="t3_content" style="" class="x-hide-display">

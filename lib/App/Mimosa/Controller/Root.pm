@@ -69,6 +69,7 @@ sub show_grid :Local {
     $c->stash->{sequenceset_html} = join '',
             map { "<option value='$_->[0]'> $_->[1] </option>" } @setinfo;
 
+    $c->stash->{sequence_data_dir} = $self->_app->config->{sequence_data_dir};
     $c->stash->{template}       = 'index.mason';
     $c->stash->{schema}         = $c->model('Model::BCS');
 
