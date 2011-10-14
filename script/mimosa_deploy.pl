@@ -1,6 +1,8 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use File::Spec::Functions;
+use lib 'lib';
 use Config::JFDI;
 use Test::More;
 use Data::Dumper;

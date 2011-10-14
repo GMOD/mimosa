@@ -84,21 +84,21 @@ to run the Mimosa test suite.
 
 If you want to use Mimosa with SQLite, that is the default:
 
-    perl -Ilib script/mimosa_deploy.pl
+    perl script/mimosa_deploy.pl
 
 If you want to deploy Mimosa to an already installed Chado schema, pass the --chado flag
 
-    perl -Ilib script/mimosa_deploy.pl --chado 1
+    perl script/mimosa_deploy.pl --chado 1
 
 This will also require you to give the proper DSN to your Chado instance in app_mimosa.conf.
 
 If you want to use a different config file:
 
-    perl -Ilib script/mimosa_deploy.pl --chado 1 --conf my_other.conf
+    perl script/mimosa_deploy.pl --chado 1 --conf my_other.conf
 
 If you want to deploy an empty schema, because you plan to load custom sequence sets later on:
 
-    perl -Ilib script/mimosa_deploy.pl --chado 1 --empty 1 --conf some.conf
+    perl script/mimosa_deploy.pl --chado 1 --empty 1 --conf some.conf
 
 ## How do I start Mimosa ?
 
