@@ -166,7 +166,8 @@ sub validate : Private {
 
     my $cwd               = getcwd;
     my $seq_root          = $self->_app->config->{sequence_data_dir} || catdir(qw/examples data/);
-    $c->stash->{seq_root} = catfile($cwd, $seq_root);
+    # TODO: this only works on unixy systems
+    $c->stash->{seq_root} = $seq_root =~ m!^/! ? $seq_root : catfile($cwd, $seq_root);
 
     my $i = Bio::SeqIO->new(
         -format   => 'fasta',
