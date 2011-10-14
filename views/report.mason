@@ -1,6 +1,7 @@
 <%args>
     $report => 'No hits found! Please try changing some of the advanced options, such as the e-value'
     $job_id
+    $sequence_data_dir
 </%args>
 <div id="tabs1">
     <div id="t1_content">
@@ -14,5 +15,5 @@
     <% $report %>
     </div>
     </div> <!-- t1_content -->
-    <& tabs.mason, admin => 0 &>
+    <& tabs.mason, admin => 0, sequence_data_dir => $sequence_data_dir &>
 </div> <!-- tabs1 -->

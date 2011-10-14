@@ -83,6 +83,8 @@ sub show_grid :Local {
 sub login :Local {
     my ($self, $c) = @_;
 
+    $c->stash->{sequence_data_dir} = $self->_app->config->{sequence_data_dir};
+
     if($self->_app->config->{allow_anonymous}) {
         # keep on forwardin'
     } else {
@@ -291,6 +293,8 @@ sub compose_sequence_sets : Private {
 
 sub submit :Path('/submit') :Args(0) {
     my ( $self, $c ) = @_;
+
+    $c->forward('login');
 
     my $ids            = $c->req->param('mimosa_sequence_set_ids') || '';
     my $alignment_view = $c->req->param('alignment_view') || '0';
