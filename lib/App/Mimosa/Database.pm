@@ -68,7 +68,7 @@ sub index {
     my $cwd = getcwd;
     chdir $dir;
 
-    my $seqfile = catfile($self->db_basename . '.seq');
+    my $seqfile = catfile($self->db_basename);
 
     my $db = Bio::BLAST::Database->open(
         full_file_basename => $self->db_basename,

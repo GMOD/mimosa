@@ -248,10 +248,10 @@ sub compose_sequence_sets : Private {
             # TODO: If files on disk are changed without names changing,
             # we will need to refresh sha1's
         } else {
-            die "Can't read sequence set FASTA $seq_root/$ss_name.seq : $!" unless -e "$seq_root/$ss_name.seq";
+            die "Can't read sequence set FASTA $seq_root/$ss_name : $!" unless -e "$seq_root/$ss_name";
             $c->log->debug("reading in $seq_root/$ss_name.seq");
             my $fasta = '';
-            open( my $fh, '<', "$seq_root/$ss_name.seq");
+            open( my $fh, '<', "$seq_root/$ss_name");
             while (<$fh>) { $fasta .= $_ };
             close $fh;
             $composite_fasta  .= $fasta;

@@ -18,5 +18,5 @@ my $r    = request('/api/grid/json.json?blarg=poop');
 my $json = $r->content;
 is_valid_json( $json, 'it returns valid JSON') or diag $json;
 is_json($json, <<JSON, 'got the JSON we expected');
-{"rows":[{"mimosa_sequence_set_id":1,"name":"chupacabra_dna","description":null,"alphabet":"nucleotide"}],"total":0}
+{"rows":[{"mimosa_sequence_set_id":1,"name":"chupacabra_dna.seq","description":null,"alphabet":"nucleotide"}],"total":0}
 JSON

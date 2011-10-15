@@ -1,4 +1,4 @@
-use Test::Most tests => 12;
+use Test::Most tests => 14;
 use strict;
 use warnings;
 
@@ -15,7 +15,15 @@ fixtures_ok 'basic_organism';
 action_ok   '/api/grid/json.json';
 
 my $seq_data_dir = app->config->{sequence_data_dir};
+diag "Sequence data dir is $seq_data_dir";
 my $extraseq     = catfile($seq_data_dir, 'extra', 'extraomgbbq.seq');
+my $extraseq2    = catfile($seq_data_dir, 'extra', 'cyclops.fasta');
+
+BEGIN {
+    # Remove these in case something left them behind
+    unlink( catfile($seq_data_dir, 'extraomgbbq.seq') );
+    unlink( catfile($seq_data_dir, 'cyclops.fasta') );
+}
 
 {
 my $r    = request('/api/grid/json.json');
@@ -32,7 +40,7 @@ like($json, qr/blargwart/, 'blargwart common_name appears');
 
 # This test depends on the data in t/etc/schema.pl and which data the JSON controller returns
 is_json($json, <<JSON, 'got the JSON we expected');
-{"rows":[{"mimosa_sequence_set_id":1,"name":"blastdb_test.nucleotide","description":"test db","alphabet":"nucleotide"},{"mimosa_sequence_set_id":2,"name":"solanum_foobarium_dna","description":"DNA sequences for S. foobarium","alphabet":"nucleotide"},{"mimosa_sequence_set_id":3,"name":"Blargopod foobarium (blargwart)","description":"Protein sequences for B. foobarium","alphabet":"protein"}],"total":2}
+{"rows":[{"mimosa_sequence_set_id":1,"name":"blastdb_test.nucleotide.seq","description":"test db","alphabet":"nucleotide"},{"mimosa_sequence_set_id":2,"name":"solanum_foobarium_dna.seq","description":"DNA sequences for S. foobarium","alphabet":"nucleotide"},{"mimosa_sequence_set_id":3,"name":"Blargopod foobarium (blargwart)","description":"Protein sequences for B. foobarium","alphabet":"protein"}],"total":2}
 JSON
 #diag $json;
 }
@@ -44,7 +52,8 @@ JSON
 my $r    = request('/api/grid/json.json');
 my $json = $r->content;
 
-# now add a new file to the sequence directory
+# now add a new seq file to the sequence directory
+diag "copying $extraseq to $seq_data_dir";
 copy($extraseq, $seq_data_dir);
 
 # ask for the grid json again
@@ -52,10 +61,22 @@ copy($extraseq, $seq_data_dir);
 my $r2    = request('/api/grid/json.json?foo=bar');
 my $json2 = $r2->content;
 cmp_ok (length($json2),'>', length($json), 'autodetection: new json is bigger than original');
-like($json2, qr/"extraomgbbq"/, 'autodetection: the correct shortname appears in the new json');
+like($json2, qr/"extraomgbbq\.seq"/, 'autodetection: the correct shortname appears in the new json');
+
+# now add a new fasta file to the sequence directory
+diag "copying $extraseq2 to $seq_data_dir";
+copy($extraseq2, $seq_data_dir);
+
+# ask for the grid json again
+# foo=bar is to defeat caching, if it exists
+my $r3    = request('/api/grid/json.json?blarg=poop');
+my $json3 = $r3->content;
+cmp_ok (length($json3),'>', length($json2), 'autodetection: new json is bigger than original');
+like($json3, qr/"cyclops\.fasta"/, 'autodetection: the correct shortname appears in the new json');
 
 }
 
 END {
     unlink( catfile($seq_data_dir, 'extraomgbbq.seq') );
+    unlink( catfile($seq_data_dir, 'cyclops.fasta') );
 }

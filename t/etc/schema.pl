@@ -11,9 +11,9 @@ return {
         'basic_ss' => {
             'Mimosa::SequenceSet' => [
                 [qw/ mimosa_sequence_set_id shortname title description alphabet source_spec lookup_spec info_url update_interval is_public /],
-                [ 1, 'blastdb_test.nucleotide', 'test db', 'test db', 'nucleotide', '', '', ,'', 30, 1    ],
-                [ 2, 'solanum_foobarium_dna', 'Solanum foobarium DNA sequences', 'DNA sequences for S. foobarium', 'nucleotide', '', '', ,'', 30, 0    ],
-                [ 3, 'Blargopod_foobarium_protein', 'Blargopod foobarium protein sequences', 'Protein sequences for B. foobarium', 'protein', '', '', ,'', 60, 1    ],
+                [ 1, 'blastdb_test.nucleotide.seq', 'test db', 'test db', 'nucleotide', '', '', ,'', 30, 1    ],
+                [ 2, 'solanum_foobarium_dna.seq', 'Solanum foobarium DNA sequences', 'DNA sequences for S. foobarium', 'nucleotide', '', '', ,'', 30, 0    ],
+                [ 3, 'Blargopod_foobarium_protein.seq', 'Blargopod foobarium protein sequences', 'Protein sequences for B. foobarium', 'protein', '', '', ,'', 60, 1    ],
               ],
         },
         'basic_ss_organism' => {

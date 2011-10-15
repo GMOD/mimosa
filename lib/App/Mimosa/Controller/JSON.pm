@@ -36,7 +36,7 @@ sub autodetect :Private {
     my $bcs        = $c->model('BCS');
     my $config     = $self->_app->config;
     my $seq_dir    = $config->{sequence_data_dir};
-    my @seq_files  = map { $_ =~ s!$seq_dir/(.*)\.seq!$1!g; $_ } grep { !-d } glob(catfile($seq_dir, '*.seq'));
+    my @seq_files  = map { $_ =~ s!$seq_dir/(.*)!$1!g; $_ } grep { !-d } glob("$seq_dir/*.seq $seq_dir/*.gff* $seq_dir/*.fa*");
     my $rs         = $bcs->resultset('Mimosa::SequenceSet');
     my @shortnames = map { $_->shortname } ($rs->all);
 
@@ -46,9 +46,9 @@ sub autodetect :Private {
     # nonzero difference means we have new sequence files, so we grab metadata about them
     if (@new_sets) {
         for my $seq_set (@new_sets) {
-            my $fasta = slurp("$seq_dir/$seq_set.seq");
-            my $sha1 = sha1_hex($fasta);
-            warn "adding $seq_set ($sha1) to the db";
+            my $fasta      = slurp("$seq_dir/$seq_set");
+            my $sha1       = sha1_hex($fasta);
+            $c->log->debug("adding $seq_dir/$seq_set ($sha1) to the db");
             # insert data about new sequences
             $rs->create({
                 title     => "stuff and thangs",
