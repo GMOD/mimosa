@@ -3,8 +3,8 @@ use Moose;
 use Bio::Chado::Schema;
 use File::Spec::Functions;
 use Set::Scalar;
-use File::Slurp qw/slurp/;
 use Digest::SHA1 'sha1_hex';
+use App::Mimosa::Util qw/slurp/;
 
 use namespace::autoclean;
 

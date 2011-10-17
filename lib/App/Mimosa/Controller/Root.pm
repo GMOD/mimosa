@@ -3,10 +3,11 @@ use Moose;
 use namespace::autoclean;
 use autodie qw/:all/;
 
+use App::Mimosa::Util qw/slurp/;
+use File::Slurp qw/write_file/;
 use File::Temp qw/tempfile/;
 use IO::String;
 use File::Spec::Functions;
-use File::Slurp qw/write_file slurp/;
 
 use Storable 'freeze';
 use Digest::SHA1 'sha1_hex';
@@ -249,11 +250,10 @@ sub compose_sequence_sets : Private {
             # we will need to refresh sha1's
         } else {
             die "Can't read sequence set FASTA $seq_root/$ss_name : $!" unless -e "$seq_root/$ss_name";
-            $c->log->debug("reading in $seq_root/$ss_name.seq");
-            my $fasta = '';
-            open( my $fh, '<', "$seq_root/$ss_name");
-            while (<$fh>) { $fasta .= $_ };
-            close $fh;
+            $c->log->debug("reading in $seq_root/$ss_name");
+
+            my $fasta = slurp("$seq_root/$ss_name");
+
             $composite_fasta  .= $fasta;
             #warn "computing sha1 of $ss_name";
             $sha1              = sha1_hex($fasta);
