@@ -1,4 +1,4 @@
-use Test::Most tests => 14;
+use Test::Most tests => 16;
 use strict;
 use warnings;
 
@@ -18,11 +18,13 @@ my $seq_data_dir = app->config->{sequence_data_dir};
 diag "Sequence data dir is $seq_data_dir";
 my $extraseq     = catfile($seq_data_dir, 'extra', 'extraomgbbq.seq');
 my $extraseq2    = catfile($seq_data_dir, 'extra', 'cyclops.fasta');
+my $extraseq3    = catfile($seq_data_dir, 'extra', 'cyclops.fasta.nsi');
 
 BEGIN {
     # Remove these in case something left them behind
     unlink( catfile($seq_data_dir, 'extraomgbbq.seq') );
     unlink( catfile($seq_data_dir, 'cyclops.fasta') );
+    unlink( catfile($seq_data_dir, 'cyclops.fasta.nsi') );
 }
 
 {
@@ -68,15 +70,24 @@ diag "copying $extraseq2 to $seq_data_dir";
 copy($extraseq2, $seq_data_dir);
 
 # ask for the grid json again
-# foo=bar is to defeat caching, if it exists
 my $r3    = request('/api/grid/json.json?blarg=poop');
 my $json3 = $r3->content;
 cmp_ok (length($json3),'>', length($json2), 'autodetection: new json is bigger than original');
 like($json3, qr/"cyclops\.fasta"/, 'autodetection: the correct shortname appears in the new json');
 
+copy($extraseq3, $seq_data_dir);
+
+# ask for the grid json yet again, make sure it did not autodetect the *.nsi file
+my $r4    = request("/api/grid/json.json?time=" . localtime() );
+my $json4 = $r4->content;
+cmp_ok (length($json4),'==', length($json3), 'autodetection: new json is same size as previous');
+unlike($json4, qr/"cyclops\.fasta\.nsi"/, 'autodetection: cyclops.fasta.nsi does not appear');
+
 }
+
 
 END {
     unlink( catfile($seq_data_dir, 'extraomgbbq.seq') );
     unlink( catfile($seq_data_dir, 'cyclops.fasta') );
+    unlink( catfile($seq_data_dir, 'cyclops.fasta.nsi') );
 }
