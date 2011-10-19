@@ -14,6 +14,7 @@ return {
                 [ 1, 'blastdb_test.nucleotide.seq', 'test db', 'test db', 'nucleotide', '', '', ,'', 30, 1    ],
                 [ 2, 'solanum_foobarium_dna.seq', 'Solanum foobarium DNA sequences', 'DNA sequences for S. foobarium', 'nucleotide', '', '', ,'', 30, 0    ],
                 [ 3, 'Blargopod_foobarium_protein.seq', 'Blargopod foobarium protein sequences', 'Protein sequences for B. foobarium', 'protein', '', '', ,'', 60, 1    ],
+                [ 4, 'trollus_trollus.seq', 'Common Wild Troll species DNA sequence', 'DNA sequences for T. trollus', 'nucleotide', '', '', ,'', 60, 1    ],
               ],
         },
         'basic_ss_organism' => {

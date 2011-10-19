@@ -42,7 +42,7 @@ like($json, qr/blargwart/, 'blargwart common_name appears');
 
 # This test depends on the data in t/etc/schema.pl and which data the JSON controller returns
 is_json($json, <<JSON, 'got the JSON we expected');
-{"rows":[{"mimosa_sequence_set_id":1,"name":"blastdb_test.nucleotide.seq","description":"test db","alphabet":"nucleotide"},{"mimosa_sequence_set_id":2,"name":"solanum_foobarium_dna.seq","description":"DNA sequences for S. foobarium","alphabet":"nucleotide"},{"mimosa_sequence_set_id":3,"name":"Blargopod foobarium (blargwart)","description":"Protein sequences for B. foobarium","alphabet":"protein"}],"total":2}
+{"rows":[{"mimosa_sequence_set_id":1,"name":"blastdb_test.nucleotide.seq","description":"test db","alphabet":"nucleotide"},{"mimosa_sequence_set_id":2,"name":"solanum_foobarium_dna.seq","description":"DNA sequences for S. foobarium","alphabet":"nucleotide"},{"mimosa_sequence_set_id":3,"name":"Blargopod foobarium (blargwart)","description":"Protein sequences for B. foobarium","alphabet":"protein"},{"mimosa_sequence_set_id":4,"name":"trollus_trollus.seq","description":"DNA sequences for T. trollus","alphabet":"nucleotide"},{"mimosa_sequence_set_id":5,"name":"archaeopteryx_protein.seq","description":null,"alphabet":"nucleotide"}],"total":4}
 JSON
 #diag $json;
 }
