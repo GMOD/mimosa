@@ -12,18 +12,6 @@ use HTTP::Request::Common;
 use File::Spec::Functions;
 #use Carp::Always;
 
-BEGIN {
-    use Cwd;
-    sub clean {
-        clean_up_indices(getcwd, catfile(qw/t data blastdb_test.nucleotide.seq/))
-    }
-    clean();
-}
-
-END {
-    clean();
-}
-
 fixtures_ok 'basic_ss';
 
 {

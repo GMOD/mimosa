@@ -117,15 +117,13 @@ sub test_blast_hits() {
 
 }
     test_blast_hits();
-
-    # We do this again to verify that already-generated
-    # reports are cached and the user is redirected to them
-
+    # do it again to exercise cached codepaths
     test_blast_hits();
 
 }
 
 sub test_composite_blast_hits() {
+    my $mech = Mech->new;
     $mech->get_ok('/');
     $mech->submit_form_ok({
         form_name => 'main_input_form',
@@ -151,6 +149,8 @@ sub test_composite_blast_hits() {
 
 }
 
+test_composite_blast_hits();
+# do it again to exercise cached codepaths
 test_composite_blast_hits();
 
 done_testing;
