@@ -249,6 +249,7 @@ sub compose_sequence_sets : Private {
             $c->log->debug("Found cached sha1 $sha1");
             # TODO: If files on disk are changed without names changing,
             # we will need to refresh sha1's
+            # BUG: $composite_fasta is never created, but used below
         } else {
             die "Can't read sequence set FASTA $seq_root/$ss_name : $!" unless -e "$seq_root/$ss_name";
             $c->log->debug("reading in $seq_root/$ss_name");
@@ -256,8 +257,8 @@ sub compose_sequence_sets : Private {
             my $fasta = slurp("$seq_root/$ss_name");
 
             $composite_fasta  .= $fasta;
-            #warn "computing sha1 of $ss_name";
             $sha1              = sha1_hex($fasta);
+            $c->log->debug("sha1 of $ss_name = $sha1");
         }
         $composite_sha1   .= $sha1;
         $c->log->debug("updating $ss_id to $sha1");
