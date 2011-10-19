@@ -4,12 +4,25 @@ use Test::Most tests => 25;
 
 use lib 't/lib';
 use App::Mimosa::Test;
+use App::Mimosa::Util qw/clean_up_indices/;
 use Test::DBIx::Class;
 
 use File::Slurp qw/slurp/;
 use HTTP::Request::Common;
 use File::Spec::Functions;
 #use Carp::Always;
+
+BEGIN {
+    use Cwd;
+    sub clean {
+        clean_up_indices(getcwd, catfile(qw/t data blastdb_test.nucleotide.seq/))
+    }
+    clean();
+}
+
+END {
+    clean();
+}
 
 fixtures_ok 'basic_ss';
 

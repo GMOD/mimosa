@@ -82,7 +82,7 @@ sub index {
     unless ($self->already_indexed) {
         $self->debug("indexing $seqfile");
         $self->db->format_from_file(
-            seqfile      => $seqfile,
+            seqfile      => "$seqfile",
             title        => basename($self->db_basename),
             indexed_seqs => 1,
         );

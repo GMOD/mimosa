@@ -135,7 +135,7 @@ sub test_composite_blast_hits() {
             sequence               => $fasta,
             program                => "blastn",
         },
-    });
+    }, 'submit composite sequence sets');
     $mech->content_like( qr/Sbjct: /, 'got a blast hit');
     $mech->content_like( qr/OMGBBQWTF/, 'fasta defline found in report');
 
