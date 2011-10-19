@@ -26,17 +26,4 @@ sub clean_up_indices {
     }
 }
 
-BEGIN {
-    use Cwd;
-    sub clean {
-        clean_up_indices(getcwd, catfile(qw/t data blastdb_test.nucleotide.seq/))
-    }
-    clean();
-}
-
-END {
-    clean();
-}
-
-
 1;

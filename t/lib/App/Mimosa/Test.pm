@@ -4,6 +4,8 @@ use warnings;
 use autodie qw/:all/;
 use IPC::Cmd qw/can_run/;
 use Test::More;
+use File::Spec::Functions;
+use App::Mimosa::Util qw/clean_up_indices/;
 
 use base 'Exporter';
 our @EXPORT = (
@@ -20,6 +22,19 @@ our @EXPORT = (
           app
     ),
   );
+
+BEGIN {
+    use Cwd;
+    sub clean {
+        clean_up_indices(getcwd, catfile(qw/t data blastdb_test.nucleotide.seq/))
+    }
+    clean();
+}
+
+END {
+    clean();
+}
+
 
 # set things up for in-process testing only
 BEGIN {
