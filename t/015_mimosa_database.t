@@ -10,24 +10,40 @@ use File::Spec::Functions;
 
 fixtures_ok 'basic_ss';
 
-BEGIN{ use_ok 'App::Mimosa::Database' }
+sub clean_up_indices {
+    my ($dir, $name) = @_;
+    for my $f (map { "$name.$_" } qw/nsi nhr nin nsd nsq/) {
+        diag "unlink $dir/$f" if $ENV{DEBUG};
+        unlink catfile($dir,$f);
+    }
+}
 
+my ($tdir, $file);
 
-my $cwd = getcwd;
+BEGIN {
+    use_ok 'App::Mimosa::Database';
 
-chdir catdir(qw/t data/);
+    $file = 'blastdb_test.nucleotide.seq';
+    $tdir = catdir(qw/t data/);
+    clean_up_indices( $tdir, $file);
+}
 
+my $cwd  = getcwd;
+chdir $tdir;
 my $db = App::Mimosa::Database->new(
-    db_basename => catfile(qw/blastdb_test.nucleotide/),
-    alphabet    => 'protein',
+    db_basename => $file,
+    alphabet    => 'nucleotide',
     context     => app(),
 );
 isa_ok $db, 'App::Mimosa::Database';
 
 lives_ok sub { $db->index }, 'index does not die';
 
-is( $db->db->title, 'blastdb_test.nucleotide', 'title is correct');
+is( $db->db->title, $file, 'title is correct');
 
 can_ok $db, qw/db_basename alphabet index/;
 
-chdir $cwd;
+END {
+    chdir $cwd;
+    clean_up_indices( $tdir, $file );
+}
