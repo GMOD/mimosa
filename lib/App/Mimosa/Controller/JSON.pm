@@ -37,7 +37,7 @@ sub autodetect :Private {
     my $config     = $self->_app->config;
     my $seq_dir    = $config->{sequence_data_dir};
     # TODO: make autodeteced suffixes configurable
-    my @seq_files  = map { $_ =~ s!$seq_dir/(.*)!$1!g; $_ } grep { !-d } glob("$seq_dir/*.seq $seq_dir/*.gff3 $seq_dir/*.gff $seq_dir/*.fasta $seq_dir/*.fa");
+    my @seq_files  = map { $_ =~ s!$seq_dir/(.*)!$1!g; $_ } grep { !-d } glob("$seq_dir/*.seq $seq_dir/*.fasta $seq_dir/*.fa");
     my $rs         = $bcs->resultset('Mimosa::SequenceSet');
     my @shortnames = map { $_->shortname } ($rs->all);
 

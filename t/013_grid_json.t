@@ -1,4 +1,4 @@
-use Test::Most tests => 16;
+use Test::Most tests => 18;
 use strict;
 use warnings;
 
@@ -19,12 +19,14 @@ diag "Sequence data dir is $seq_data_dir";
 my $extraseq     = catfile($seq_data_dir, 'extra', 'extraomgbbq.seq');
 my $extraseq2    = catfile($seq_data_dir, 'extra', 'cyclops.fasta');
 my $extraseq3    = catfile($seq_data_dir, 'extra', 'cyclops.fasta.nsi');
+my $gff          = catfile($seq_data_dir, 'extra', 'foo.gff3');
 
 BEGIN {
     # Remove these in case something left them behind
     unlink( catfile($seq_data_dir, 'extraomgbbq.seq') );
     unlink( catfile($seq_data_dir, 'cyclops.fasta') );
     unlink( catfile($seq_data_dir, 'cyclops.fasta.nsi') );
+    unlink( catfile($seq_data_dir, 'foo.gff3') );
 }
 
 {
@@ -83,6 +85,15 @@ my $json4 = $r4->content;
 cmp_ok (length($json4),'==', length($json3), 'autodetection: new json is same size as previous');
 unlike($json4, qr/"cyclops\.fasta\.nsi"/, 'autodetection: cyclops.fasta.nsi does not appear');
 
+# now add a gff file, which should not be autodetected
+diag "copying $gff to $seq_data_dir";
+copy($gff, $seq_data_dir);
+
+my $r5    = request('/api/grid/json.json?f=g');
+my $json5 = $r5->content;
+cmp_ok (length($json5),'==', length($json3), 'autodetection: do not autodetect gff files');
+unlike($json3, qr/"foo.gff3"/, 'autodetection: no foo.gff3 in json');
+
 }
 
 
@@ -90,4 +101,5 @@ END {
     unlink( catfile($seq_data_dir, 'extraomgbbq.seq') );
     unlink( catfile($seq_data_dir, 'cyclops.fasta') );
     unlink( catfile($seq_data_dir, 'cyclops.fasta.nsi') );
+    unlink( catfile($seq_data_dir, 'foo.gff3') );
 }
