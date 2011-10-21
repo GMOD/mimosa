@@ -36,8 +36,12 @@ sub autodetect :Private {
     my $bcs        = $c->model('BCS');
     my $config     = $self->_app->config;
     my $seq_dir    = $config->{sequence_data_dir};
-    # TODO: make autodeteced suffixes configurable
-    my @seq_files  = map { $_ =~ s!$seq_dir/(.*)!$1!g; $_ } grep { !-d } glob("$seq_dir/*.seq $seq_dir/*.fasta $seq_dir/*.fa");
+
+    # This isn't madness, this is FASTA!
+    # http://en.wikipedia.org/wiki/FASTA_format#File_extension
+    my @fasta_extensions = qw/fasta fna ffn faa frn fa seq mpfa/;
+    my @globs            = glob(join " ", map { catfile($seq_dir, "*.$_") } @fasta_extensions);
+    my @seq_files  = map { $_ =~ s!$seq_dir/(.*)!$1!g; $_ } grep { !-d } @globs;
     my $rs         = $bcs->resultset('Mimosa::SequenceSet');
     my @shortnames = map { $_->shortname } ($rs->all);
 
