@@ -35,8 +35,3 @@ lives_ok sub { $db->index }, 'index does not die';
 is( $db->db->title, $file, 'title is correct');
 
 can_ok $db, qw/db_basename alphabet index/;
-
-END {
-    chdir $cwd;
-    clean_up_indices( $tdir, $dbname );
-}

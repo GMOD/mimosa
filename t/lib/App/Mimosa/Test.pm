@@ -26,7 +26,10 @@ our @EXPORT = (
 BEGIN {
     use Cwd;
     sub clean {
-        clean_up_indices(getcwd, catfile(qw/t data blastdb_test.nucleotide.seq/))
+        my @seqs = glob(catfile(qw/t data *.seq/));
+        for my $seq (@seqs) {
+            clean_up_indices(getcwd, $seq);
+        }
     }
     clean();
 }

@@ -21,7 +21,7 @@ sub clean_up_indices {
     my ($dir, $name) = @_;
     for my $f (map { "$name.$_" } qw/nsi nhr nin nsd nsq psd psi phr psq pin/) {
         no autodie;
-        #diag "unlink $dir/$f";
+        # diag "unlink $dir/$f";
         unlink catfile($dir,$f);
     }
 }
