@@ -26,10 +26,7 @@ our @EXPORT = (
 BEGIN {
     use Cwd;
     sub clean {
-        my @seqs = glob(catfile(qw/t data *.seq/));
-        for my $seq (@seqs) {
-            clean_up_indices(getcwd, $seq);
-        }
+        map { clean_up_indices(getcwd, $_) } (glob(catfile(qw/t data *.seq/)));
     }
     clean();
 }
