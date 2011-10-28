@@ -122,13 +122,14 @@ sub test_blast_hits() {
 
 }
 
-sub test_composite_blast_hits() {
+sub test_composite_blast_hits($) {
+    my ($ids) = @_;
     my $mech = Mech->new;
     $mech->get_ok('/');
     $mech->submit_form_ok({
         form_name => 'main_input_form',
         fields => {
-            mimosa_sequence_set_ids => "1,2",
+            mimosa_sequence_set_ids => $ids,
             filtered               => 'T',
             sequence               => $fasta,
             program                => "blastn",
@@ -149,8 +150,10 @@ sub test_composite_blast_hits() {
 
 }
 
-test_composite_blast_hits();
+test_composite_blast_hits('1,2');
 # do it again to exercise cached codepaths
-test_composite_blast_hits();
+test_composite_blast_hits('1,2');
+
+test_composite_blast_hits('1,2,4');
 
 done_testing;
