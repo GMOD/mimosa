@@ -58,7 +58,11 @@ use Catalyst::Test 'App::Mimosa';
 my ( undef, $c ) = ctx_request('/nonexistent_url_for_t_lib_app_mimosa_test');
 sub app { $c }
 
+END {
+    my $dsn = app->config->{"Model::BCS"}->{connect_info}->{dsn};
+    my (undef,$test_db)   = split /=/, $dsn;
+    # diag "unlink $test_db";
+    { no autodie; unlink $test_db }
+}
 
 1;
-
-
