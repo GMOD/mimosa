@@ -25,21 +25,14 @@ our @EXPORT = (
 
 BEGIN {
     use Cwd;
-    # load the app, grab the context object so we can use it for configuration
-    use Catalyst::Test 'App::Mimosa';
-    my ( undef, $c ) = ctx_request('/nonexistent_url_for_t_lib_app_mimosa_test');
-    sub app { $c }
-    sub clean_indices {
+    sub clean {
         map { clean_up_indices(getcwd, $_) } (glob(catfile(qw/t data *.seq/)));
     }
-    sub clean_test_db() {
-        my $dsn = app->model('BCS')->connect_info->{dsn};
-        diag "dsn=$dsn";
-        my (undef,$test_db)   = split /=/, $dsn;
-        # diag "unlink $test_db";
-        { no autodie; unlink $test_db }
-    }
-    clean_indices();
+    clean();
+}
+
+END {
+    clean();
 }
 
 
@@ -60,11 +53,16 @@ BEGIN {
     }
 }
 
-
+# load the app, grab the context object so we can use it for configuration
+use Catalyst::Test 'App::Mimosa';
+my ( undef, $c ) = ctx_request('/nonexistent_url_for_t_lib_app_mimosa_test');
+sub app { $c }
 
 END {
-    clean_test_db();
-    clean_indices();
+    my $dsn = app->config->{"Model::BCS"}->{connect_info}->{dsn};
+    my (undef,$test_db)   = split /=/, $dsn;
+    # diag "unlink $test_db";
+    { no autodie; unlink $test_db }
 }
 
 1;
