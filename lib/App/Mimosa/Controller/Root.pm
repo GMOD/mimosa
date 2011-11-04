@@ -243,12 +243,11 @@ sub compose_sequence_sets : Private {
 
         # SHA1's are null until the first time we are asked to align against
         # the sequence set.
-        #my $sha1 = $ss->sha1;
-        #if ($sha1) {
-        #    $c->log->debug("Found cached sha1 $sha1");
-        #    # TODO: If files on disk are changed without names changing,
-        #    # we will need to refresh sha1's
-        #}
+        my $cached_sha1 = $ss->sha1;
+
+        if ($cached_sha1) {
+            $c->log->debug("Found cached sha1 $cached_sha1");
+        }
 
         die "Can't read sequence set FASTA $seq_root/$ss_name : $!" unless -e "$seq_root/$ss_name";
         $c->log->debug("reading in $seq_root/$ss_name");
@@ -257,13 +256,20 @@ sub compose_sequence_sets : Private {
 
         $composite_fasta  .= $fasta;
         my $sha1           = sha1_hex($fasta);
+
+        $c->log->debug("found $ss_id with sha1 $sha1");
+
+        # Make sure our cached sha1 is up-to-date
+        if ($sha1 ne $cached_sha1) {
+            $c->log->debug("updating stale sha1 value for $seq_root/$ss_name to $sha1 from $cached_sha1");
+            $search->update({ sha1 => $sha1 });
+        }
         $c->log->debug("sha1 of $ss_name = $sha1");
 
         $composite_sha1   .= $sha1;
         $c->log->debug("updating $ss_id to $sha1");
-
         $search->update({ sha1 => $sha1 });
-        $c->log->debug("found $ss_id with sha1 $sha1");
+
     }
     $composite_sha1 = sha1_hex($composite_sha1);
     $c->log->debug("computed composite sha1 $composite_sha1");
