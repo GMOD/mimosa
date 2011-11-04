@@ -229,7 +229,6 @@ sub compose_sequence_sets : Private {
     my $composite_fasta= '';
     my $alphabet;
 
-    # TODO: error if any one of the ids is not valid
     for my $ss_id (grep { $_ } @ss_ids) {
         my $search = $rs->search({ 'mimosa_sequence_set_id' =>  $ss_id });
 
@@ -244,24 +243,25 @@ sub compose_sequence_sets : Private {
 
         # SHA1's are null until the first time we are asked to align against
         # the sequence set.
-        my $sha1 = $ss->sha1;
-        if ($sha1) {
-            $c->log->debug("Found cached sha1 $sha1");
-            # TODO: If files on disk are changed without names changing,
-            # we will need to refresh sha1's
-            # BUG: $composite_fasta is never created, but used below
-        } else {
-            die "Can't read sequence set FASTA $seq_root/$ss_name : $!" unless -e "$seq_root/$ss_name";
-            $c->log->debug("reading in $seq_root/$ss_name");
+        #my $sha1 = $ss->sha1;
+        #if ($sha1) {
+        #    $c->log->debug("Found cached sha1 $sha1");
+        #    # TODO: If files on disk are changed without names changing,
+        #    # we will need to refresh sha1's
+        #}
 
-            my $fasta = slurp("$seq_root/$ss_name");
+        die "Can't read sequence set FASTA $seq_root/$ss_name : $!" unless -e "$seq_root/$ss_name";
+        $c->log->debug("reading in $seq_root/$ss_name");
 
-            $composite_fasta  .= $fasta;
-            $sha1              = sha1_hex($fasta);
-            $c->log->debug("sha1 of $ss_name = $sha1");
-        }
+        my $fasta = slurp("$seq_root/$ss_name");
+
+        $composite_fasta  .= $fasta;
+        my $sha1           = sha1_hex($fasta);
+        $c->log->debug("sha1 of $ss_name = $sha1");
+
         $composite_sha1   .= $sha1;
         $c->log->debug("updating $ss_id to $sha1");
+
         $search->update({ sha1 => $sha1 });
         $c->log->debug("found $ss_id with sha1 $sha1");
     }
