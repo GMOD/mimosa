@@ -8,7 +8,6 @@ use Data::Dumper;
 use lib 't/lib';
 use App::Mimosa::Test;
 
-use Catalyst::Test 'App::Mimosa';
 use Bio::Chado::Schema::Test;
 use App::Mimosa::Schema::BCS;
 

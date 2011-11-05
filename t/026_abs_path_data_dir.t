@@ -10,7 +10,6 @@ use lib 't/lib';
 use App::Mimosa::Test;
 use Test::DBIx::Class;
 use Test::JSON;
-use Catalyst::Test 'App::Mimosa';
 use HTTP::Request::Common;
 use File::Spec::Functions;
 

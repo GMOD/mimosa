@@ -10,7 +10,5 @@ BEGIN {
 use lib 't/lib';
 use App::Mimosa::Test;
 
-use Catalyst::Test 'App::Mimosa';
-
 my (undef, $c) = ctx_request("/nowhere");
 is($c->config->{tmp_dir}, "/tmp/blarg", "temp dir can be set in the config file");

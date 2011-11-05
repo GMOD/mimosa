@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::Most;
+use Test::Most tests => 9;
 
 use_ok 'App::Mimosa::Schema::BCS';
 
@@ -27,6 +27,3 @@ is $schema->resultset('Organism')->search_related('mimosa_sequence_sets')->count
 'organism has mimosa_sequence_sets rel';
 
 is $schema->resultset('Mimosa::Job')->count, 0, 'no jobs by default';
-
-
-done_testing;
