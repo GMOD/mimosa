@@ -5,7 +5,6 @@ use warnings;
 use lib 't/lib';
 use App::Mimosa::Test;
 
-use Catalyst::Test 'App::Mimosa';
 use File::Slurp qw/slurp/;
 use HTTP::Request::Common;
 use File::Spec::Functions;

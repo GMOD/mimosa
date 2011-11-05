@@ -1,25 +1,21 @@
-use Test::Most tests => 6;
+use Test::Most tests => 5;
 use strict;
 use warnings;
+use Carp::Always;
 use Cwd;
 
 use lib 't/lib';
-use App::Mimosa::Test;
-use Test::DBIx::Class;
 use File::Spec::Functions;
-
-fixtures_ok 'basic_ss';
+use App::Mimosa::Test;
 
 my ($tdir, $file, $dbname);
-
 BEGIN {
     use_ok 'App::Mimosa::Database';
-    use App::Mimosa::Util qw/clean_up_indices/;
     $dbname = 'blastdb_test.nucleotide';
     $file   = "$dbname.seq";
     $tdir   = catdir(qw/t data/);
-    clean_up_indices( $tdir, $dbname);
 }
+
 
 my $cwd  = getcwd;
 chdir $tdir;

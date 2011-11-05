@@ -105,8 +105,8 @@ sub test_blast_hits() {
             program                => "blastn",
         },
     });
-    $mech->content_like( qr/Sbjct: /, 'got a blast hit');
-    $mech->content_like( qr/OMGBBQWTF/, 'fasta defline found in report');
+    $mech->content_like( qr/Sbjct: /, 'got a blast hit') or diag $mech->content;
+    $mech->content_like( qr/OMGBBQWTF/, 'fasta defline found in report') or diag $mech->content;
 
     my @links = $mech->find_all_links( url_regex => qr!/api/! );
     $mech->links_ok( \@links, "All /api links work: " . join(" ",map { $_->url } @links) );
@@ -134,8 +134,8 @@ sub test_composite_blast_hits() {
             program                => "blastn",
         },
     }, 'submit composite sequence sets');
-    $mech->content_like( qr/Sbjct: /, 'got a blast hit');
-    $mech->content_like( qr/OMGBBQWTF/, 'fasta defline found in report');
+    $mech->content_like( qr/Sbjct: /, 'got a blast hit') or diag $mech->content;
+    $mech->content_like( qr/OMGBBQWTF/, 'fasta defline found in report') or diag $mech->content;
 
     my @links = $mech->find_all_links( url_regex => qr!/api/! );
     $mech->links_ok( \@links, "All /api links work: " . join(" ",map { $_->url } @links) );

@@ -50,6 +50,7 @@ sub get_sequence {
     $self->debug("Is it indexed? " . ( $self->db->indexed_seqs ? 1 : 0 ));
     $self->debug("Complete? " . ( $self->db->files_are_complete ? 1 : 0 ));
 
+    $self->debug("get_sequence($name)");
     my $sequence = $db->get_sequence($name);
 
     return $sequence;
@@ -81,6 +82,7 @@ sub index {
 
     unless ($self->already_indexed) {
         $self->debug("indexing $seqfile");
+        $seqfile .= '.seq' unless $seqfile =~ m/\.seq$/;
         $self->db->format_from_file(
             seqfile      => "$seqfile",
             title        => basename($self->db_basename),
