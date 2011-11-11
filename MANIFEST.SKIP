@@ -3,3 +3,5 @@ t/data/.mimosa_cache*
 ^MYMETA\.yml$
 ^MYMETA\.json$
 _build/.*
+.*.swp
+App-Mimosa-*
