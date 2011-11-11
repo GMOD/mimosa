@@ -73,6 +73,10 @@ To deploy a Mimosa database:
 
     perl script/mimosa_deploy.pl
 
+For full details on the deploy options:
+
+    perldoc script/mimosa_deploy.pl
+
 To start Mimosa:
 
     perl script/mimosa_server.pl
