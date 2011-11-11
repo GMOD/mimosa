@@ -22,3 +22,6 @@ t/data/blastdb_test.nucleotide.nsi
 META.json
 META.yml
 Makefile.PL
+MANIFEST
+MANIFEST.bak
+MANIFEST.SKIP.bak
