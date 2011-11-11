@@ -69,7 +69,19 @@ App::Mimosa - Miniature Model Organism Sequence Aligner
 
 =head1 SYNOPSIS
 
-    perl script/app_mimosa_server.pl
+To deploy a Mimosa database:
+
+    perl script/mimosa_deploy.pl
+
+To start Mimosa:
+
+    perl script/mimosa_server.pl
+
+You should see something like:
+
+    You can connect to your server at http://localhost:3000
+
+Now you can go to L<http://localhost:3000> and try Mimosa!
 
 =head1 DESCRIPTION
 
