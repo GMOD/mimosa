@@ -9,6 +9,64 @@ use Data::Dumper;
 use Getopt::Long;
 use App::Mimosa::Schema::BCS;
 
+=head1 NAME
+
+script/mimosa_deploy.pl - Deploy a Mimosa database
+
+=head1 SYNOPSIS
+
+To deploy a Mimosa database:
+
+    perl script/mimosa_deploy.pl
+
+This will use the default config file "app_mimosa.conf" and by default,
+use a SQLite database called ./mimosa.db .
+
+=head1 DESCRIPTION
+
+If you want to use a custom "foo.conf" config file:
+
+    perl script/mimosa_deploy.pl --conf foo.conf
+
+To deploy into an already-existing Chado database:
+
+    perl script/mimosa_deploy.pl --chado 1
+
+This means that only Mimosa-related tables will be created and deployed to. This
+specifically does not create/deploy Chado tables, since they should already
+exist.
+
+If you run either of:
+
+    perl script/mimosa_deploy.pl
+    perl script/mimosa_deploy.pl --chado 0
+
+then all Mimosa and Chado tables that are needed will be created and deployed to.
+
+To deploy an empty schema with no data:
+
+    perl script/mimosa_deploy.pl --empty 1
+
+And of course, these options can be used together:
+
+    perl script/mimosa_deploy.pl --conf foo.conf --chado 1
+
+
+=head1 SEE ALSO
+
+L<App::Mimosa>
+
+=head1 AUTHOR
+
+Jonathan "Duke" Leto <jonathan@leto.net>
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
 # default to app_mimosa.conf and not deploying to chado
 my $conf  = '';
 my $chado = 0;
