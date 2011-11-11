@@ -20,11 +20,11 @@ sub interp_args {
 
 =head1 NAME
 
-App::Mimosa::View::Mason - Mason View Component for SGN
+App::Mimosa::View::Mason - Mason View Component
 
 =head1 DESCRIPTION
 
-Mason View Component for SGN. This extends Catalyst::View::HTML::Mason.
+Mason View Component. This extends Catalyst::View::HTML::Mason.
 
 =head1 FUNCTIONS
 
