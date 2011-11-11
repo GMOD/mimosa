@@ -89,14 +89,25 @@ Now you can go to L<http://localhost:3000> and try Mimosa!
 
 =head1 DESCRIPTION
 
+=head1 Non-Perl Dependencies
+
+Mimosa has some non-Perl dependencies. Most notably, the NCBI BLAST command-line
+suite of programs. These are detected by attempting to execute
+
+    fastacmd
+
+If it does not exist, then Mimosa will currently not work at all. Future versions
+of Mimosa may detect different alignment programs such as BWA.
+
+The above command is also necessary to run the Mimosa test suite.
 
 =head1 SEE ALSO
 
 L<App::Mimosa::Controller::Root>, L<Catalyst>
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Jonathan "Duke" Leto <jonathan@leto.net>
+Jonathan "Duke" Leto <jonathan@leto.net>, Rob Buels
 
 =head1 LICENSE
 
