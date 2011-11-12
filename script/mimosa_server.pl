@@ -11,11 +11,11 @@ Catalyst::ScriptRunner->run('App::Mimosa', 'Server');
 
 =head1 NAME
 
-app_mimosa_server.pl - Catalyst Test Server
+script/mimosa_server.pl - Mimosa Catalyst Test Server
 
 =head1 SYNOPSIS
 
-app_mimosa_server.pl [options]
+script/mimosa_server.pl [options]
 
    -d --debug           force debug mode
    -f --fork            handle each request in a new process
@@ -45,7 +45,7 @@ app_mimosa_server.pl [options]
 
 =head1 DESCRIPTION
 
-Run a Catalyst Testserver for this application.
+Run a Catalyst Testserver for Mimosa.
 
 =head1 AUTHORS
 

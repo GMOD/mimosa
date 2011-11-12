@@ -69,15 +69,27 @@ App::Mimosa - Miniature Model Organism Sequence Aligner
 
 =head1 SYNOPSIS
 
-To deploy a Mimosa database:
-
-    perl script/mimosa_deploy.pl
+=head2 DEPLOYING
 
 For full details on the deploy options:
 
     perldoc script/mimosa_deploy.pl
 
-To start Mimosa:
+To deploy a Mimosa database:
+
+    perl script/mimosa_deploy.pl
+
+=head2 RUNNING
+
+For full details on the server options:
+
+    perldoc script/mimosa_server.pl
+
+To start Mimosa on port 8888:
+
+    perl script/mimosa_server.pl -p 8888
+
+To start Mimosa on the default port (3000):
 
     perl script/mimosa_server.pl
 
@@ -87,9 +99,7 @@ You should see something like:
 
 Now you can go to L<http://localhost:3000> and try Mimosa!
 
-=head1 DESCRIPTION
-
-=head1 Non-Perl Dependencies
+=head1 DEPENDENCIES
 
 Mimosa has some non-Perl dependencies. Most notably, the NCBI BLAST command-line
 suite of programs. These are detected by attempting to execute
