@@ -36,8 +36,16 @@ can be integrated into an existing website via a REST interface.
 
 ## How do I get Mimosa?
 
-Currently, Mimosa does not have distribution packages, so you must use git. This
-will change as Mimosa gets closer to a public release.
+You can install Mimosa from CPAN (where it is called
+[http://p3rl.org/App::Mimosa](App::Mimosa)) .
+
+If you use cpanminus (preferred) :
+
+    cpanm App::Mimosa
+
+If you use CPAN.pm:
+
+    cpan App::Mimosa
 
 ### Installing non-Perl dependencies
 
