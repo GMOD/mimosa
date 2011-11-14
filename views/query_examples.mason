@@ -1,3 +1,4 @@
 <%args>
 </%args>
-Examples: <div id="speruvianum">S. peruvianum</a>, <a id="amarina">A. marina</a>, P. necrotus, A. cryptum
+Examples (click to paste): <div id="speruvianum">S. peruvianum</a>, <div id="amarina">A. marina</a>,
+<div id="pnecrotus">P. necrotus</div>, <div id="acryptum">A. cryptum</a>

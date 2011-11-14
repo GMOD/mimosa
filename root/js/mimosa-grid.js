@@ -162,5 +162,10 @@ Ext.onReady(function(){
         jQuery("#sequence_input").append(
         ">A. marina search\nMTALAGLKDAQLFANGVYSAWEWVKACDGIRWFTDGERRYGQELWQLASVYLKGDECHPDYGHRKVWREG\nLEVVMKVKGSQGNRRVEWVKTEHPFTAISPRSEIHANHNEAHNAALRRRCSAYRRRQNLYAKKRLGLQRV") } );
 
+    jQuery("#pnecrotus").click(function() {
+        jQuery("#sequence_input").append("") });
+
+    jQuery("#acryptum").click(function() {
+        jQuery("#sequence_input").append("") });
 
 });
