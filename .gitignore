@@ -25,3 +25,5 @@ Makefile.PL
 MANIFEST
 MANIFEST.bak
 MANIFEST.SKIP.bak
+examples/data/solanum_peruvianum_mRNA.seq.nsd
+examples/data/solanum_peruvianum_mRNA.seq.nsi
