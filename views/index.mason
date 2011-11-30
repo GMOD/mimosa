@@ -41,7 +41,7 @@
     <textarea name="sequence" id="sequence_input" rows="8" cols="80"><% $sequence_input %></textarea></td></tr>
     <tr><td>Upload query sequence file:</td><td> <input type="file" name="sequence_input_file" size="40"></td></tr>
     </table>
-      <div><br/><input type="reset" value="Clear" onclick="clearField(); "> <input type="submit" name="search" value="Align" ></div>
+      <div><br/><input type="reset" value="Clear" onclick="clearField(); "> <input type="submit" name="search" value="Align" id="align_button" ></div>
        <br/>
         <input value="unchecked" type="checkbox" name="advanced" id="advanced_control" onclick="$('#advanced').toggle('slow', 'swing')">
         <label for="advanced_control">Advanced Options</label>

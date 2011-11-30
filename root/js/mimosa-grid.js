@@ -152,6 +152,15 @@ Ext.onReady(function(){
 
     jQuery("#search_description").keyup(filter);
 
+    jQuery("#align_button").click(function() {
+        var seq = jQuery("#sequence_input").val();
+        if (seq.length()) {
+        } else {
+            alert("Sequence input is empty!");
+            return false;
+        }
+    });
+
     jQuery("#speruvianum").click(function() {
         jQuery("#sequence_input").append(
         ">Tomato sequence\nATCCACAAATTAAATATCAACAAAATCATACAAAATGGCATTCAAGGCAAATATTTTGCTTATATTTTCTTTGGTTCTTA\nTGATTATATCATCAGAGGTTATTGCAAGGAAAGTGGTTGAGACAAATCAAGTTCAAAATACATTTGAATTGGACAATCCG\nACACTCCAGAAAAAAGGTGGTGGTGGAAAAGGTGGGGGATCATTATTTCCTAATATAGCGTGTTTGGGTTGCAGTTGCCC\nAAAAGATAATAATAATAATAATAATAATAATAACAACGATGACGATGATGACAATGACAGTTTCATTGGTAATG\n")
