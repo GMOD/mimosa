@@ -193,8 +193,9 @@ connection information in this config key.
 ## What is Mimosa written in?
 
 Mimosa is written in Perl 5, HTML, CSS, and JavaScript.  On the server side, it
-uses Moose, BioPerl and the Catalyst web framework.  On the client side, it uses
-JQuery, JQuery UI.
+uses Moose, BioPerl, Bio::Chado::Schema, Bio::BLAST::Database, Digest::SHA1,
+the Catalyst web framework and many other CPAN modules.  On the client side, it
+uses JQuery and ExtJS.
 
 ## How can I help hack on Mimosa or otherwise get involved?
 
