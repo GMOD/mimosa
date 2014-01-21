@@ -12,7 +12,7 @@ use Bio::BLAST::Database;
 #use Carp::Always;
 
 # TODO: store this in a shared place, because App::Mimosa::Job has it too
-enum 'Alphabet' => qw(protein nucleotide);
+enum 'Alphabet' => [qw(protein nucleotide)];
 
 has alphabet => (
     isa     => 'Alphabet',

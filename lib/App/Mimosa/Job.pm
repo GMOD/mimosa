@@ -61,9 +61,9 @@ has matrix => (
     default => 'BLOSUM62',
 );
 
-enum 'BoolStr' => qw(T F);
+enum 'BoolStr' => [qw(T F)];
 
-enum 'Alphabet' => qw(protein nucleotide);
+enum 'Alphabet' => [qw(protein nucleotide)];
 
 has alphabet => (
     isa     => 'Alphabet',
